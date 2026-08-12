@@ -1,4 +1,4 @@
-# IRON CANVAS v5.0 — Agent Quick Reference
+# IRON CANVAS v5.2 — Agent Quick Reference
 
 ## THE PIPELINE
 
@@ -107,7 +107,7 @@ Playful 7-10                  → Animated illustrations, GIF loops
 Serious 8-10 + Technical 7-10 → Data viz, clean transitions
 ```
 
-## 11 ANTI-PATTERNS (v4.2)
+## 17 ANTI-PATTERNS
 
 1. Cookie-Cutter — skip Phase 1 = uniform output
 2. Blind Generation — artifacts without CSS context
@@ -117,9 +117,17 @@ Serious 8-10 + Technical 7-10 → Data viz, clean transitions
 6. Trinket Dropping — images not integrated with CSS
 7. Video-as-Animation — MP4 instead of Canvas frames
 8. Frame Inconsistency — different prompts per frame
-9. **One-Shot Prompting** ★ — no Discovery Interview or PRD
-10. **Skipping Asset Pipeline** ★ — raw video on scroll engine
-11. **Context Drift** ★ — no persistent context injection
+9. One-Shot Prompting — no Discovery Interview or PRD
+10. Skipping Asset Pipeline — raw video on scroll engine
+11. Context Drift — no persistent context injection
+12. Intensity Mismatch — DIS reading ignored (over/under-designed)
+13. Code-vs-AI Misrouting — wrong asset class for the job
+14. Generative-for-its-own-sake — algorithmic art with no brand reason
+15. Depth Theater ★v5.0 — 3D bolted on for flash, not meaning
+16. Slop Tells ★v5.1 — the anti-slop canon (the generic-AI look)
+17. Register Mismatch ★v5.1 — wrong treatment for the task's ambition
+
+Full detail: references/anti-patterns.md
 
 ## TASTE DOCTRINE (8 RULES)
 
@@ -132,15 +140,16 @@ Serious 8-10 + Technical 7-10 → Data viz, clean transitions
 7. Best moments visible in the 15-second scroll
 8. Preserve ONE signature animation on mobile
 
-## FINAL SIGN-OFF AXES
+## FINAL SIGN-OFF — 6 AXES
 
 ```
-Axis 1: Awwwards score     ≥ 7.5/10
-Axis 2: Animation quality  ≥ 7/10 checks
-Axis 3: Taste Test         7/7 (all must pass)
-Axis 4: Performance        ≥ 10/12 checks
-Axis 5: Brand DNA match    ≥ 5/7
-+ Enhancement Discovery:   3-5 suggestions (Orchestrator decides)
+Axis 1: Awwwards Design     ≥ 7.5/10
+Axis 2: Animation quality   ≥ 7/10 checks
+Axis 3: Taste Test          7/7 (all must pass)
+Axis 4: Performance         ≥ 10/12 checks
+Axis 5: Brand DNA match     ≥ 5/7
+Axis 6: Treatment & Soul    ≥ 5/6 (CD3 — register match, soul, anti-slop; hard-fails block ship)
++ Enhancement Discovery:    3-5 suggestions (Orchestrator decides)
 ```
 
 ## IMMERSIVE MODE (v4.3)

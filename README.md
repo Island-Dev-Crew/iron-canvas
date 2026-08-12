@@ -1,6 +1,6 @@
 # ⚡ Iron Canvas
 
-> **v5.0 — Surfaces.** Iron Canvas is no longer website-only. One design-quality core now
+> **v5.2 — Surfaces, Soul & Gauntlet.** Iron Canvas is no longer website-only. One design-quality core now
 > dispatches across **four surface packs**: `web` (the flagship), `app-dashboard` (Type C
 > first-class — density scale, app shell grammar, data-motion grammar, state choreography),
 > `immersive-3d` (Type A-world — one material, camera rail, Agent F as world agent), and
@@ -137,16 +137,16 @@ iron-canvas/
 
 ```
 # MISSION MODE — Full team
-Iron Canvas v4.2 MISSION MODE for [project].
+Iron Canvas v5.2 MISSION MODE for [project].
 Full team. Discovery Interview first. Phases 0-8.
 Target: Awwwards Site of the Day quality.
 
 # SWARM MODE — Standard production
-Iron Canvas v4.2 SWARM MODE for [URL/project].
+Iron Canvas v5.2 SWARM MODE for [URL/project].
 Phases 0-3.9 sequential. Then parallel agents. Merge and verify.
 
 # SOLO MODE — Quick enhancement
-Iron Canvas v4.2 SOLO for [URL].
+Iron Canvas v5.2 SOLO for [URL].
 Phase 1 FIRST — no changes before DNA profile.
 ```
 
@@ -162,8 +162,10 @@ ORIENT(0) → INTERVIEW → STUDY(1) → FEEL(2) → SCOUT(3) → VALIDATE(3.5) 
 
 ---
 
-## v5.0 Highlights
+## Highlights
 
+- **Gauntlet-forged premium (v5.2)** — at registers R2–R4, FORGE / IMMERSE / GENERATE build via a fan-out + blind cross-family critic loop against a falsifiable bar (immersion scorecard ≥ 4.0 + North Star reference-peg diff + 6-axis); ship the survivor (`references/gauntlet-loop.md`)
+- **Claude Design 3 — the Treatment Doctrine (v5.1)** — calibrate the *treatment*, not whether to design: one craft across five registers (R0 Utilitarian → R4 Immersive), grounded in the subject's own world (soul), enforced by VERIFY Axis 6 (`references/claude-design-3.md`)
 - **Surface Packs** — one core, four surfaces: `web` · `app-dashboard` · `immersive-3d` · `game-realtime` (exp). Phase 0 dispatches exactly ONE (`surfaces/SURFACE-PACK-CONTRACT.md`)
 - **Depth Language (DIS System 9)** — composed (CSS) → staged (one Three.js scene) → inhabited (igloo.inc-tier world). BPM-gated, mode-ceilinged, fallback ladder mandatory (`references/depth-language.md`)
 - **Live depth demo** — [`showcase/depth.html`](showcase/depth.html): scroll IS the dial; the page obeys every rule it demonstrates (seeded 5417, DOM-first, ladder-proven)

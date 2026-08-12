@@ -202,7 +202,7 @@ const PHASES = [
   { id:"04", name:"FORGE", desc:"Token system + structural skeleton" },
   { id:"05", name:"GENERATE", desc:"Artifact Assessment Gate → assets" },
   { id:"06", name:"COMPOSE", desc:"Scroll engine assembly + agent merge" },
-  { id:"07", name:"VERIFY", desc:"5-axis audit + Enhancement Discovery" },
+  { id:"07", name:"VERIFY", desc:"6-axis audit + Enhancement Discovery" },
 ];
 const STATS = [
   { label:"Self-audit", value:"108/120", sub:"90% — 6-axis Awwwards-grade" },

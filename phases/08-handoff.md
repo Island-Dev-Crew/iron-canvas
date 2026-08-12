@@ -120,7 +120,7 @@ For urgent issues: [emergency contact]
 
 ---
 
-*Built with Iron Canvas v3 — Island Development Crew*
+*Built with Iron Canvas v5.2 — Island Development Crew*
 ```
 
 ---
@@ -201,4 +201,4 @@ Phase 8 is complete when:
 
 ---
 
-*Iron Canvas v3 — phases/08-handoff.md*
+*Iron Canvas v5.2 — phases/08-handoff.md*

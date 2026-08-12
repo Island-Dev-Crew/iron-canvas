@@ -1,5 +1,5 @@
 # Design PRD Template
-## Iron Canvas v4.2 — Phase 3.9 Output
+## Iron Canvas v5.2 — Phase 3.9 Output
 
 *Instructions: Orchestrator fills this completely before dispatching to Build Agents.*
 *Delete all instruction lines (in italics) before saving final PRD.*

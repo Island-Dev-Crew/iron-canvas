@@ -1,4 +1,4 @@
-# Invocation Templates — Iron Canvas v4.2
+# Invocation Templates — Iron Canvas v5.2
 
 > Copy-paste these to invoke Iron Canvas in Antigravity, Claude Code,
 > or any agentic AI environment. Every template references the correct phases,
@@ -9,7 +9,7 @@
 ## SOLO MODE — Full Sequential Pipeline
 
 ```
-Apply Iron Canvas v4.2 SOLO to [URL/project].
+Apply Iron Canvas v5.2 SOLO to [URL/project].
 
 Read SKILL.md first, then execute phases sequentially:
 Phase 0 (ORIENT): Classify project type and mode.
@@ -29,7 +29,7 @@ Output all JSON/MD files to project root. Final deliverable only after verificat
 ## SWARM MODE — Parallel Build Agents
 
 ```
-Apply Iron Canvas v4.2 SWARM to [URL/project].
+Apply Iron Canvas v5.2 SWARM to [URL/project].
 
 Orchestrator: Run Phases 0-3.9 sequentially. Produce design-prd.md.
 
@@ -49,7 +49,7 @@ Target: Awwwards Site of the Day quality (7.5+ on all axes).
 ## MISSION MODE — Full Team
 
 ```
-Iron Canvas v4.2 MISSION MODE for [project].
+Iron Canvas v5.2 MISSION MODE for [project].
 
 Full agent team:
   Research Agent → Phases 1-3 (DNA + feel + North Star)
@@ -66,7 +66,7 @@ Full agent team:
   Orchestrator: Merge, compose, run 6-axis verification audit.
 
 Target: Awwwards Site of the Day. Taste Test 7/7. Performance ≥ 10/12.
-Deliver only after all 5 verification axes pass.
+Deliver only after all 6 verification axes pass.
 ```
 
 ---
@@ -74,7 +74,7 @@ Deliver only after all 5 verification axes pass.
 ## Dashboard Build — Mission Control Route
 
 ```
-Iron Canvas v4.2 MISSION MODE — DASHBOARD ROUTE for [name].
+Iron Canvas v5.2 MISSION MODE — DASHBOARD ROUTE for [name].
 
 Project type: C (Dashboard/Mission Control).
 Activate § DASHBOARD ADDENDUM in SKILL.md.
@@ -97,7 +97,7 @@ Data: [describe what metrics/data are being displayed].
 ## Existing Site Enhancement
 
 ```
-Iron Canvas v4.2 SOLO — Enhancement of [URL].
+Iron Canvas v5.2 SOLO — Enhancement of [URL].
 
 Project type: E. Phase 1 STUDY is NON-NEGOTIABLE and must complete before any changes.
 
@@ -119,7 +119,7 @@ Anti-Pattern priority for this project: #5 Identity Erasure is highest risk.
 ## E-commerce Scroll Sequence
 
 ```
-Iron Canvas v4.2 SWARM for [site] with scroll-driven product reveal.
+Iron Canvas v5.2 SWARM for [site] with scroll-driven product reveal.
 
 Product: [description].
 Scroll section: [section name, current dimensions].
@@ -146,7 +146,7 @@ Phase 6 COMPOSE (Agent-B):
 ## Narrated Scroll Experience (Voice AI)
 
 ```
-Iron Canvas v4.2 SWARM for [site] with scroll-triggered narrated experience.
+Iron Canvas v5.2 SWARM for [site] with scroll-triggered narrated experience.
 
 Phase 3.5 VALIDATION AGENT — verify before building:
   1. WebSocket TTS streaming feasible in browser (HTTPS required)?
@@ -179,7 +179,7 @@ Narration moments (from scroll positions):
 ## Artifacts Only (Phase 5 Focused)
 
 ```
-Iron Canvas v4.2 Phase 5 — Context-aware artifact generation for [site/project].
+Iron Canvas v5.2 Phase 5 — Context-aware artifact generation for [site/project].
 
 Prerequisite: site-dna-profile.json and feel-profile.json must exist before starting.
 
@@ -202,7 +202,7 @@ Anti-Pattern #6 (Trinket Dropping): Test in situ BEFORE finalizing, no exception
 ## Quick Enhancement (No Scroll Engine, No Artifacts)
 
 ```
-Iron Canvas v4.2 SOLO — Quick structural upgrade for [URL].
+Iron Canvas v5.2 SOLO — Quick structural upgrade for [URL].
 
 Phases 1-4 only. No image generation. No scroll engine.
 
@@ -240,4 +240,4 @@ Brand personality: Bold [score] Avant-garde [score]
 ```
 
 ---
-*Iron Canvas v4.2 — Island Development Crew*
+*Iron Canvas v5.2 — Island Development Crew*

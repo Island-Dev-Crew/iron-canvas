@@ -1,5 +1,5 @@
-# IRON CANVAS — v5.0 REPO FILE MAP
-## *Complete repository state — all files current*
+# IRON CANVAS — v5.2 REPO FILE MAP
+## *Repository map — Iron Canvas v5.2*
 
 > v5.0: Surface packs + Depth Language (v5.0-alpha) reconciled with IMMERSIVE mode,
 > Agent F, Phase 4.5 IMMERSE, and the evidence gate (v4.3). SKILL.md remains
@@ -12,8 +12,8 @@
 ```
 iron-canvas/
 │
-├── SKILL.md                              ← MASTER SKILL (v4.3 — self-contained + IMMERSIVE)
-├── ROUTING.md                            ← Master bridge (v4.3 — navigation system)
+├── SKILL.md                              ← MASTER SKILL (v5.2 — self-contained + IMMERSIVE)
+├── ROUTING.md                            ← Master bridge (v5.2 — navigation system)
 ├── README.md                             ← Human-readable overview (v4.3)
 ├── REPO_MAP.md                           ← This file (v4.3)
 ├── CHANGELOG.md                          ← Version history (v1→v2→v3→v4→v4.3)
