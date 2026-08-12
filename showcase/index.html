@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Iron Canvas — Island Development Crew</title>
+<meta name="description" content="Iron Canvas — a multi-agent design orchestration system that studies a site before touching it, then enhances. Live, mode-reactive demonstration." />
+<meta property="og:title" content="Iron Canvas" />
+<meta property="og:description" content="Multi-agent design orchestration. Studies the site before touching it. Live demo — pick a mode." />
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:oklch(0.16 0.015 50);min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  #root{min-height:100vh}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<noscript style="display:block;padding:48px;text-align:center;color:#d4af6a;font-family:system-ui,sans-serif">
+  Iron Canvas — this live showcase needs JavaScript enabled.
+</noscript>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+/* generated from showcase/iron-canvas-showcase.jsx — do not edit by hand; run showcase/build-standalone.cjs */
+(function () {
+  var React = window.React, ReactDOM = window.ReactDOM;
+  var useState = React.useState, useEffect = React.useEffect, useRef = React.useRef;
+/* ============================================================================
+   IRON CANVAS — live "about" showcase  (v4.2)
+   Order: header → mode switch → LIVE code-driven demos (SVG / Remotion /
+   Hyperframes / Algorithmic Art) → Palette Derivation → Systems/Pipeline.
+   A live flow-field (algorithmic art) paints the whole background and re-times
+   to the selected mode. Everything reacts to MISSION / SWARM / SOLO.
+   ========================================================================== */
+
+const MODES = {
+  MISSION: {
+    label: "MISSION",
+    subtitle: "Maximum Impact — neon ceiling",
+    systemCount: "8/8",
+    desc: "All 8 systems at full intensity, plus the full code-driven asset class: Remotion motion graphics, self-drawing SVG, Hyperframe sequences, seeded generative art. This is the HDR top end.",
+    intensity: 1.0,
+    blur: 120,
+    grain: 0.05,
+    orbCount: 4,
+    cardGlass: 0.12,
+    borderGlow: true,
+    flowCount: 1100,
+    flowSpeed: 1.0,
+    svgSpeed: 1.0,
+    demoActivity: 1.0
+  },
+  SWARM: {
+    label: "SWARM",
+    subtitle: "Production Standard",
+    systemCount: "6/8",
+    desc: "Six systems at 70% ceiling plus selective code-driven motion. Atmospheric, refined, fast where it counts — the balanced middle of the range.",
+    intensity: 0.7,
+    blur: 80,
+    grain: 0.035,
+    orbCount: 3,
+    cardGlass: 0.08,
+    borderGlow: true,
+    flowCount: 460,
+    flowSpeed: 0.62,
+    svgSpeed: 0.64,
+    demoActivity: 0.66
+  },
+  SOLO: {
+    label: "SOLO",
+    subtitle: "Refined Enhancement — calm floor",
+    systemCount: "3/8",
+    desc: "Three core systems at 40% ceiling. Quiet generative texture, precise type, restrained motion. The simple-professional-SaaS low end of the same range.",
+    intensity: 0.4,
+    blur: 44,
+    grain: 0.02,
+    orbCount: 2,
+    cardGlass: 0.05,
+    borderGlow: false,
+    flowCount: 150,
+    flowSpeed: 0.32,
+    svgSpeed: 0.4,
+    demoActivity: 0.4
+  }
+};
+
+/* ---------- warm house tokens ---------- */
+const GOLD = "oklch(0.78 0.12 78)";
+const COPPER = "oklch(0.7 0.13 55)";
+const AMBER = "oklch(0.83 0.1 82)";
+
+/* ---------- PALETTE DERIVATION (the Phase-2 protocol, live) ---------- */
+const DNA_ARCHETYPES = [{
+  id: "luxury",
+  name: "Luxury Skincare",
+  dna: {
+    organic: 8,
+    refined: 9,
+    bold: 7,
+    contemplative: 7,
+    minimal: 4,
+    digital: 2
+  },
+  note: "organic 8 → warm earth hues · bold 7 → dark dramatic base · refined 9 → low chroma + one bright accent"
+}, {
+  id: "fintech",
+  name: "Fintech / SaaS",
+  dna: {
+    organic: 2,
+    refined: 8,
+    bold: 6,
+    contemplative: 3,
+    minimal: 7,
+    digital: 9
+  },
+  note: "digital 9 + organic 2 → cool technical band · refined 8 → restrained chroma · dark UI base"
+}, {
+  id: "wellness",
+  name: "Wellness / Spa",
+  dna: {
+    organic: 7,
+    refined: 7,
+    bold: 2,
+    contemplative: 8,
+    minimal: 8,
+    digital: 2
+  },
+  note: "contemplative 8 + minimal 8 → light, calm base · organic 7 → soft warm clay · near-monochrome"
+}, {
+  id: "fashion",
+  name: "Bold Fashion",
+  dna: {
+    organic: 4,
+    refined: 4,
+    bold: 9,
+    contemplative: 3,
+    minimal: 3,
+    digital: 5,
+    avant_garde: 9
+  },
+  note: "bold 9 + avant-garde 9 → dramatic dark base · high-chroma signature hue (violet is EARNED here, never a default)"
+}, {
+  id: "editorial",
+  name: "Editorial / Classic",
+  dna: {
+    organic: 5,
+    refined: 8,
+    bold: 4,
+    contemplative: 5,
+    minimal: 6,
+    digital: 3,
+    classic: 8
+  },
+  note: "classic 8 + refined 8 → heritage palette · crisp paper base · deep emerald ink + oxblood accent (cool, high-contrast — a different world from the warm spa)"
+}];
+function derivePalette(d) {
+  const organic = d.organic,
+    digital = d.digital,
+    refined = d.refined,
+    bold = d.bold,
+    minimal = d.minimal ?? 5,
+    contemplative = d.contemplative ?? 5,
+    avant = d.avant_garde ?? 5,
+    classic = d.classic ?? 5;
+  let hue,
+    temp,
+    forceLight = false,
+    forceDark = false,
+    secHueOverride = null;
+  if (avant >= 8 && bold >= 8) {
+    hue = 300;
+    temp = "dramatic";
+    forceDark = true;
+  } else if (classic >= 7 && refined >= 6) {
+    hue = 152;
+    temp = "heritage";
+    forceLight = true;
+    secHueOverride = 25;
+  } // emerald + oxblood
+  else if (organic >= 6) {
+    hue = Math.round(30 + organic * 6);
+    temp = "warm";
+  } else if (digital >= 6 && organic <= 3) {
+    hue = 245;
+    temp = "cool";
+  } else {
+    const warm = organic >= digital;
+    hue = warm ? 70 : 235;
+    temp = warm ? "warm" : "cool";
+  }
+  const light = forceLight || !forceDark && (minimal >= 7 && bold <= 4 || classic >= 7 && contemplative <= 6 && bold <= 4);
+  const dark = !light;
+  const baseC = temp === "heritage" ? 0.006 : refined >= 7 ? 0.02 : 0.035;
+  const accentC = temp === "heritage" ? 0.12 : bold >= 7 || temp === "dramatic" ? 0.16 : refined >= 7 ? 0.11 : 0.13;
+  const secHue = secHueOverride != null ? secHueOverride : ((hue + (temp === "cool" ? -30 : 35)) % 360 + 360) % 360;
+  const L = dark ? {
+    bg: 0.17,
+    surf: 0.235
+  } : temp === "heritage" ? {
+    bg: 0.965,
+    surf: 0.995
+  } : {
+    bg: 0.965,
+    surf: 0.995
+  };
+  return {
+    bg: `oklch(${L.bg} ${baseC} ${hue})`,
+    surface: `oklch(${L.surf} ${(baseC + 0.006).toFixed(3)} ${hue})`,
+    primary: `oklch(${temp === "heritage" ? 0.5 : 0.74} ${accentC} ${hue})`,
+    bright: `oklch(0.85 ${accentC} ${hue})`,
+    secondary: `oklch(${temp === "heritage" ? 0.45 : 0.7} ${(accentC * 0.9).toFixed(3)} ${secHue})`,
+    text: dark ? `oklch(0.93 0.02 ${hue})` : `oklch(${temp === "heritage" ? 0.2 : 0.24} 0.02 ${hue})`,
+    sub: dark ? `oklch(0.74 0.02 ${hue})` : `oklch(0.46 0.02 ${hue})`,
+    temp,
+    dark,
+    hue,
+    family: temp === "warm" ? "Warm earth" : temp === "cool" ? "Cool / technical" : temp === "dramatic" ? "Dramatic signature" : temp === "heritage" ? "Heritage / editorial" : "Neutral",
+    base: dark ? "Dark base" : "Light base"
+  };
+}
+
+/* ---------- shared canvas flow-field (algorithmic art) ---------- */
+function Flow({
+  count,
+  speed,
+  intensity,
+  background,
+  hue
+}) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const cv = ref.current;
+    if (!cv) return;
+    const ctx = cv.getContext("2d");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = 0,
+      h = 0,
+      parts = [],
+      t = 0,
+      raf = 0;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function resize() {
+      w = cv.clientWidth;
+      h = cv.clientHeight;
+      cv.width = w * dpr;
+      cv.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function seed() {
+      parts = Array.from({
+        length: count
+      }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        l: Math.random() * 40 + 10
+      }));
+    }
+    function ang(x, y) {
+      return (Math.sin(x * 0.0016 + t * 0.0003) + Math.cos(y * 0.0016 - t * 0.00026) + Math.sin((x + y) * 0.0009 + t * 0.0002)) * Math.PI;
+    }
+    function step() {
+      t += 16 * speed;
+      ctx.fillStyle = background ? "rgba(10,7,5,0.05)" : "rgba(12,9,6,0.08)";
+      ctx.fillRect(0, 0, w, h);
+      for (const p of parts) {
+        const a = ang(p.x, p.y);
+        const nx = p.x + Math.cos(a) * 1.7 * speed,
+          ny = p.y + Math.sin(a) * 1.7 * speed;
+        ctx.strokeStyle = `oklch(0.8 0.12 ${hue} / ${(background ? 0.05 : 0.13) * intensity})`;
+        ctx.lineWidth = background ? 1 : 1.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(nx, ny);
+        ctx.stroke();
+        p.x = nx;
+        p.y = ny;
+        p.l -= 1;
+        if (p.l < 0 || p.x < 0 || p.x > w || p.y < 0 || p.y > h) {
+          p.x = Math.random() * w;
+          p.y = Math.random() * h;
+          p.l = Math.random() * 40 + 10;
+        }
+      }
+    }
+    function loop() {
+      raf = requestAnimationFrame(loop);
+      if (document.hidden) return;
+      step();
+    }
+    resize();
+    seed();
+    if (reduce) {
+      for (let i = 0; i < 6; i++) step();
+    } // static fallback
+    else loop();
+    const onR = () => {
+      resize();
+      seed();
+    };
+    window.addEventListener("resize", onR);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onR);
+    };
+  }, [count, speed, intensity, background, hue]);
+  return /*#__PURE__*/React.createElement("canvas", {
+    ref: ref,
+    style: background ? {
+      position: "fixed",
+      inset: 0,
+      width: "100%",
+      height: "100%",
+      pointerEvents: "none",
+      zIndex: 0,
+      opacity: 0.55
+    } : {
+      position: "absolute",
+      inset: 0,
+      width: "100%",
+      height: "100%",
+      pointerEvents: "none"
+    }
+  });
+}
+
+/* ---------- code-driven demo cards (all re-time to svgSpeed) ---------- */
+function DemoCard({
+  tag,
+  title,
+  speed,
+  glass,
+  children
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderRadius: 16,
+      padding: "16px 16px 14px",
+      background: `rgba(255,255,255,${glass})`,
+      border: "1px solid rgba(255,255,255,.08)",
+      backdropFilter: "blur(12px)",
+      overflow: "hidden",
+      position: "relative"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 120,
+      position: "relative",
+      marginBottom: 12,
+      borderRadius: 10,
+      overflow: "hidden",
+      background: "rgba(8,6,4,.4)",
+      border: "1px solid rgba(255,255,255,.05)"
+    }
+  }, children), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "baseline",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "rgba(245,234,214,.9)"
+    }
+  }, title), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 8.5,
+      fontFamily: "var(--mono)",
+      color: "rgba(224,187,110,.6)",
+      letterSpacing: ".05em"
+    }
+  }, speed.toFixed(2), "\xD7")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9.5,
+      fontFamily: "var(--mono)",
+      color: "rgba(255,255,255,.3)",
+      letterSpacing: ".06em",
+      marginTop: 3
+    }
+  }, tag));
+}
+function SvgMorph({
+  speed
+}) {
+  const dur = (5 / speed).toFixed(2);
+  return /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 200 120",
+    style: {
+      width: "100%",
+      height: "100%"
+    }
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "100",
+    cy: "60",
+    r: "34",
+    fill: "none",
+    stroke: GOLD,
+    strokeWidth: "1.4",
+    strokeDasharray: "6 8",
+    style: {
+      transformOrigin: "100px 60px",
+      animation: `spin ${(8 / speed).toFixed(2)}s linear infinite`
+    }
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M100 30 L128 78 L72 78 Z",
+    fill: "none",
+    stroke: AMBER,
+    strokeWidth: "1.6",
+    strokeDasharray: "240",
+    strokeDashoffset: "240",
+    style: {
+      animation: `draw ${dur}s ease-in-out infinite`
+    }
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "100",
+    cy: "60",
+    r: "3.5",
+    fill: GOLD,
+    style: {
+      animation: `pulse2 ${(2.4 / speed).toFixed(2)}s ease-in-out infinite`
+    }
+  }));
+}
+function RemotionBars({
+  speed
+}) {
+  const dur = (1.4 / speed).toFixed(2);
+  const bars = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "center",
+      gap: 5,
+      padding: "16px 14px"
+    }
+  }, bars.map(i => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      width: 8,
+      borderRadius: 3,
+      background: `linear-gradient(180deg, ${AMBER}, ${COPPER})`,
+      transformOrigin: "bottom",
+      animation: `bar ${dur}s ease-in-out ${(i * 0.08).toFixed(2)}s infinite`
+    }
+  })));
+}
+function HyperGrid({
+  speed
+}) {
+  const cells = Array.from({
+    length: 36
+  });
+  const dur = (3.2 / speed).toFixed(2);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      padding: 14,
+      display: "grid",
+      gridTemplateColumns: "repeat(6,1fr)",
+      gridTemplateRows: "repeat(6,1fr)",
+      gap: 4
+    }
+  }, cells.map((_, i) => {
+    const row = Math.floor(i / 6),
+      col = i % 6,
+      delay = ((row + col) * 0.07).toFixed(2);
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        borderRadius: 3,
+        background: GOLD,
+        opacity: 0.12,
+        animation: `cell ${dur}s ease-in-out ${delay}s infinite`
+      }
+    });
+  }));
+}
+
+/* ---------- bars ---------- */
+function Bar({
+  value,
+  color,
+  label
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 72
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 8.5,
+      textTransform: "uppercase",
+      letterSpacing: ".14em",
+      color: "rgba(255,255,255,.3)",
+      fontFamily: "var(--mono)",
+      marginBottom: 4
+    }
+  }, label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 3,
+      borderRadius: 2,
+      background: "rgba(255,255,255,.05)",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${value * 100}%`,
+      borderRadius: 2,
+      background: `linear-gradient(90deg, ${color}, ${color})`,
+      transition: "width .8s cubic-bezier(.16,1,.3,1)"
+    }
+  })));
+}
+const SYSTEMS = [{
+  name: "Gradient Mesh",
+  agent: "A",
+  desc: "oklch orbs with blur diffusion"
+}, {
+  name: "Glass Depth",
+  agent: "A+C",
+  desc: "Backdrop-filter spatial hierarchy"
+}, {
+  name: "Kinetic Type",
+  agent: "C",
+  desc: "Character stagger + scramble"
+}, {
+  name: "Particle Field",
+  agent: "B",
+  desc: "Ambient depth particles"
+}, {
+  name: "Border Glow",
+  agent: "C",
+  desc: "Luminous edge treatments"
+}, {
+  name: "Scroll Sequences",
+  agent: "B+D",
+  desc: "Canvas + ScrollTrigger"
+}, {
+  name: "Magnetic Cursor",
+  agent: "C",
+  desc: "WebGL attraction fields"
+}, {
+  name: "Micro Polish",
+  agent: "C+E",
+  desc: "Sound, loading, delight"
+}];
+const PHASES = [{
+  id: "00",
+  name: "ORIENT",
+  desc: "Discovery interview + mode selection"
+}, {
+  id: "01",
+  name: "STUDY",
+  desc: "Extract site DNA before touching anything"
+}, {
+  id: "02",
+  name: "FEEL",
+  desc: "Brand Personality Matrix + palette derivation"
+}, {
+  id: "03",
+  name: "SCOUT",
+  desc: "North Star image + engine selection"
+}, {
+  id: "04",
+  name: "FORGE",
+  desc: "Token system + structural skeleton"
+}, {
+  id: "05",
+  name: "GENERATE",
+  desc: "Artifact Assessment Gate → assets"
+}, {
+  id: "06",
+  name: "COMPOSE",
+  desc: "Scroll engine assembly + agent merge"
+}, {
+  id: "07",
+  name: "VERIFY",
+  desc: "5-axis audit + Enhancement Discovery"
+}];
+const STATS = [{
+  label: "Competitive",
+  value: "108/120",
+  sub: "90% — 6-axis Awwwards-grade"
+}, {
+  label: "SKILL.md",
+  value: "2.4K",
+  sub: "lines, self-contained"
+}, {
+  label: "Agents",
+  value: "5",
+  sub: "A B C D E parallel"
+}, {
+  label: "Phases",
+  value: "8",
+  sub: "ORIENT → VERIFY"
+}];
+function IronCanvasShowcase() {
+  const [mode, setMode] = useState("MISSION");
+  const [ready, setReady] = useState(false);
+  const [arch, setArch] = useState("luxury");
+  const [tab, setTab] = useState("systems");
+  const c = MODES[mode];
+  const activeCount = mode === "MISSION" ? 8 : mode === "SWARM" ? 6 : 3;
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+    setTimeout(() => setReady(true), 80);
+  }, []);
+  const a = DNA_ARCHETYPES.find(x => x.id === arch) || DNA_ARCHETYPES[0];
+  const pal = derivePalette(a.dna);
+  const axes = [["organic", "Organic"], ["digital", "Digital"], ["refined", "Refined"], ["bold", "Bold"], ["minimal", "Minimal"], ["contemplative", "Calm"]];
+  const sw = [["Base", pal.bg], ["Surface", pal.surface], ["Primary", pal.primary], ["Bright", pal.bright], ["Second", pal.secondary], ["Ink", pal.text]];
+  const pill = {
+    fontSize: 9,
+    fontFamily: "var(--mono)",
+    padding: "3px 9px",
+    borderRadius: 6,
+    background: "rgba(212,175,106,.12)",
+    border: "1px solid rgba(212,175,106,.2)",
+    color: "rgba(224,187,110,.8)",
+    letterSpacing: ".04em"
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      "--mono": "'JetBrains Mono', monospace",
+      "--sans": "'Inter', sans-serif",
+      minHeight: "100vh",
+      background: "oklch(0.16 0.015 50)",
+      color: "#fff",
+      fontFamily: "var(--sans)",
+      position: "relative",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("style", null, `
+        @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes titleIn{from{opacity:0;transform:translateY(26px) scale(.96);filter:blur(8px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+        @keyframes lineGrow{from{width:0}to{width:72px}}
+        @keyframes pulse{0%,100%{box-shadow:0 0 18px rgba(212,175,106,.10),inset 0 1px 0 rgba(255,255,255,.05)}50%{box-shadow:0 0 36px rgba(212,175,106,.2),inset 0 1px 0 rgba(255,255,255,.08)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes draw{0%{stroke-dashoffset:240}45%{stroke-dashoffset:0}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-240}}
+        @keyframes pulse2{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(2.2);opacity:1}}
+        @keyframes bar{0%,100%{transform:scaleY(.18)}50%{transform:scaleY(1)}}
+        @keyframes cell{0%,100%{opacity:.1}50%{opacity:.85}}
+      `), /*#__PURE__*/React.createElement(Flow, {
+    count: c.flowCount,
+    speed: c.flowSpeed,
+    intensity: c.intensity,
+    background: true,
+    hue: 78
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 1,
+      pointerEvents: "none",
+      background: "radial-gradient(circle at 30% 12%, oklch(0.3 0.07 60 / .5), transparent 60%), radial-gradient(circle at 80% 80%, oklch(0.28 0.06 40 / .4), transparent 55%)"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "relative",
+      zIndex: 10,
+      maxWidth: 880,
+      margin: "0 auto",
+      padding: "48px 20px 64px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 34,
+      animation: ready ? "fadeUp .4s ease both" : "none"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      fontFamily: "var(--mono)",
+      letterSpacing: ".12em",
+      color: "rgba(224,187,110,.7)",
+      padding: "6px 16px",
+      borderRadius: 100,
+      border: "1px solid rgba(212,175,106,.2)",
+      background: "rgba(212,175,106,.05)"
+    }
+  }, "v4.2 \u2014 Island Development Crew")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontSize: "clamp(44px, 9vw, 86px)",
+      fontWeight: 800,
+      lineHeight: .95,
+      letterSpacing: "-.045em",
+      margin: 0,
+      background: "linear-gradient(135deg, #f6ecd9 0%, oklch(0.83 0.11 82) 42%, oklch(0.72 0.13 52) 78%, oklch(0.62 0.12 38) 100%)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      backgroundClip: "text",
+      animation: ready ? "titleIn .8s ease .1s both" : "none"
+    }
+  }, "Iron Canvas")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 72,
+      height: 2,
+      margin: "18px auto 18px",
+      background: "linear-gradient(90deg, transparent, rgba(212,175,106,.5), transparent)",
+      animation: ready ? "lineGrow .5s ease .35s both" : "none"
+    }
+  }), /*#__PURE__*/React.createElement("p", {
+    style: {
+      textAlign: "center",
+      fontSize: 14.5,
+      color: "rgba(245,234,214,.5)",
+      lineHeight: 1.7,
+      maxWidth: 560,
+      margin: "0 auto 30px",
+      fontWeight: 300,
+      animation: ready ? "fadeUp .5s ease .45s both" : "none"
+    }
+  }, "A multi-agent design system that studies a site before touching it \u2014 then enhances. Everything on this page is generated, live, and re-times to the mode you pick."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4,1fr)",
+      gap: 10,
+      marginBottom: 30
+    }
+  }, STATS.map(s => /*#__PURE__*/React.createElement("div", {
+    key: s.label,
+    style: {
+      textAlign: "center",
+      padding: "14px 8px",
+      borderRadius: 14,
+      background: `rgba(255,255,255,${c.cardGlass * .6})`,
+      backdropFilter: `blur(${c.blur / 4}px)`,
+      border: "1px solid rgba(255,255,255,.06)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 22,
+      fontWeight: 700,
+      letterSpacing: "-.02em",
+      color: "rgba(245,234,214,.9)",
+      fontFamily: "var(--mono)"
+    }
+  }, s.value), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: ".1em",
+      color: "rgba(255,255,255,.3)",
+      marginTop: 2,
+      fontFamily: "var(--mono)"
+    }
+  }, s.label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      color: "rgba(255,255,255,.18)",
+      marginTop: 2
+    }
+  }, s.sub)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 2,
+      background: "rgba(255,255,255,.03)",
+      borderRadius: 12,
+      padding: 3,
+      border: "1px solid rgba(255,255,255,.05)"
+    }
+  }, Object.keys(MODES).map(m => /*#__PURE__*/React.createElement("button", {
+    key: m,
+    onClick: () => setMode(m),
+    style: {
+      padding: "9px 24px",
+      borderRadius: 10,
+      background: mode === m ? "rgba(212,175,106,.18)" : "transparent",
+      color: mode === m ? "rgba(245,234,214,.95)" : "rgba(255,255,255,.3)",
+      fontSize: 11.5,
+      fontFamily: "var(--mono)",
+      fontWeight: 600,
+      letterSpacing: ".07em",
+      cursor: "pointer",
+      transition: "all .3s ease",
+      border: mode === m ? "1px solid rgba(212,175,106,.3)" : "1px solid transparent"
+    }
+  }, m)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      fontSize: 12,
+      color: "rgba(245,234,214,.4)",
+      marginBottom: 4,
+      fontFamily: "var(--mono)",
+      letterSpacing: ".06em"
+    }
+  }, c.subtitle, " \u2014 ", c.systemCount, " systems"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      textAlign: "center",
+      fontSize: 12,
+      color: "rgba(255,255,255,.3)",
+      maxWidth: 520,
+      margin: "0 auto 26px",
+      lineHeight: 1.6
+    }
+  }, c.desc), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: ".16em",
+      color: "rgba(224,187,110,.55)",
+      fontFamily: "var(--mono)",
+      marginBottom: 12
+    }
+  }, "Code-Driven Assets \u2014 live \xB7 ", mode), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))",
+      gap: 12,
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement(DemoCard, {
+    tag: "SVG \xB7 self-drawing",
+    title: "Vector Morph",
+    speed: c.svgSpeed,
+    glass: c.cardGlass
+  }, /*#__PURE__*/React.createElement(SvgMorph, {
+    speed: c.svgSpeed
+  })), /*#__PURE__*/React.createElement(DemoCard, {
+    tag: "Remotion \xB7 code \u2192 video",
+    title: "Motion Graphics",
+    speed: c.svgSpeed,
+    glass: c.cardGlass
+  }, /*#__PURE__*/React.createElement(RemotionBars, {
+    speed: c.svgSpeed
+  })), /*#__PURE__*/React.createElement(DemoCard, {
+    tag: "Hyperframes \xB7 frame seq",
+    title: "Frame Sequence",
+    speed: c.svgSpeed,
+    glass: c.cardGlass
+  }, /*#__PURE__*/React.createElement(HyperGrid, {
+    speed: c.svgSpeed
+  })), /*#__PURE__*/React.createElement(DemoCard, {
+    tag: "Algorithmic \xB7 seeded flow",
+    title: "Generative Art",
+    speed: c.svgSpeed,
+    glass: c.cardGlass
+  }, /*#__PURE__*/React.createElement(Flow, {
+    count: Math.round(c.flowCount * 0.18),
+    speed: c.flowSpeed * 1.3,
+    intensity: 1,
+    hue: 70
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10.5,
+      color: "rgba(255,255,255,.32)",
+      lineHeight: 1.6,
+      marginBottom: 40,
+      fontStyle: "italic"
+    }
+  }, "Every panel \u2014 and the background field \u2014 is code, not a video file. They speed up under MISSION, settle under SOLO. The same engines ship in production via the code-driven asset class (SVG, Remotion, Hyperframes, algorithmic art)."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "20px 24px",
+      borderRadius: 18,
+      background: `rgba(255,255,255,${c.cardGlass})`,
+      backdropFilter: `blur(${c.blur / 2.5}px)`,
+      border: "1px solid rgba(255,255,255,.07)",
+      marginBottom: 40,
+      animation: c.borderGlow ? "pulse 4.5s ease-in-out infinite" : "none"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: ".14em",
+      color: "rgba(255,255,255,.25)",
+      fontFamily: "var(--mono)",
+      marginBottom: 14
+    }
+  }, "System Intensities \u2014 ", mode), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 14,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement(Bar, {
+    value: c.intensity,
+    label: "Mesh",
+    color: GOLD
+  }), /*#__PURE__*/React.createElement(Bar, {
+    value: c.cardGlass / .12,
+    label: "Glass",
+    color: AMBER
+  }), /*#__PURE__*/React.createElement(Bar, {
+    value: c.svgSpeed,
+    label: "Motion",
+    color: COPPER
+  }), /*#__PURE__*/React.createElement(Bar, {
+    value: c.flowCount / 1100,
+    label: "Field",
+    color: GOLD
+  }), /*#__PURE__*/React.createElement(Bar, {
+    value: c.intensity,
+    label: "Borders",
+    color: AMBER
+  }), /*#__PURE__*/React.createElement(Bar, {
+    value: c.intensity,
+    label: "Scroll",
+    color: COPPER
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: ".16em",
+      color: "rgba(224,187,110,.55)",
+      fontFamily: "var(--mono)",
+      marginBottom: 10
+    }
+  }, "Palette Derivation \u2014 DNA \u2192 palette, live"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: "rgba(255,255,255,.4)",
+      lineHeight: 1.6,
+      marginBottom: 16
+    }
+  }, "Pick an archetype. The palette is ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: "rgba(245,234,214,.72)"
+    }
+  }, "derived"), " from its Brand Personality Matrix by the same protocol Iron Canvas runs in Phase 2 \u2014 there is no fixed house palette."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6,
+      flexWrap: "wrap",
+      marginBottom: 18
+    }
+  }, DNA_ARCHETYPES.map(x => /*#__PURE__*/React.createElement("button", {
+    key: x.id,
+    onClick: () => setArch(x.id),
+    style: {
+      padding: "8px 16px",
+      borderRadius: 9,
+      cursor: "pointer",
+      fontFamily: "var(--mono)",
+      fontSize: 11,
+      letterSpacing: ".03em",
+      transition: "all .3s ease",
+      background: arch === x.id ? "rgba(212,175,106,.16)" : "rgba(255,255,255,.03)",
+      color: arch === x.id ? "rgba(245,234,214,.95)" : "rgba(255,255,255,.4)",
+      border: arch === x.id ? "1px solid rgba(212,175,106,.35)" : "1px solid rgba(255,255,255,.06)"
+    }
+  }, x.name))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "minmax(220px,1fr) minmax(240px,1.15fr)",
+      gap: 16,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "18px 20px",
+      borderRadius: 16,
+      background: "rgba(255,255,255,.04)",
+      border: "1px solid rgba(255,255,255,.07)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: ".14em",
+      color: "rgba(255,255,255,.3)",
+      fontFamily: "var(--mono)",
+      marginBottom: 14
+    }
+  }, "DNA Input \u2014 Brand Personality Matrix"), axes.map(([k, label]) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 9
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 70,
+      fontSize: 10.5,
+      color: "rgba(255,255,255,.45)",
+      fontFamily: "var(--mono)"
+    }
+  }, label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      height: 5,
+      borderRadius: 3,
+      background: "rgba(255,255,255,.05)",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${(a.dna[k] || 0) * 10}%`,
+      borderRadius: 3,
+      background: `linear-gradient(90deg, ${GOLD}, ${COPPER})`,
+      transition: "width .5s cubic-bezier(.16,1,.3,1)"
+    }
+  })), /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 16,
+      fontSize: 10.5,
+      color: "rgba(255,255,255,.5)",
+      fontFamily: "var(--mono)",
+      textAlign: "right"
+    }
+  }, a.dna[k] || "\u2013"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 13,
+      display: "flex",
+      gap: 7,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: pill
+  }, pal.family), /*#__PURE__*/React.createElement("span", {
+    style: pill
+  }, pal.base), /*#__PURE__*/React.createElement("span", {
+    style: pill
+  }, "hue ", pal.hue))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderRadius: 16,
+      overflow: "hidden",
+      border: "1px solid rgba(255,255,255,.08)",
+      position: "relative",
+      minHeight: 210,
+      background: pal.bg,
+      transition: "background .6s cubic-bezier(.16,1,.3,1)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      background: `radial-gradient(circle at 28% 18%, ${pal.primary}, transparent 62%)`,
+      opacity: 0.16,
+      transition: "background .6s"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "relative",
+      padding: "30px 26px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9.5,
+      letterSpacing: ".3em",
+      textTransform: "uppercase",
+      color: pal.primary,
+      marginBottom: 14,
+      transition: "color .6s"
+    }
+  }, "Derived Brand"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
+      fontSize: 36,
+      fontWeight: 600,
+      lineHeight: 1.04,
+      color: pal.text,
+      marginBottom: 10,
+      transition: "color .6s"
+    }
+  }, a.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: pal.sub,
+      lineHeight: 1.6,
+      marginBottom: 22,
+      transition: "color .6s"
+    }
+  }, "Same layout, same components \u2014 only the palette changed, derived from this brand's DNA."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "inline-block",
+      padding: "11px 26px",
+      borderRadius: 100,
+      fontSize: 11,
+      letterSpacing: ".1em",
+      textTransform: "uppercase",
+      fontWeight: 600,
+      background: `linear-gradient(120deg, ${pal.primary}, ${pal.secondary})`,
+      color: pal.dark ? pal.bg : "oklch(0.99 0 0)",
+      transition: "all .6s"
+    }
+  }, "Explore")))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      marginBottom: 14,
+      flexWrap: "wrap"
+    }
+  }, sw.map(([label, val]) => /*#__PURE__*/React.createElement("div", {
+    key: label,
+    style: {
+      flex: 1,
+      minWidth: 92
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 46,
+      borderRadius: 10,
+      background: val,
+      border: "1px solid rgba(255,255,255,.1)",
+      transition: "background .6s cubic-bezier(.16,1,.3,1)"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 8.5,
+      color: "rgba(255,255,255,.35)",
+      fontFamily: "var(--mono)",
+      marginTop: 5
+    }
+  }, label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 7.5,
+      color: "rgba(255,255,255,.2)",
+      fontFamily: "var(--mono)",
+      wordBreak: "break-all"
+    }
+  }, val.replace("oklch(", "").replace(")", ""))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "12px 16px",
+      borderRadius: 11,
+      background: "rgba(212,175,106,.05)",
+      border: "1px solid rgba(212,175,106,.12)",
+      marginBottom: 40
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "rgba(224,187,110,.8)",
+      fontFamily: "var(--mono)",
+      fontSize: 9.5,
+      letterSpacing: ".06em"
+    }
+  }, "DERIVATION \u2014 "), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "rgba(255,255,255,.5)",
+      lineHeight: 1.6
+    }
+  }, a.note)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 2,
+      marginBottom: 16
+    }
+  }, [{
+    key: "systems",
+    label: "Design Systems"
+  }, {
+    key: "pipeline",
+    label: "Pipeline"
+  }].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.key,
+    onClick: () => setTab(t.key),
+    style: {
+      padding: "7px 16px",
+      borderRadius: 8,
+      border: "none",
+      background: tab === t.key ? "rgba(255,255,255,.06)" : "transparent",
+      color: tab === t.key ? "rgba(255,255,255,.7)" : "rgba(255,255,255,.25)",
+      fontSize: 11,
+      fontFamily: "var(--mono)",
+      cursor: "pointer",
+      transition: "all .3s ease",
+      letterSpacing: ".04em"
+    }
+  }, t.label))), tab === "systems" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))",
+      gap: 10,
+      marginBottom: 40
+    }
+  }, SYSTEMS.map((s, i) => {
+    const active = i < activeCount;
+    return /*#__PURE__*/React.createElement("div", {
+      key: s.name,
+      style: {
+        padding: "16px 18px",
+        borderRadius: 14,
+        background: active ? `rgba(255,255,255,${c.cardGlass})` : "rgba(255,255,255,.015)",
+        backdropFilter: active ? `blur(${c.blur / 4}px)` : "none",
+        border: `1px solid ${active ? "rgba(255,255,255,.1)" : "rgba(255,255,255,.03)"}`,
+        transition: "all .5s cubic-bezier(.16,1,.3,1)",
+        opacity: active ? 1 : .28
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12.5,
+        fontWeight: 600,
+        color: active ? "rgba(245,234,214,.88)" : "rgba(255,255,255,.18)",
+        marginBottom: 6
+      }
+    }, s.name), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10.5,
+        color: active ? "rgba(255,255,255,.38)" : "rgba(255,255,255,.1)",
+        lineHeight: 1.45
+      }
+    }, s.desc), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8,
+        fontSize: 9,
+        fontFamily: "var(--mono)",
+        color: active ? "rgba(224,187,110,.5)" : "rgba(255,255,255,.08)",
+        letterSpacing: ".08em"
+      }
+    }, "AGENT ", s.agent));
+  })), tab === "pipeline" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gap: 8,
+      marginBottom: 40
+    }
+  }, PHASES.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 14,
+      padding: "12px 18px",
+      borderRadius: 12,
+      background: `rgba(255,255,255,${c.cardGlass * .7})`,
+      backdropFilter: `blur(${c.blur / 5}px)`,
+      border: "1px solid rgba(255,255,255,.06)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      background: "rgba(212,175,106,.12)",
+      border: "1px solid rgba(212,175,106,.25)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 11,
+      fontFamily: "var(--mono)",
+      fontWeight: 600,
+      color: "rgba(224,187,110,.85)",
+      flexShrink: 0
+    }
+  }, p.id), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "rgba(245,234,214,.8)"
+    }
+  }, p.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10.5,
+      color: "rgba(255,255,255,.35)",
+      marginTop: 1
+    }
+  }, p.desc)), (p.id === "05" || p.id === "06") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 8,
+      fontFamily: "var(--mono)",
+      padding: "3px 8px",
+      borderRadius: 6,
+      background: "rgba(212,120,60,.12)",
+      border: "1px solid rgba(212,120,60,.25)",
+      color: "rgba(212,120,60,.8)",
+      letterSpacing: ".08em",
+      flexShrink: 0
+    }
+  }, "MANDATORY")))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      paddingTop: 20,
+      borderTop: "1px solid rgba(255,255,255,.04)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9.5,
+      color: "rgba(245,234,214,.13)",
+      fontFamily: "var(--mono)",
+      letterSpacing: ".1em"
+    }
+  }, "IRON CANVAS v4.2 \u2014 LIVE DESIGN LANGUAGE"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      color: "rgba(255,255,255,.08)",
+      marginTop: 5,
+      fontStyle: "italic"
+    }
+  }, "\"Where there is no vision, the people perish.\" \u2014 Proverbs 29:18"))));
+}
+  ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(IronCanvasShowcase));
+})();
+</script>
+</body>
+</html>

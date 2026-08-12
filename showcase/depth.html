@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Iron Canvas — Depth Language · One Dial, Three Altitudes</title>
+<meta name="description" content="Live demonstration of the Iron Canvas Depth Language (DIS System 9): composed, staged, and inhabited depth — one z-axis grammar, dialed 0–1 by scroll." />
+<!--
+  IRON CANVAS v5.0 — DEPTH LANGUAGE SHOWCASE
+  Standalone, no-build. Three.js via CDN import map (ES modules).
+  Honors its own rules: seeded (mulberry32), palette-locked, DOM-first text,
+  DPR capped at 2, IntersectionObserver pause, reduced-motion static fallback,
+  no-WebGL fallback ladder (III → II → I, never to flat). No torus knots. Ever.
+-->
+<style>
+  :root{
+    --bg:#0d0a07; --bg2:#14100b; --gold:#e0bb6e; --gold-dim:rgba(224,187,110,.55);
+    --cream:#f5ead6; --cream-dim:rgba(245,234,214,.55); --line:rgba(224,187,110,.14);
+    --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Inter',system-ui,sans-serif;
+    --elev-1:0 2px 8px rgba(0,0,0,.35); --elev-2:0 8px 24px rgba(0,0,0,.45);
+    --elev-3:0 18px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(224,187,110,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{background:var(--bg);color:var(--cream);font-family:var(--sans)}
+  main{overflow:clip}  /* contains the ambient orbs; html/body stay visible so the VIEWPORT scrolls */
+  ::selection{background:rgba(224,187,110,.25)}
+
+  /* ── fixed dial HUD ─────────────────────────────────────────── */
+  #dial{position:fixed;top:22px;right:22px;z-index:50;text-align:right;font-family:var(--mono);
+    padding:14px 18px;border:1px solid var(--line);border-radius:12px;
+    background:rgba(13,10,7,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--elev-2);min-width:172px}
+  #dial .dv{font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--gold);line-height:1}
+  #dial .dt{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);margin-top:6px}
+  #dial .tier{font-size:11px;letter-spacing:.1em;color:var(--cream);margin-top:2px}
+  #dial .bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:10px;overflow:hidden}
+  #dial .bar i{display:block;height:100%;width:10%;background:linear-gradient(90deg,rgba(224,187,110,.4),var(--gold));border-radius:2px}
+
+  /* ── sections ───────────────────────────────────────────────── */
+  section{position:relative;padding:16vh 6vw;max-width:1200px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:18px}
+  h1{font-size:clamp(42px,8vw,96px);font-weight:800;letter-spacing:-.04em;line-height:.98}
+  h1 .thin{color:var(--gold);font-weight:300}
+  h2{font-size:clamp(28px,4.5vw,52px);font-weight:700;letter-spacing:-.03em;margin-bottom:14px}
+  .lede{font-size:clamp(15px,1.6vw,19px);color:var(--cream-dim);max-width:56ch;line-height:1.7;margin-top:22px}
+  .rule-quote{font-family:var(--mono);font-size:12px;color:var(--gold-dim);letter-spacing:.04em;margin-top:34px}
+
+  /* ── Tier I: composed depth instruments ─────────────────────── */
+  .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:48px}
+  .card{border:1px solid var(--line);border-radius:16px;padding:26px;
+    background:rgba(255,255,255,.03);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:var(--elev-1);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s,border-color .45s}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--elev-3);border-color:rgba(224,187,110,.35)}
+  .card h3{font-size:15px;letter-spacing:.02em;margin-bottom:8px;color:var(--cream)}
+  .card p{font-size:12.5px;line-height:1.65;color:var(--cream-dim)}
+  .card .tag{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:12px}
+  .c8{grid-column:span 8}.c4{grid-column:span 4}.c6{grid-column:span 6}
+  @media(max-width:860px){.c8,.c4,.c6{grid-column:span 12}}
+
+  /* parallax bands (grammar ratios: mid .88 / far .68 / atmosphere .4) */
+  [data-band]{will-change:transform}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:-1}
+  .orb.a{width:520px;height:520px;background:radial-gradient(circle,rgba(224,187,110,.13),transparent 70%);top:-120px;left:-140px}
+  .orb.b{width:420px;height:420px;background:radial-gradient(circle,rgba(160,110,60,.10),transparent 70%);bottom:-100px;right:-120px}
+
+  /* ── Tier II: staged window ─────────────────────────────────── */
+  .stage-wrap{margin-top:48px;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    box-shadow:var(--elev-3);background:var(--bg2);position:relative}
+  .stage-wrap canvas{display:block;width:100%;height:56vh}
+  .stage-cap{position:absolute;left:22px;bottom:18px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim)}
+  .stage-fallback{height:56vh;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;text-align:center;padding:24px}
+  .stage-fallback .glyph{width:120px;height:120px;border:1px solid var(--gold-dim);border-radius:24px;transform:rotate(45deg);box-shadow:var(--elev-2), inset 0 0 40px rgba(224,187,110,.08)}
+
+  /* ── Tier III: inhabited world ──────────────────────────────── */
+  #world{position:fixed;inset:0;z-index:0;opacity:0;transition:opacity .8s ease;pointer-events:none}
+  #world canvas{width:100%;height:100%;display:block}
+  #tier3{position:relative;z-index:2}
+  .station{min-height:92vh;display:flex;align-items:center}
+  .station .inner{max-width:640px}
+  .station h2{text-shadow:0 4px 40px rgba(0,0,0,.8)}
+  .station .lede{text-shadow:0 2px 24px rgba(0,0,0,.8)}
+
+  /* ── coda ───────────────────────────────────────────────────── */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:40px}
+  .rules .r{border:1px solid var(--line);border-radius:12px;padding:18px;background:rgba(255,255,255,.02)}
+  .rules .r b{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
+  .rules .r span{font-size:12px;color:var(--cream-dim);line-height:1.6}
+  footer{padding:8vh 6vw 12vh;text-align:center;font-family:var(--mono);font-size:11px;color:var(--cream-dim);letter-spacing:.06em}
+  footer a{color:var(--gold);text-decoration:none}
+
+  /* reduced motion: static frames, zero animation */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none!important;animation:none!important}
+    [data-band]{transform:none!important}
+  }
+  body.no-webgl .stage-wrap canvas, body.no-webgl #world{display:none}
+  body.no-webgl .stage-fallback{display:flex}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- DIAL HUD (NEAR band — locked to viewer) -->
+<div id="dial" role="status" aria-live="off">
+  <div class="dv" id="dv">0.10</div>
+  <div class="dt">Depth · DIS System 9</div>
+  <div class="tier" id="dtier">TIER I — COMPOSED</div>
+  <div class="bar"><i id="dbar"></i></div>
+</div>
+
+<!-- Tier III world canvas (ATMOSPHERE band — behind everything) -->
+<div id="world" aria-hidden="true"></div>
+
+<main style="position:relative;z-index:2">
+
+  <!-- ════ HERO · dial 0.10 ════ -->
+  <section id="hero" data-depth="0.10">
+    <div class="orb a" data-band="atmo"></div>
+    <p class="kicker">Iron Canvas v5.0 · references/depth-language.md</p>
+    <h1>DEPTH<br><span class="thin">LANGUAGE</span></h1>
+    <p class="lede">One z-axis grammar, three altitudes, dialed 0–1. This page IS the dial —
+      scroll, and watch the same espresso-and-gold identity climb from composed CSS shadows
+      to a staged WebGL scene to an inhabited world. Same palette. Same light. One language.</p>
+    <p class="rule-quote">"igloo is not a category. It is 1.0 on the dial."</p>
+  </section>
+
+  <!-- ════ TIER I · COMPOSED · 0.10–0.35 ════ -->
+  <section id="tier1" data-depth="0.28">
+    <div class="orb b" data-band="atmo"></div>
+    <p class="kicker">Tier I · 0.10 – 0.35 · CSS only</p>
+    <h2>Composed depth.<br>The floor is never flat.</h2>
+    <p class="lede">Four instruments, zero WebGL. Every Iron Canvas surface — even a dense
+      dashboard — carries this much. Hover the cards: elevation is choreography.</p>
+    <div class="bento">
+      <div class="card c8" data-band="mid"><span class="tag">Instrument 01</span>
+        <h3>Elevation ramp</h3><p>Tokenized shadow scale, one light source, consistent angle.
+        The same key light will lift the staged scene and set the world's sun below.</p></div>
+      <div class="card c4" data-band="mid"><span class="tag">Instrument 02</span>
+        <h3>Focus blur</h3><p>backdrop-filter as depth-of-field — the dial HUD floats on it now.</p></div>
+      <div class="card c4" data-band="far"><span class="tag">Instrument 03</span>
+        <h3>Glass strata</h3><p>Fore, mid, back transparency bands organized by z, not by whim.</p></div>
+      <div class="card c8" data-band="far"><span class="tag">Instrument 04</span>
+        <h3>Scroll parallax</h3><p>These cards drift at grammar ratios — MID .88, FAR .68,
+        ATMOSPHERE .40. The bands you feel here are the bands the world will obey.</p></div>
+    </div>
+  </section>
+
+  <!-- ════ TIER II · STAGED · 0.40–0.70 ════ -->
+  <section id="tier2" data-depth="0.55">
+    <p class="kicker">Tier II · 0.40 – 0.70 · one scene, lazily loaded</p>
+    <h2>Staged depth.<br>A window, not a world.</h2>
+    <p class="lede">One Three.js scene, seeded (mulberry32 · seed 5417), palette-locked,
+      initialized only when you arrive, paused when you leave. The DOM remains the page.
+      Scroll scrubs the orbit — the scene never owns your wheel.</p>
+    <div class="stage-wrap">
+      <canvas id="stage" aria-label="Staged scene: seeded golden particle emblem"></canvas>
+      <div class="stage-fallback">
+        <div class="glyph"></div>
+        <p class="lede" style="margin-top:18px">WebGL unavailable — Tier II degrades to its
+        seeded static emblem. The ladder never drops to flat.</p>
+      </div>
+      <div class="stage-cap" id="stagecap">scene paused — enter viewport to render</div>
+    </div>
+  </section>
+
+  <!-- ════ TIER III · INHABITED · 0.75–1.0 ════ -->
+  <div id="tier3">
+    <section class="station" data-depth="0.78">
+      <div class="inner">
+        <p class="kicker">Tier III · 0.75 – 1.00 · the scene is the site</p>
+        <h2>Inhabited depth.</h2>
+        <p class="lede">The world has faded in behind this text. One material — seeded
+          point-field with wireframe landmarks. Fog mixed from the brand ramp, never gray.
+          Keep scrolling: you are on a camera rail.</p>
+      </div>
+    </section>
+    <section class="station" data-depth="0.88">
+      <div class="inner">
+        <h2>Scroll owns the camera.</h2>
+        <p class="lede">Camera position is a pure function of scroll — no autonomous drift,
+          no hijack. Stations glide at contemplative BPM. Every word you're reading lives in
+          the DOM above the canvas: fully selectable, fully accessible, fully indexable.</p>
+      </div>
+    </section>
+    <section class="station" data-depth="1.00">
+      <div class="inner">
+        <h2>Fog is brand.<br>Coherence is the wow.</h2>
+        <p class="lede">One world. One light. No second metaphor, no bolted-on spectacle —
+          Depth Theater (Anti-Pattern #15) dies at the gate. This is the top of the dial:
+          not a different product, the same language at full altitude.</p>
+        <p class="rule-quote">"The floor is never flat. The ceiling is a world."</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ════ CODA ════ -->
+  <section id="coda" data-depth="1.00" style="background:linear-gradient(rgba(13,10,7,0),var(--bg) 26%)">
+    <p class="kicker">The hard rules · SKILL.md §20</p>
+    <h2>Five rules hold the grammar.</h2>
+    <div class="rules">
+      <div class="r"><b>01 · DOM-first</b><span>Every word in the DOM. Canvas renders atmosphere, never text.</span></div>
+      <div class="r"><b>02 · Fallback ladder</b><span>III → II → I → elevation stays. Never to flat. This page walks it live.</span></div>
+      <div class="r"><b>03 · Scroll owns the camera</b><span>Camera = f(scroll). ±2° cursor micro-response, nothing more.</span></div>
+      <div class="r"><b>04 · Depth serves hierarchy</b><span>NEAR is important. A CTA in FAR is broken grammar.</span></div>
+      <div class="r"><b>05 · One world</b><span>A single material metaphor per project. Collage is not identity.</span></div>
+    </div>
+  </section>
+
+  <footer style="position:relative;z-index:2">
+    IRON CANVAS v5.0 — DEPTH LANGUAGE · seeded 5417 · palette-locked · evidence-gated (§22)<br><br>
+    <a href="./index.html">← showcase home</a>
+  </footer>
+</main>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+/* ═══ IRON CANVAS DEPTH DEMO ─ seeded, palette-locked, ladder-proven ═══ */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const GOLD = 0xe0bb6e, CREAM = 0xf5ead6, FOG = 0x0d0a07; /* fog = brand base, not gray */
+
+/* mulberry32 — Hard Rule: SEEDED, never raw Math.random() */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const SEED = 5417;
+
+/* ── dial: scroll progress → depth value + tier ── */
+const dv=document.getElementById('dv'), dtier=document.getElementById('dtier'),
+      dbar=document.getElementById('dbar'), world=document.getElementById('world');
+const sections=[...document.querySelectorAll('[data-depth]')];
+let depth=0.10, scrollP=0;
+
+function tierFor(d){ return d<0.38 ? ['TIER I — COMPOSED','I'] : d<0.72 ? ['TIER II — STAGED','II'] : ['TIER III — INHABITED','III']; }
+
+function updateDial(){
+  const mid=innerHeight*0.55; let best=sections[0], bd=1e9;
+  for(const s of sections){const r=s.getBoundingClientRect();
+    const c=r.top+r.height/2, dist=Math.abs(c-mid);
+    if(dist<bd){bd=dist;best=s;}}
+  const target=parseFloat(best.dataset.depth);
+  depth += (target-depth)*(REDUCED?1:0.12);            /* eased dial */
+  const doc=document.documentElement;
+  scrollP = doc.scrollTop/(doc.scrollHeight-doc.clientHeight);
+  dv.textContent=depth.toFixed(2);
+  dtier.textContent=tierFor(depth)[0];
+  dbar.style.width=(depth*100)+'%';
+  world.style.opacity = depth>=0.72 ? 1 : 0;           /* world fades at the Tier III line */
+}
+
+/* ── Tier I parallax — grammar band ratios (MID .88 / FAR .68 / ATMO .40) ── */
+const RATIO={mid:0.88, far:0.68, atmo:0.40};
+const bands=[...document.querySelectorAll('[data-band]')];
+function parallax(){
+  if(REDUCED) return;
+  for(const el of bands){
+    const r=el.getBoundingClientRect();
+    const offset=(r.top+r.height/2-innerHeight/2)*(1-RATIO[el.dataset.band]);
+    el.style.transform=`translateY(${offset.toFixed(1)}px)`;
+  }
+}
+
+/* ── WebGL ladder check ── */
+let THREE=null, webgl=false;
+try{ const c=document.createElement('canvas');
+  webgl=!!(c.getContext('webgl2')||c.getContext('webgl')); }catch(e){ webgl=false; }
+if(!webgl) document.body.classList.add('no-webgl');
+
+let stageAPI=null, worldAPI=null;
+if(webgl){ THREE = await import('three').catch(()=>null); if(!THREE) document.body.classList.add('no-webgl'); }
+
+/* ── TIER II — staged scene: seeded golden point-emblem in a window ── */
+function buildStage(){
+  const canvas=document.getElementById('stage');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));          /* DPR cap: 2 */
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(FOG,7,16);
+  const cam=new THREE.PerspectiveCamera(42,2,0.1,60); cam.position.set(0,0,9);
+  const rnd=mulberry32(SEED);
+  /* emblem: points sampled on an icosahedral shell — geometric, brand-exact, no torus knots */
+  const geo=new THREE.IcosahedronGeometry(3,4);
+  const pos=geo.attributes.position, pts=new Float32Array(pos.count*3);
+  for(let i=0;i<pos.count;i++){const j=(0.92+rnd()*0.16);
+    pts[i*3]=pos.getX(i)*j; pts[i*3+1]=pos.getY(i)*j; pts[i*3+2]=pos.getZ(i)*j;}
+  const pgeo=new THREE.BufferGeometry();
+  pgeo.setAttribute('position',new THREE.BufferAttribute(pts,3));
+  const emblem=new THREE.Points(pgeo,new THREE.PointsMaterial({color:GOLD,size:0.045,transparent:true,opacity:0.9}));
+  const wire=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(3,1)),
+    new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.16}));
+  scene.add(emblem,wire);
+  /* ONE light direction — matches the CSS elevation angle (§20: one light) */
+  const key=new THREE.DirectionalLight(CREAM,1.2); key.position.set(-3,5,4); scene.add(key);
+  function size(){const w=canvas.clientWidth,h=canvas.clientHeight;
+    renderer.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix();}
+  size(); addEventListener('resize',size);
+  let active=false, raf=0;
+  function frame(){
+    if(!active) return;
+    /* scroll SCRUBS the orbit — the scene never owns the wheel (Hard Rule 3) */
+    const r=canvas.getBoundingClientRect();
+    const p=1-Math.min(Math.max((r.top+r.height/2)/innerHeight,0),1);
+    emblem.rotation.y=p*Math.PI*1.6; wire.rotation.y=p*Math.PI*1.6;
+    emblem.rotation.x=0.25; wire.rotation.x=0.25;
+    if(!REDUCED){emblem.rotation.y+=performance.now()*0.00004;}
+    renderer.render(scene,cam); raf=requestAnimationFrame(frame);
+  }
+  return { start(){ if(!active){active=true;frame();
+      document.getElementById('stagecap').textContent='seeded 5417 · scroll scrubs the orbit · paused off-screen';} },
+    stop(){ active=false; cancelAnimationFrame(raf);
+      document.getElementById('stagecap').textContent='scene paused — enter viewport to render'; } };
+}
+
+/* ── TIER III — inhabited world: camera rail through a seeded point-field ── */
+function buildWorld(){
+  const canvas=document.createElement('canvas'); world.appendChild(canvas);
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setClearColor(FOG,1);
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(FOG,0.055);                        /* fog = brand espresso */
+  const cam=new THREE.PerspectiveCamera(58,2,0.1,120);
+  const rnd=mulberry32(SEED*2);
+  /* ONE material metaphor: golden dust field + sparse wireframe landmarks (Hard Rule 5) */
+  const N=3200, dust=new Float32Array(N*3);
+  for(let i=0;i<N;i++){dust[i*3]=(rnd()-0.5)*46; dust[i*3+1]=(rnd()-0.5)*26; dust[i*3+2]=-rnd()*90;}
+  const dg=new THREE.BufferGeometry();
+  dg.setAttribute('position',new THREE.BufferAttribute(dust,3));
+  scene.add(new THREE.Points(dg,new THREE.PointsMaterial({color:GOLD,size:0.08,transparent:true,opacity:0.75})));
+  for(let i=0;i<7;i++){
+    const lm=new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.6+rnd()*2.4,0)),
+      new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.12+rnd()*0.14}));
+    lm.position.set((rnd()-0.5)*26,(rnd()-0.5)*12,-8-i*11-rnd()*5);
+    lm.rotation.set(rnd()*3,rnd()*3,0); scene.add(lm);
+  }
+  const key=new THREE.DirectionalLight(CREAM,1); key.position.set(-3,5,4); scene.add(key);
+  function size(){renderer.setSize(innerWidth,innerHeight,false);
+    cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix();}
+  size(); addEventListener('resize',size);
+  const t3=document.getElementById('tier3');
+  let active=false, raf=0;
+  function frame(){
+    if(!active) return;
+    /* CAMERA RAIL: dolly z = pure function of Tier III scroll (Hard Rule 3) */
+    const r=t3.getBoundingClientRect();
+    const p=Math.min(Math.max(-r.top/(r.height-innerHeight),0),1);
+    cam.position.set(Math.sin(p*Math.PI)*1.4, 0.4, 4-p*74);      /* gentle curved rail */
+    cam.lookAt(0,0,cam.position.z-10);
+    renderer.render(scene,cam); raf=requestAnimationFrame(frame);
+  }
+  if(REDUCED){ /* static frame at station 0 — reduced-motion path renders ONCE */
+    cam.position.set(0,0.4,4); cam.lookAt(0,0,-10);
+    return { start(){renderer.render(scene,cam);}, stop(){} };
+  }
+  return { start(){ if(!active){active=true;frame();} },
+           stop(){ active=false; cancelAnimationFrame(raf); } };
+}
+
+/* ── lazy init + pause off-screen (perf gate: render only what's seen) ── */
+if(webgl&&THREE){
+  const io=new IntersectionObserver(es=>{
+    for(const e of es){
+      if(e.target.id==='tier2'){ if(e.isIntersecting){stageAPI??=buildStage();stageAPI.start();} else stageAPI?.stop(); }
+      if(e.target.id==='tier3'){ if(e.isIntersecting){worldAPI??=buildWorld();worldAPI.start();} else worldAPI?.stop(); }
+    }
+  },{rootMargin:'12% 0px'});
+  io.observe(document.getElementById('tier2'));
+  io.observe(document.getElementById('tier3'));
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden){stageAPI?.stop();worldAPI?.stop();} });
+}
+
+/* ── main loop: continuous rAF (dial eases smoothly through jumps + momentum) ── */
+(function loop(){ updateDial(); parallax(); requestAnimationFrame(loop); })();
+
+/* evidence hook (§22 harness) — lets Playwright/agents step the loop deterministically */
+window.__icDepth = { updateDial, parallax, tierFor, get depth(){ return depth; } };
+</script>
+</body>
+</html>
