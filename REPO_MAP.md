@@ -1,6 +1,11 @@
-# IRON CANVAS — v5.2 REPO FILE MAP
-## *Repository map — Iron Canvas v5.2*
+# IRON CANVAS — v6 REPO FILE MAP
+## *Repository map — Iron Canvas v6.0 · The Living Canvas*
 
+> v6: the voice restored inline (SKILL.md §0.1) and made executable — the Score Runtime
+> (`runtime/`), the Power Engines (`engines/`), Iron Canvas Studio (`studio/`), the checks
+> (`scripts/`), the film surface (`surfaces/film/`), four new references, and the restored
+> v4.2.0 motion arsenal. See "v6 ADDITIONS" at the end of this file.
+>
 > v5.0: Surface packs + Depth Language (v5.0-alpha) reconciled with IMMERSIVE mode,
 > Agent F, Phase 4.5 IMMERSE, and the evidence gate (v4.3). SKILL.md remains
 > self-contained (2500+ lines — §20 Depth Language, §21 Surface Packs, §22 Immersive
@@ -12,14 +17,34 @@
 ```
 iron-canvas/
 │
-├── SKILL.md                              ← MASTER SKILL (v5.2 — self-contained + IMMERSIVE)
-├── ROUTING.md                            ← Master bridge (v5.2 — navigation system)
-├── README.md                             ← Human-readable overview (v4.3)
-├── REPO_MAP.md                           ← This file (v4.3)
-├── CHANGELOG.md                          ← Version history (v1→v2→v3→v4→v4.3)
-├── QUICK_REFERENCE.md                    ← Agent cheat sheet (v4.3)
-├── FEEL.md                               ← Iron Canvas brand feel profile
+├── SKILL.md                              ← MASTER SKILL (v6 — self-contained; §0.1 the voice, §23–25 new)
+├── ROUTING.md                            ← Master bridge (v6 — navigation system)
+├── README.md                             ← Human-readable overview (v6)
+├── REPO_MAP.md                           ← This file (v6)
+├── CHANGELOG.md                          ← Version history (v1 → v6, with the v6 loss ledger)
+├── QUICK_REFERENCE.md                    ← Agent cheat sheet (v6)
+├── FEEL.md                               ← Iron Canvas's own Feel Brief (a worked example — never a client palette)
 ├── IMMERSIVE_MODE.md                     ← v4.3 Agent F + IMMERSE evidence gate
+│
+├── runtime/                              ← ★v6 the Score Runtime
+│   ├── canvas-score.js                   ← performs a score: acts → shots → verbs · full / reduced / static · kill switch
+│   ├── score.schema.json                 ← the score + motion-contract schema (stage, job, role, emotion, reduced)
+│   ├── camera-rail.js                    ← plays a Blender-baked ic-camera-rail/2 by progress
+│   ├── verbs.html                        ← the verb gallery — 17 verbs × 7 personalities, performed
+│   └── README.md
+├── engines/                              ← ★v6 Power Engines (optional, detected, never provisioned)
+│   ├── detect.mjs · lib.mjs · ledger.mjs ← scan · shared helpers · select → verify → encode → promote
+│   ├── blender/ (blender.mjs · blender_forge.py)  ← clay rails (baked, sheet gate) · hero GLBs · turntables · matcaps
+│   ├── video/video.mjs                   ← Seedance 2.5 via the fal queue, or ingest
+│   ├── audio/audio.mjs                   ← ElevenLabs sound generation
+│   ├── canvas.config.example.json · canvas.config.schema.json · examples/ · README.md
+├── studio/                               ← ★v6 Iron Canvas Studio — compile.mjs (the bible compiler) + index.html
+├── scripts/                              ← ★v6 ic-preflight.mjs · ic-contract.mjs · lint-skill.mjs
+├── showcase/
+│   ├── origin.html + origin.contract.json ← ★v6 the first Iron Canvas page, restored (zero libraries)
+│   ├── living-canvas/ (index.html · world.js) ← ★v6 the five-act WebGL scroll film
+│   ├── depth.html                        ← v5.0 Depth Language demo
+│   └── index.html · iron-canvas-showcase.jsx · build-standalone.cjs  ← v4.2 about-page
 │
 ├── phases/
 │   ├── 00-orient.md                      ← Project type + mode + Discovery Interview + Autonomy Tier
@@ -63,8 +88,12 @@ iron-canvas/
 │   ├── tool-acquisition-protocol.md      ← Supplementary provisioning patterns
 │   ├── video-integration-protocol.md     ← 7 hooks from Samir's Applied AI Engineering
 │   ├── webgl-immersion.md                ← IMMERSIVE implementation/degradation guide
-│   ├── claude-design-3.md                ← ★v5.1 CD3 Treatment Doctrine (soul) — Register R0–R4
+│   ├── claude-design-3.md                ← ★v5.1 CD3 Treatment Doctrine (the conscience) — Register R0–R4
 │   ├── gauntlet-loop.md                  ← ★v5.2 premium build method — fan-out + blind critic + falsifiable bar (R2–R4)
+│   ├── motion-language.md                ← ★v6 the one motion vocabulary — aliveness floor, personalities, tempos, sound
+│   ├── cinematic-score.md                ← ★v6 the score as motion contract — motion sentence, one signature, one clock
+│   ├── power-engines.md                  ← ★v6 Blender · Seedance 2.5 · sound — gates, twin camera, ledger
+│   ├── direction-fusion.md               ← ★v6 Voice · World · Instrument — authored direction + evidence classes
 │   └── evidence-qa.md                    ← Browser evidence gate
 │
 ├── templates/
@@ -75,9 +104,13 @@ iron-canvas/
 │   ├── immersion-scorecard.md            ← IMMERSIVE scorecard gate
 │   ├── playwright.config.ts              ← Evidence harness config template
 │   ├── smoke.spec.ts                     ← Evidence smoke spec template
+│   ├── scroll-capture.spec.ts            ← ★v6 Axis 7 evidence — arrival video, act stations, liveness, hand-feel, reduced walk
+│   ├── design-contract.json              ← ★v6 the design plan, machine-readable (scripts/ic-contract.mjs)
 │   └── invocation-templates.md           ← Copy-paste invocations
 │
-└── sub-skills/                           ← Legacy v1 protocols (valid as focused tools)
+├── surfaces/                             ← web · app-dashboard · immersive-3d · game-realtime (exp) · ★v6 film (exp)
+│
+└── sub-skills/                           ← Archival v1 protocols — superseded by SKILL.md §7b (kept for history)
     ├── 01-PERCEPTION.md
     ├── 02-MOTION-ARCHITECTURE.md
     ├── 03-FORGE.md
@@ -146,7 +179,7 @@ ALWAYS:   anti-patterns.md, structural-policy.md, agent-autonomy.md
 
 ---
 
-*Iron Canvas v5.2 — Island Development Crew*
+*Iron Canvas v6.0 — The Living Canvas — Island Development Crew*
 *"Where there is no vision, the people perish." — Proverbs 29:18 (KJV)*
 
 
@@ -210,3 +243,29 @@ v4.3 IMMERSIVE mode reconciled into v5.0: SKILL.md §22 (inline) wires Agent F +
 + the evidence gate to Depth Language — the lane auto-selects at depth ≥ 0.4, and the
 scorecard gate (≥ 4.0, zero auto-fails) is mandatory for Tier II/III on every surface.
 All four registry packs shipped: web · app-dashboard · immersive-3d · game-realtime (exp).
+
+---
+
+## v6 ADDITIONS — The Living Canvas
+
+```
+runtime/        ★v6  canvas-score.js · score.schema.json (+ contract fields) · camera-rail.js · verbs.html · README.md
+engines/        ★v6  detect · ledger · blender (clay rails baked per frame, vertical fov, roll, handheld,
+                     21-still sheet gate, frame-count proof) · video (Seedance 2.5) · audio · examples
+studio/         ★v6  compile.mjs (treatment · score · engine jobs · config · mission; the aliveness floor per register)
+scripts/        ★v6  ic-preflight.mjs (feel brief · score · config) · ic-contract.mjs (design contract lint)
+                     · lint-skill.mjs (paths · fences · voice · version · loss guard)
+showcase/       ★v6  origin.html + origin.contract.json · living-canvas/ (index.html · world.js)
+surfaces/film/  ★v6  PACK.md — Type H (exp): one film score → code · video · Blender lanes
+references/     ★v6  motion-language.md · cinematic-score.md · power-engines.md · direction-fusion.md
+templates/      ★v6  scroll-capture.spec.ts · design-contract.json
+```
+
+SKILL.md gained §0.1 THE VOICE (CD3 becomes §0.2, the conscience), the Feel Brief with a required
+kinetic signature, §7b CHOREOGRAPHY inline in Agent-B, the design contract (3.9d), VERIFY Axis 7
+(Aliveness — never waived), PREMIERE in §11, §23 THE SCORE, §24 POWER ENGINES and §25 STUDIO.
+Anti-patterns 17 → 22 (#18 Lifeless · #19 Two Clocks · #20 Flagged but Shipped · #21 Defaults as
+Decisions · #22 Unreviewed Interpolation). The v4.2.0 material erased by the 2026-06 overlay is
+restored: the Creative Arsenal, high-end component patterns, React / Next.js motion rules,
+anti-patterns Section II, responsive hardening, the tactile hand-feel rules, the five Bento
+archetypes. Merge splices that had swallowed Phase 2 into Phase 3 code fences are repaired.

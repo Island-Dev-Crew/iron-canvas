@@ -105,10 +105,12 @@ PRODUCTION DEPLOY
 ---
 
 ## § ARTIFACT ASSESSMENT GATE
-### *Run at the start of every Phase 5. Score to decide.*
+### *★v6: run at the end of PACKAGE (3.9b) — before FORGE, so the engine jobs are known and ASSET FORGE (5a) runs in parallel. Score to decide.*
 
 This gate is what was missing. It was the reason Phase 5 kept getting skipped.
-Every run of Iron Canvas must pause here and explicitly decide.
+Every run of Iron Canvas must pause here and explicitly decide. (Through v5.2 it ran at the
+start of Phase 5; v6 moves it forward so generated assets are forged beside the build instead
+of after it — Phase 5 is now the tournament that judges them.)
 
 ### ASSESSMENT CRITERIA (score each 1-5)
 
@@ -208,8 +210,27 @@ SKILL.md                 Master orchestration document. Read first always.
 ROUTING.md               THIS FILE. Navigation bridge to all resources.
 README.md                Human-readable overview. Not for agents.
 CHANGELOG.md             Version history. Reference for what changed.
-FEEL.md                  Iron Canvas brand's own feel profile. Reference
-                         for understanding what premium IC output looks like.
+FEEL.md                  Iron Canvas's own Feel Brief — a worked example of a finished one
+                         (lens, reference vibe, kinetic signature). Quoted in SKILL.md §0.1.
+                         The studio's feel, never a client palette.
+QUICK_REFERENCE.md       Agent cheat sheet — the voice, the vocabulary, the checks.
+REPO_MAP.md              File map with versions.
+IMMERSIVE_MODE.md        v4.3 Agent F + IMMERSE evidence gate (doctrine reframed in v6).
+
+RUNTIME/ · ENGINES/ · STUDIO/ · SCRIPTS/ — ★v6 executable parts
+──────────────────────────────────────────────────────────────
+runtime/canvas-score.js      Performs a score (acts → shots → verbs); full / reduced / static; kill switch.
+runtime/score.schema.json    The score + motion-contract schema. runtime/README.md wires a page in 4 steps.
+runtime/camera-rail.js       Plays a Blender-baked camera rail (ic-camera-rail/2) by the score's progress.
+runtime/verbs.html           The verb gallery — every verb and personality, performed.
+engines/                     Power Engines: detect · blender · video (Seedance 2.5) · audio · ledger (README.md).
+studio/                      Iron Canvas Studio — idea in, production bible out (compile.mjs + index.html).
+scripts/ic-preflight.mjs     Feel brief + score + engine config, one pass — blocks PACKAGE hand-off on errors.
+scripts/ic-contract.mjs      The build against its design contract — taste enforced.
+scripts/lint-skill.mjs       Doctrine lint: paths · fences · voice · version · the loss guard (--against).
+showcase/origin.html         The first Iron Canvas page, restored — the soul with zero libraries.
+showcase/living-canvas/      The five-act WebGL scroll film — the pipeline, performed.
+surfaces/film/PACK.md        ★v6 Type H (experimental) — launch films + motion graphics from one film score.
 
 PHASES/ — Sequential execution guides
 ──────────────────────────────────────────────────────────────
@@ -222,7 +243,7 @@ phases/03.9-package.md   Design PRD template + Orchestrator dispatch prompt
 phases/04-forge.md       CSS tokens, universal upgrades, spring curves
 phases/05-generate.md    ★ ARTIFACT ASSESSMENT GATE + full generation pipeline
 phases/06-compose.md     ★ Image integration + scroll engine assembly
-phases/07-refine.md      REFINE loop + Phase 7 is the 6-axis Awwwards audit (Axis 6 = CD3 Treatment & Soul)
+phases/07-refine.md      REFINE loop + Phase 7 is the 7-axis audit (Axis 6 = CD3 Treatment & Soul, Axis 7 = Aliveness)
 
 AGENT-PROMPTS/ — Copy-paste system prompts for each specialized agent
 ──────────────────────────────────────────────────────────────
@@ -235,8 +256,12 @@ agent-prompts/agent-e-qa.md           Accessibility + performance + cross-browse
 
 REFERENCES/ — Technical deep dives (loaded when specifically needed)
 ──────────────────────────────────────────────────────────────
-references/anti-patterns.md           17 anti-patterns (incl. CD3 #16 Slop Tells / #17 Register Mismatch). Loaded at start of every run.
-references/claude-design-3.md         ★v5.1 CD3 Treatment Doctrine (soul) — Register R0–R4, governs every phase. Read third, at ORIENT + VERIFY.
+references/anti-patterns.md           22 anti-patterns (incl. CD3 #16 Slop Tells / #17 Register Mismatch; v6 #18 Lifeless · #19 Two Clocks · #20 Flagged but Shipped · #21 Defaults as Decisions · #22 Unreviewed Interpolation) + Section II design slop. Loaded at start of every run.
+references/claude-design-3.md         ★v5.1 CD3 Treatment Doctrine (the conscience) — Register R0–R4, governs every phase. Read third, at ORIENT + VERIFY.
+references/motion-language.md         ★v6 The one motion vocabulary — the aliveness floor, the seven personalities, curve roles, tempos, arrival, heartbeat, hand-feel, breath, transitions, type in motion, sound. Read at FEEL, PACKAGE, FORGE (Agent-B/C) and VERIFY (Axis 7).
+references/cinematic-score.md         ★v6 The score as motion contract — motion sentence, acts and shots, one signature, one clock, portfolio rules, one score → site · film · shot list. Read at PACKAGE.
+references/power-engines.md           ★v6 Blender · Seedance 2.5 · sound — available × appropriate gates, the twin camera, the ledger, fallbacks. Read at ORIENT (scan) and ASSET FORGE.
+references/direction-fusion.md        ★v6 Voice · World · Instrument — authored direction from three sources, evidence classes. Read at FEEL (feel line) and SCOUT.
 references/gauntlet-loop.md           ★v5.2 The premium build method — fan-out + blind critic + falsifiable bar for the generative phases FORGE/IMMERSE/GENERATE at R2–R4 (OFF at R0/R1; COMPOSE is integration, not gauntlet). Read at ORIENT when register ≥ R2, and before Phase 4/4.5/5.
 references/scroll-engine.md           ★ Canvas + GSAP ScrollTrigger architecture
                                        LOAD THIS when scroll engine is planned.
@@ -257,14 +282,17 @@ templates/site-dna-profile.md         Phase 1 output template
 templates/feel-profile.md             Phase 2 output template
 templates/technical-validation-report.md  Phase 3.5 output template
 templates/design-prd.md               Phase 3.9 PRD master template
+templates/design-contract.json        ★v6 Phase 3.9d the design plan, machine-readable (scripts/ic-contract.mjs)
+templates/scroll-capture.spec.ts      ★v6 Phase 7 Axis 7 evidence — arrival video, act stations, liveness, hand-feel
 templates/invocation-templates.md     Copy-paste Antigravity/Claude Code invocations
 
-SUB-SKILLS/ (legacy v1 protocols, still valid as focused sub-tasks)
+SUB-SKILLS/ (ARCHIVAL — superseded by SKILL.md v6 §7b and references/motion-language.md;
+             kept for history, not executed)
 ──────────────────────────────────────────────────────────────
-sub-skills/01-PERCEPTION.md          Focused DNA extraction (alternative to phases/01)
-sub-skills/02-MOTION-ARCHITECTURE.md Focused animation planning (alternative to phases/04)
-sub-skills/03-FORGE.md               Focused code generation (alternative to full pipeline)
-sub-skills/04-VERIFY.md              Focused verification (alternative to phases/07)
+sub-skills/01-PERCEPTION.md          Historic focused DNA extraction (live doctrine: phases/01)
+sub-skills/02-MOTION-ARCHITECTURE.md Historic animation planning (live doctrine: SKILL.md §7b)
+sub-skills/03-FORGE.md               Historic code generation (live doctrine: the full pipeline)
+sub-skills/04-VERIFY.md              Historic verification (live doctrine: phases/07)
 ```
 
 ---
@@ -411,7 +439,15 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/blueprints/{id}/run \
 
 | Condition | Load This Reference |
 |-----------|-------------------|
+| Before ORIENT (very first read) ★v6 | SKILL.md §0 — the voice (§0.1) and the conscience (§0.2); `FEEL.md` as the worked Feel Brief |
 | Before ORIENT (very first read) ★v5.1 | `references/claude-design-3.md` — the Treatment Doctrine; sets `treatment_register` (R0–R4), caps the DIS |
+| At ORIENT ★v6 | `references/power-engines.md` + `node engines/detect.mjs` (the power-engine scan) |
+| At FEEL ★v6 | `references/motion-language.md` (the kinetic signature) · `references/direction-fusion.md` §1 (the feel line) |
+| At SCOUT ★v6 | `references/direction-fusion.md` (Voice · World · Instrument, evidence classes) |
+| At PACKAGE ★v6 | `references/cinematic-score.md` + `runtime/score.schema.json` (the score) · `templates/design-contract.json` · then `scripts/ic-preflight.mjs` |
+| Before Agent-B runs ★v6 | `references/motion-language.md` + `runtime/README.md` (performing the score) |
+| At VERIFY ★v6 | `references/motion-language.md` §17 + `templates/scroll-capture.spec.ts` (Axis 7) · `scripts/ic-contract.mjs` |
+| Film surface ★v6 | `surfaces/film/PACK.md` (one film score → code · video · Blender lanes) |
 | Before VERIFY / Agent-E ★v5.1 | `references/claude-design-3.md` (Axis 6 — Treatment & Soul battery) |
 | At ORIENT when `treatment_register` ≥ R2, then before Phase 4/4.5/5 ★v5.2 | `references/gauntlet-loop.md` — the fan-out + blind-critic build method for the premium tier (skip at R0/R1) |
 | Phase 5 starts (any path) | `references/model-selection.md` |
@@ -780,3 +816,29 @@ SHOWCASE (depth):  showcase/depth.html                   → LIVE Depth Language
 (DEPTH THEATER) guards it. The `motion.three_js` boolean in feel-profile.json is superseded
 by `design_intensity.systems.depth_language` — kept for backward compatibility, derived as
 `depth_language.intensity ≥ 0.4`.
+
+---
+
+## v6 ROUTING ADDITIONS — The Living Canvas
+
+```
+FRONT DOOR:        studio/index.html                     → one-line idea → production bible (treatment ·
+                                                           score · engine jobs · config · mission)
+PHASE 0 (ORIENT):  Q8 the mechanism · node engines/detect.mjs → power_engines
+                   surfaces/film/PACK.md                 → Type H (EXPERIMENTAL): films + motion graphics
+PHASE 2 (FEEL):    references/motion-language.md         → the kinetic signature (GATE 2 fails without it)
+                   references/direction-fusion.md §1     → the feel line when no direction was given
+PHASE 3 (SCOUT):   references/direction-fusion.md        → Voice · World · Instrument; evidence classes
+PHASE 3.9:         references/cinematic-score.md         → score.json (the motion contract)
+                   ROUTING § ARTIFACT ASSESSMENT GATE     → now runs here (3.9b) + engine jobs
+                   templates/design-contract.json         → 3.9d the design contract
+                   scripts/ic-preflight.mjs               → must PASS before dispatch (3.9c)
+PHASE 4 (FORGE):   runtime/canvas-score.js (+ README)    → Agent-B performs the score
+                   references/interaction-library.md      → restored high-end patterns + Creative Arsenal
+PHASE 5a:          references/power-engines.md + engines/ → ASSET FORGE in parallel with FORGE
+PHASE 5:           engines/ledger.mjs                     → the tournament: select · verify · encode · promote
+PHASE 7 (VERIFY):  Axis 7 (Aliveness, never waived)       → templates/scroll-capture.spec.ts
+                   scripts/ic-contract.mjs                → the build keeps its contract
+PHASE 8:           PREMIERE                               → references/cinematic-score.md §7 · surfaces/film/PACK.md
+ALWAYS:            scripts/lint-skill.mjs --against <base> → before any doctrine release (the loss guard)
+```
