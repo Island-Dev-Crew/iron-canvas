@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Island-Dev-Crew/iron-canvas/engines/canvas.config.schema.json",
+  "title": "Iron Canvas project config — Power Engine toggles",
+  "description": "Placed at a project root as canvas.config.json. The user owns these switches; Phase 0 detection reports what is actually available. Engines never auto-provision; secrets come from the environment only.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "project": { "type": "string" },
+    "engines": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blender": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "binary": { "type": "string", "description": "Absolute path to blender(.exe). Empty = auto-detect." },
+            "note": { "type": "string" }
+          }
+        },
+        "video": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "provider": { "enum": ["fal", "ingest", "higgsfield-mcp", "replicate", "modelark"], "default": "fal" },
+            "model": { "type": "string", "default": "bytedance/seedance-2.5" },
+            "resolution": { "enum": ["480p", "720p", "1080p"], "default": "720p" },
+            "note": { "type": "string" }
+          }
+        },
+        "audio": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "provider": { "enum": ["elevenlabs"], "default": "elevenlabs" },
+            "note": { "type": "string" }
+          }
+        },
+        "imagery": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "provider": { "type": "string" },
+            "note": { "type": "string" }
+          }
+        },
+        "film": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "provider": { "enum": ["hyperframes", "remotion"], "default": "hyperframes" },
+            "note": { "type": "string" }
+          }
+        }
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "credit_cap_usd": { "type": "number", "minimum": 0 },
+        "max_candidates_per_job": { "type": "integer", "minimum": 1, "maximum": 8 }
+      }
+    }
+  }
+}

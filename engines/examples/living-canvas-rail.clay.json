@@ -1,0 +1,21 @@
+{
+  "type": "clay-camera",
+  "name": "living-canvas-corridor",
+  "note": "The Living Canvas showcase's World act, as rail stations in three.js space. Blender renders the clay reference; the same stations drive the site's camera — film and site match shot for shot.",
+  "seed": 5417,
+  "resolution": [1280, 720],
+  "fps": 24,
+  "seconds": 5,
+  "blocking": [
+    { "kind": "plane", "position": [0, -2.5, -55], "size": [40, 1, 1] },
+    { "kind": "cube", "position": [-4.6, 0, 2], "size": [0.35, 5, 0.35], "repeat": { "count": 38, "step": [0, 0, -3.1] } },
+    { "kind": "cube", "position": [4.6, 0, 2], "size": [0.35, 5, 0.35], "repeat": { "count": 38, "step": [0, 0, -3.1] } },
+    { "kind": "cube", "position": [0, 2.55, 2], "size": [9.5, 0.3, 0.35], "repeat": { "count": 38, "step": [0, 0, -3.1] } }
+  ],
+  "stations": [
+    { "t": 0.0, "position": [0, 0.40, 17], "target": [0, 0.35, 5], "fov": 52 },
+    { "t": 0.35, "position": [0.45, 0.33, -25], "target": [0.2, 0.28, -37], "fov": 50 },
+    { "t": 0.7, "position": [-0.4, 0.26, -68], "target": [-0.2, 0.21, -80], "fov": 48 },
+    { "t": 1.0, "position": [0, 0.20, -104], "target": [0, 0.15, -116], "fov": 46 }
+  ]
+}

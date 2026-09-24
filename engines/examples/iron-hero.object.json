@@ -1,0 +1,17 @@
+{
+  "type": "hero-object",
+  "name": "iron-crystal",
+  "note": "A faceted, metallic hero form — what code can't cheaply sculpt. Tinted by role tokens: base = gold, emission = ember.",
+  "seed": 5417,
+  "size": 2.2,
+  "detail": 5,
+  "facet": 0.55,
+  "strength": 0.32,
+  "base": "#e0bb6e",
+  "emission": "#ff8a3d",
+  "emission_strength": 0.4,
+  "metallic": 0.9,
+  "roughness": 0.28,
+  "draco": true,
+  "tier": "II"
+}

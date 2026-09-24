@@ -1,0 +1,24 @@
+{
+  "name": "living-canvas-trailer",
+  "class": "film",
+  "mode": "reference-to-video",
+  "logline": "An idea becomes a world you walk through: a golden corridor of light in warm fog.",
+  "format": { "duration": 10, "aspect_ratio": "16:9", "resolution": "720p", "generate_audio": true },
+  "references": [
+    { "tag": "@Video1", "role": "camera", "kind": "video", "url": "https://example.com/replace-with-hosted/clay.mp4", "path": "clay.mp4",
+      "job": "Camera path, speed, and blocking only.", "exclude": "its grey surfaces, flat lighting, or any visible geometry edges" },
+    { "tag": "@Image1", "role": "style", "kind": "image", "path": "premiere-still.jpg",
+      "job": "Palette, material, and light: molten gold points and warm ember glow over near-black.", "exclude": "composition and any text" }
+  ],
+  "timeline": [
+    { "from": 0, "to": 3, "beat": "establish", "action": "A single warm point of light breathes in darkness, then blooms into drifting golden dust.", "camera": "locked to @Video1, slow push in" },
+    { "from": 3, "to": 8, "beat": "reveal", "action": "The dust settles into luminous arches receding into warm fog; the camera glides through them.", "camera": "dolly forward along @Video1's path" },
+    { "from": 8, "to": 10, "beat": "resolve", "action": "The corridor opens onto a vast glowing diamond of light; everything slows to stillness.", "camera": "ease out to a gentle stop" }
+  ],
+  "camera": "Follow @Video1's camera exactly — one continuous move, no cuts.",
+  "continuity": "The golden particles are the same material throughout; one light source from upper left; fog color near-black warm brown.",
+  "audio": "A low warm synth drone that swells as the arches appear, one soft glassy chime when the diamond is revealed.",
+  "constraints": ["no people", "no slow-motion", "no lens flares that cover the path"],
+  "seed": 5417,
+  "candidates": 2
+}
