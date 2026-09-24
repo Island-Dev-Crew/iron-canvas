@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verb Gallery · Iron Canvas Score Runtime</title>
+<meta name="description" content="Every motion verb and personality in the Iron Canvas Score Runtime, performed live.">
+<script>document.documentElement.classList.add('ic-js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Cormorant+Garamond:ital,wght@1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0907; --ink-2:#15110d; --line:rgba(224,187,110,.16);
+    --gold:#e0bb6e; --ember:#ff8a3d; --cream:#f3e9d8; --ash:#948877;
+    --display:'Archivo',system-ui,sans-serif; --serif:'Cormorant Garamond',Georgia,serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--display);font-stretch:100%;-webkit-font-smoothing:antialiased}
+  .ic-js [data-ic]{opacity:0}
+  .ic-js:not(.ic-ready) [data-ic]{animation:ic-failsafe .5s 3s forwards}
+  @keyframes ic-failsafe{to{opacity:1}}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+  header{padding:clamp(72px,12vh,140px) 0 48px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+  h1{font-weight:850;font-stretch:125%;font-size:clamp(40px,7.4vw,96px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;text-wrap:balance}
+  .lede{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.4vw,28px);color:var(--ash);margin-top:22px;max-width:40ch}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:34px;font-family:var(--mono);font-size:12px}
+  .bar a,.bar button{color:var(--cream);background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;font:inherit;text-decoration:none;transition:border-color .3s,color .3s}
+  .bar a[aria-current="true"]{border-color:var(--gold);color:var(--gold)}
+  .bar a:hover,.bar button:hover{border-color:var(--gold)}
+  .mode{margin-left:auto;color:var(--ash)} .mode b{color:var(--gold);font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:48px 0 80px}
+  .card{position:relative;background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:22px;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;overflow:hidden;transition:border-color .4s}
+  .card:hover{border-color:rgba(224,187,110,.45)}
+  .card .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:flex;justify-content:space-between}
+  .card .tag span:last-child{color:var(--ash)}
+  .card .stage{flex:1;display:grid;place-items:center;padding:16px 0}
+  .word{font-weight:800;font-stretch:112%;font-size:36px;letter-spacing:-.01em;text-transform:uppercase}
+  .orb{width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3d6,var(--gold) 38%,var(--ember) 70%,#6b2d0e);box-shadow:0 0 60px rgba(255,138,61,.35)}
+  .panel{width:100%;height:90px;border-radius:12px;background:linear-gradient(120deg,var(--gold),var(--ember))}
+  .lines{font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.25;text-align:center;color:var(--cream)}
+  .num{font-weight:850;font-stretch:118%;font-size:42px;font-variant-numeric:tabular-nums;color:var(--gold)}
+  .code{font-family:var(--mono);font-size:22px;letter-spacing:.06em;color:var(--gold)}
+  .sweep{font-weight:850;font-stretch:125%;font-size:40px;text-transform:uppercase;background:linear-gradient(100deg,var(--ash) 0%,var(--ash) calc(var(--ic-sweep,140%) - 18%),#fff7e6 var(--ic-sweep,140%),var(--ash) calc(var(--ic-sweep,140%) + 18%),var(--ash) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  svg.curve{width:100%;height:110px;overflow:visible} svg.curve path{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round}
+  .hint{font-family:var(--mono);font-size:11px;color:var(--ash)}
+  .scrubzone{height:260vh;border-top:1px solid var(--line)}
+  .scrubstage{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}
+  .scrubstage .big{font-weight:900;font-stretch:125%;font-size:clamp(48px,12vw,170px);text-transform:uppercase;line-height:.9;text-align:center}
+  .scrubstage .sub{font-family:var(--serif);font-style:italic;font-size:clamp(18px,2.2vw,26px);color:var(--ash);margin-top:18px;text-align:center}
+  .floater{position:absolute;width:22vmin;height:22vmin;border-radius:50%;background:radial-gradient(circle,rgba(224,187,110,.25),transparent 70%);filter:blur(6px)}
+  footer{padding:60px 0 90px;font-family:var(--mono);font-size:12px;color:var(--ash);border-top:1px solid var(--line)}
+  footer a{color:var(--gold)}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="eyebrow">Iron Canvas · Score Runtime · canvas-score.js</p>
+  <h1>The Verb Gallery</h1>
+  <p class="lede">Every word in the motion vocabulary, performed live. Click a card to perform it again.</p>
+  <nav class="bar" aria-label="Personality">
+    <span class="hint">personality →</span>
+    <a href="?p=silk">silk</a><a href="?p=tide">tide</a><a href="?p=gravity">gravity</a><a href="?p=spark">spark</a><a href="?p=snap">snap</a><a href="?p=bloom">bloom</a>
+    <button type="button" id="kill">kill switch</button>
+    <span class="mode" id="mode">mode: <b>…</b></span>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="grid" aria-label="Verbs">
+    <article class="card" id="v-rise"><div class="tag"><span>rise</span><span>enter</span></div><div class="stage"><div class="word" data-ic>Arrive</div></div><p class="hint">y 48 → 0 · opacity</p></article>
+    <article class="card" id="v-unveil-c"><div class="tag"><span>unveil · chars</span><span>enter</span></div><div class="stage"><div class="word" data-ic>Unveil</div></div><p class="hint">masked, per character</p></article>
+    <article class="card" id="v-unveil-l"><div class="tag"><span>unveil · lines</span><span>enter</span></div><div class="stage"><p class="lines" data-ic>Nothing alive is perfectly still; every line arrives on its own breath.</p></div><p class="hint">measured lines, masked</p></article>
+    <article class="card" id="v-bloom"><div class="tag"><span>bloom</span><span>enter</span></div><div class="stage"><div class="orb" data-ic></div></div><p class="hint">scale · blur 16 → 0 · light opening</p></article>
+    <article class="card" id="v-focus"><div class="tag"><span>focus</span><span>enter</span></div><div class="stage"><div class="word" data-ic>Rack Focus</div></div><p class="hint">blur 12 → 0 · depth of field</p></article>
+    <article class="card" id="v-tilt"><div class="tag"><span>tilt</span><span>enter</span></div><div class="stage"><div class="panel" data-ic></div></div><p class="hint">rotateX 24° → 0 · perspective</p></article>
+    <article class="card" id="v-wipe"><div class="tag"><span>wipe</span><span>enter</span></div><div class="stage"><div class="panel" data-ic></div></div><p class="hint">clip-path inset</p></article>
+    <article class="card" id="v-iris"><div class="tag"><span>iris</span><span>enter</span></div><div class="stage"><div class="panel" data-ic></div></div><p class="hint">clip-path circle</p></article>
+    <article class="card" id="v-draw"><div class="tag"><span>draw</span><span>special</span></div><div class="stage"><svg class="curve" viewBox="0 0 240 110" aria-hidden="true"><path d="M4 106 C 70 106, 90 6, 236 4"/></svg></div><p class="hint">stroke self-draws · expo curve</p></article>
+    <article class="card" id="v-count"><div class="tag"><span>count</span><span>special</span></div><div class="stage"><div class="num" data-ic data-count-to="10000" data-prefix="$">$10,000</div></div><p class="hint">tabular numerals</p></article>
+    <article class="card" id="v-scramble"><div class="tag"><span>scramble</span><span>special</span></div><div class="stage"><div class="code" data-ic>IRON·CANVAS·v6</div></div><p class="hint">deterministic glyph resolve</p></article>
+    <article class="card" id="v-sweep"><div class="tag"><span>sweep</span><span>special</span></div><div class="stage"><div class="sweep">Light</div></div><p class="hint">a band of light crosses the type</p></article>
+  </section>
+</main>
+
+<section class="scrubzone" id="scrub" aria-label="Scrubbed act">
+  <div class="scrubstage">
+    <div class="floater" style="left:12%;top:18%" data-breath="1.4"></div>
+    <div class="floater" style="right:14%;bottom:16%" data-breath="1.1"></div>
+    <div>
+      <p class="big" id="scrub-title">Scroll<br>is the clock</p>
+      <p class="sub" id="scrub-sub">a pinned act, scrubbed — drift, then defocus, then dolly through</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <p>canvas-score.js · <a href="./README.md">runtime README</a> · <a href="./score.schema.json">score schema</a> · reduced motion and <a href="?motion=off">?motion=off</a> are first-class modes.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script type="module">
+  import { performScore, PERSONALITIES } from './canvas-score.js';
+  const p = new URLSearchParams(location.search).get('p');
+  const personality = PERSONALITIES[p] ? p : 'silk';
+  document.querySelectorAll('.bar a[href^="?p="]').forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === `?p=${personality}`)));
+  const card = (id, shot) => ({ id, el: `#${id}`, trigger: 'enter', start: 'top 92%', shots: [{ at: 0.1, target: '.stage > *', ...shot }] });
+  const score = {
+    title: 'Verb Gallery', personality, seed: 11,
+    acts: [
+      card('v-rise', { verb: 'rise' }),
+      card('v-unveil-c', { verb: 'unveil', split: 'chars' }),
+      card('v-unveil-l', { verb: 'unveil', split: 'lines' }),
+      card('v-bloom', { verb: 'bloom' }),
+      card('v-focus', { verb: 'focus' }),
+      card('v-tilt', { verb: 'tilt' }),
+      card('v-wipe', { verb: 'wipe' }),
+      card('v-iris', { verb: 'iris' }),
+      card('v-draw', { verb: 'draw', target: 'path' }),
+      card('v-count', { verb: 'count' }),
+      card('v-scramble', { verb: 'scramble' }),
+      card('v-sweep', { verb: 'sweep' }),
+      { id: 'scrub', el: '#scrub', trigger: 'scrub', pin: false, start: 'top top', end: 'bottom bottom', scrub: 1, shots: [
+        { at: 0, target: '#scrub-title', verb: 'drift', personality: 'drift', duration: 1, to: { y: -80 } },
+        { at: 0.45, target: '#scrub-sub', verb: 'defocus', personality: 'drift', duration: 0.35 },
+        { at: 0.7, target: '#scrub-title', verb: 'dolly', personality: 'drift', duration: 0.3 },
+      ] },
+    ],
+  };
+  const show = performScore(score);
+  show.ready.then(() => { document.querySelector('#mode b').textContent = show.mode; });
+  document.querySelectorAll('.card').forEach((c) => c.addEventListener('click', () => show.acts.find((a) => a.id === c.id)?.tl.restart()));
+  document.getElementById('kill').addEventListener('click', () => { show.kill(); document.querySelector('#mode b').textContent = 'killed'; });
+</script>
+</body>
+</html>
