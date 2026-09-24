@@ -194,8 +194,9 @@ export function performScore(score, options = {}) {
     seek(actId, p = 0) {
       const act = built.find((a) => a.id === actId);
       if (!act) return;
-      if (act.st && act.st.end > act.st.start) window.scrollTo(0, act.st.start + (act.st.end - act.st.start) * p);
-      else act.el.scrollIntoView();
+      const y = act.st && act.st.end > act.st.start ? act.st.start + (act.st.end - act.st.start) * p : act.el.offsetTop;
+      if (lenis) lenis.scrollTo(y, { immediate: true });
+      else window.scrollTo(0, y);
     },
   };
 
@@ -273,7 +274,7 @@ export function performScore(score, options = {}) {
     } else {
       st = ScrollTrigger.create({
         trigger: el,
-        start: act.start || 'top 78%',
+        start: (act.trigger === 'scrub' ? null : act.start) || 'top 78%', // a scrub start ('top top') reveals too late once demoted
         markers: debug,
         onEnter: () => { tl.play(); bus.emit('enter', id); },
         onLeaveBack: () => { if (act.replay) tl.reverse(); },
