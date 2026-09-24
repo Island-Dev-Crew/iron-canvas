@@ -9,6 +9,12 @@
 >
 > The Rule: Integration is not "upload and done."
 > Every artifact must be verified IN CONTEXT. Screenshot. Evaluate. Adjust. Repeat.
+>
+> **★v6 — COMPOSE integrates promoted encodes only** — never a master, never an unselected
+> candidate. What reaches the page came through the media tournament (Phase 5): selected with a
+> written reason, verified, encoded, promoted into `public/` with a `.provenance.json` sidecar.
+> COMPOSE is deterministic integration, not fan-out territory — it assembles the winners and
+> keeps **one clock**: the score's scrub acts own the scroll; everything else subscribes.
 
 ---
 
@@ -30,15 +36,22 @@ Before starting, verify what Phase 5 produced:
 ```
 □ artifact-assessment.json exists?
   → If YES: what was the decision? (GENERATE / CONDITIONAL / SKIP)
-  → If NO: run the Artifact Assessment Gate now (phases/05-generate.md Step 1)
+  → If NO: run the Artifact Assessment Gate now (★v6 phases/03.9-package.md 3.9b —
+    it moved from Phase 5 to the end of PACKAGE)
 
 □ agent-d artifacts exist? (/agent-outputs/agent-d/)
   → If YES: proceed to image integration (Step 2)
   → If NO (SKIP decision): proceed to merge and structural work (Step 4)
 
-□ scroll frames exist? (/agent-outputs/agent-d/frames/)
+□ ★v6 promoted encodes exist? (public/ — each generated file with its .provenance.json)
+  → engines/ledger.mjs verify passes for every run
+  → integrate ONLY these; a master or an unselected candidate never ships
+
+□ scroll frames exist? (/agent-outputs/agent-d/frames/ — ★v6 or a scroll-tied encode in public/)
   → If YES: build scroll engine (Step 3)
   → If NO: skip scroll engine assembly
+
+□ ★v6 score.json present and preflighted? (the acts, the signature, the clock the page performs)
 ```
 
 ---
@@ -57,9 +70,15 @@ For every artifact from Agent-D:
    b. Does the LIGHTING match surrounding elements?
    c. Does it FEEL like it was always part of this design?
 4. Apply artifact-css.css from Agent-D
-5. Adjust CSS if needed (see patterns below)
+5. Adjust CSS if needed (see patterns below) — the integration levers (restored ★v6):
+   - Overlay gradients to match surrounding darkness/lightness
+   - Opacity tweaks
+   - Blend modes (multiply for darker integration, screen for lighter)
+   - Tint filters to match palette temperature
 6. Check at 375px mobile viewport
 7. If doesn't work → back to Agent-D → regenerate with adjusted prompt
+8. ★v6 R2+: give it a living entrance and a slow life (Ken Burns drift, parallax band, light
+   response) on the house personality — no image sits dead; stopped under reduced motion
 ```
 
 ### CSS Integration Patterns
@@ -75,12 +94,19 @@ For every artifact from Agent-D:
   filter: sepia(0.1) saturate(1.3);
 }
 
-/* Gradient overlay for text readability */
+/* Blend modes — multiply for darker integration (an image's white ground drops out and the
+   result darkens: light sections), screen for lighter (an image's black ground drops out and the
+   result lightens: dark sections) */
+.product-image--multiply { mix-blend-mode: multiply; }
+.product-image--screen   { mix-blend-mode: screen; }
+
+/* Gradient overlay for text readability
+   ★v6: the scrim is the section's own ground through its RGB mirror token, never a hard-coded hex */
 .image-section::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(10,14,20,0.85) 0%, transparent 60%);
+  background: linear-gradient(to right, rgb(var(--bg-rgb) / 0.85) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -127,6 +153,25 @@ Section: [from design-prd.md Section 4 scroll engine spec]
 Content overlays: [from design-prd.md timing values]
 ```
 
+### ★v6 — One clock: the sequence is a scrub act of the score
+
+When the page performs a score, the frame sequence **is** its section's `scrub` act — the score
+pins it and owns its scroll; the canvas only draws. Subscribe instead of creating a second pinned
+ScrollTrigger over the same section (two owners in one viewport is Anti-Pattern #19 TWO CLOCKS):
+
+```javascript
+// runtime path — the score's scrub act is the clock; the canvas subscribes
+const show = performScore(score, { hooks });
+show.on('progress', (actId, p) => {
+  if (actId === 'reveal') drawFrame(Math.round(p * (TOTAL_FRAMES - 1)));   // the act that owns #scroll-section
+});
+```
+
+Under reduced motion the runtime neither pins nor scrubs: draw the act's designed still (its
+`reduced` meaning — often the final frame or the poster) once, and let the page scroll natively.
+The hand-written ScrollTrigger below is the no-runtime path; it must still be the only scroll
+owner in its viewport.
+
 ### Core Implementation (Agent-B builds this)
 
 ```javascript
@@ -168,9 +213,11 @@ const canvas = document.getElementById('scroll-canvas');
 const ctx = canvas.getContext('2d');
 
 // Cover-fit frame to canvas
+let currentFrame = 0;
 function drawFrame(index) {
   const img = frames[Math.min(index, TOTAL_FRAMES - 1)];
   if (!img || !img.complete) return;
+  currentFrame = index;
   const scale = Math.max(canvas.width/img.naturalWidth, canvas.height/img.naturalHeight);
   const x = (canvas.width - img.naturalWidth*scale) / 2;
   const y = (canvas.height - img.naturalHeight*scale) / 2;
@@ -181,9 +228,13 @@ function drawFrame(index) {
 // Handle resize
 function resizeCanvas() {
   const dpr = Math.min(window.devicePixelRatio, 2);
-  canvas.width = window.innerWidth * dpr;
+  canvas.width = window.innerWidth * dpr;    // assigning width resets the context transform
   canvas.height = window.innerHeight * dpr;
-  ctx.scale(dpr, dpr);
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  // No ctx.scale(dpr, dpr): drawFrame() already works in device pixels (canvas.width/height);
+  // scaling again would draw every frame dpr× too large on HiDPI screens.
+  if (frames.length) drawFrame(currentFrame);   // a resize clears the canvas — repaint the last frame
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
@@ -248,13 +299,14 @@ preloadFrames().then(() => {
 ### HTML Structure for Scroll Section
 
 ```html
-<!-- Loading indicator (visible before frames load) -->
-<div id="frame-loader" style="position:fixed;inset:0;background:#0a0e14;z-index:100;
+<!-- Loading indicator (visible before frames load) — graceful progress, not a white screen.
+     ★v6: colours from the tokens, never hard-coded hex (the loader is part of the brand moment) -->
+<div id="frame-loader" style="position:fixed;inset:0;background:var(--color-bg);z-index:100;
      display:flex;flex-direction:column;align-items:center;justify-content:center;">
-  <div class="loader-track" style="width:200px;height:2px;background:rgba(201,168,76,0.2);border-radius:1px;">
-    <div class="loader-progress" style="height:100%;width:0%;background:#c9a84c;transition:width 0.1s;border-radius:1px;"></div>
+  <div class="loader-track" style="width:200px;height:2px;background:rgb(var(--accent-rgb) / 0.2);border-radius:1px;">
+    <div class="loader-progress" style="height:100%;width:0%;background:var(--color-accent);transition:width 0.1s;border-radius:1px;"></div>
   </div>
-  <p style="color:#c9a84c;font-size:0.75rem;margin-top:1rem;letter-spacing:0.1em;text-transform:uppercase;">
+  <p style="color:var(--color-accent);font-size:0.75rem;margin-top:1rem;letter-spacing:0.1em;text-transform:uppercase;">
     Loading Experience
   </p>
 </div>
@@ -294,9 +346,15 @@ preloadFrames().then(() => {
 const isMobile = window.innerWidth < 768;
 const FRAME_PATH = isMobile ? '/frames-mobile/frame_' : '/frames/frame_';
 const FRAME_EXT = '.webp';
-// Adjust TOTAL_FRAMES: mobile can use every other frame for performance
-// const MOBILE_STEP = isMobile ? 2 : 1;
+// ★v6 restored recipe — reduce frame count on mobile
+const FRAME_STEP = isMobile ? 2 : 1; // Every other frame on mobile
+const EFFECTIVE_FRAMES = Math.ceil(TOTAL_FRAMES / FRAME_STEP);
+// Preload frame (1 + i * FRAME_STEP) for i = 0 … EFFECTIVE_FRAMES - 1, and scrub
+// { frame: 0 } → { frame: EFFECTIVE_FRAMES - 1 } — the same sequence at half the payload.
 ```
+
+The mobile fallback for a heavy sequence is fewer frames (`frames-mobile/`, `FRAME_STEP`) or a
+static poster — never a `<video>` (Anti-Pattern #7; a *looping* background may be muted video).
 
 ---
 
@@ -311,21 +369,29 @@ Merge all agent outputs in this exact order:
    - base.css → link in <head>
 
 2. Layer Agent-B (motion):
+   - ★v6 Add motion.js + canvas-score.js (performs score.json) — or the framework port
    - Add scroll.js, load-sequence.js to scripts
    - Add scroll-engine.js if scroll frames present
    - Add transitions.js if page transitions planned
    - Wire data-magnetic, data-scroll-section, .reveal attrs to Agent-A HTML
+   - ★v6 Confirm the act ids (id="act-<id>") match the score, every entrance target carries
+     data-ic, the heartbeat wrapper carries data-breath, and ic-js + the 3 s failsafe sit in <head>
 
 3. Layer Agent-C (UI/UX):
    - Add components.css after base.css
    - Add interactions.js (cursor init, nav scroll behavior)
-   - Verify all 3-state interactions are in place
+   - Verify all 3-state interactions are in place — ★v6 the hand-feel floor on every control
 
 4. Integrate Agent-D (artifacts):
    - Place each artifact at its designated location in HTML
    - Link artifact-css.css
    - Run in-situ test per Step 2
    - Verify all artifacts blend
+   - ★v6 Promoted encodes only (public/ + .provenance.json); `engines/ledger.mjs verify` passes
+
+4b. ★v6 Integrate Agent-F (when depth ≥ 0.4):
+   - The scene subscribes to the score's progress (show.on('progress')) — no scroll listener of its own
+   - Budgeted GLBs lazy-load behind the DOM shell; the fallback ladder reaches Tier I, never flat
 
 5. Implement Agent-E fixes:
    - Apply all CRITICAL fixes immediately
@@ -340,12 +406,15 @@ Merge all agent outputs in this exact order:
 ```
 INJECT: references/expertise-injection.md → Barba.js section into Agent-B
 
-Agent-B implements transitions.js:
-  - Iron Curtain: scaleY reveal (Iron Canvas signature)
-  - Or other transition from PRD Section 4
-  - Calls runLoadSequence() in enter() callback
-  - Kills all ScrollTrigger instances in leave() callback
-  - Re-initializes Lenis in enter() callback
+Agent-B implements transitions.js — ★v6 the transition is chosen by the feeling it serves (PRD §4):
+  - fade-through-black → cinematic · curtain (the Iron Curtain, scaleY) → theatrical
+  - shared-element morph → seamless · colour flood → brand-forward
+  - WebGL distortion → psychedelic (R3+ only) · zoom in/out → magazine
+  - Calls runLoadSequence() in enter() callback (★v6 with the runtime: performScore(nextScore))
+  - Kills all ScrollTrigger instances in leave() callback (★v6 with the runtime: show.kill())
+  - Re-initializes Lenis in enter() callback (lenis.destroy() in leave; gsap.context scoped to the new container)
+  - ★v6 single-page apps: same-document View Transitions can carry the transition natively;
+    cross-document @view-transition is progressive enhancement only
 ```
 
 ---
@@ -362,7 +431,12 @@ Agent-B implements transitions.js:
 □ Static fallback shows if frames fail
 □ Page transitions fire on nav link click (if implemented)
 □ Load sequence fires on fresh page load (check Network tab → throttle to Slow 3G)
+□ Loading: graceful progress indicator, not white screen
 □ Mobile: scroll engine serves mobile frames, no horizontal scroll, 30fps minimum
+□ ★v6 One clock: exactly one scroll owner per viewport; the WebGL scene and DOM chapters subscribe
+□ ★v6 Reduced motion: every entrance target at its final state; no pins, no scrubs, no breath —
+  the composed still, never blank
+□ ★v6 Alive at rest: the heartbeat runs in view, pauses off-screen and on a hidden tab
 ```
 
 ---
@@ -371,6 +445,8 @@ Agent-B implements transitions.js:
 
 ```
 □ All Agent-D artifacts integrated and verified in situ
+□ ★v6 Only promoted encodes integrated — each generated file has its .provenance.json
+□ ★v6 The score performed end to end; one clock; the ic-js failsafe present
 □ Scroll engine built and functional (if scroll_engine_needed: true)
 □ Frame preloader shows progress before scroll activates
 □ Content overlays sync with scroll timing from PRD
@@ -411,6 +487,15 @@ FIX: Check min-height: 100dvh (not 100vh).
      Check touch target sizes ≥ 44px.
      Check scroll engine is serving frames-mobile/ set.
      Check no horizontal overflow from fixed-width elements.
+
+FAILURE: "Jumps stutter, seek lands in the wrong place, the film and the page drift apart" ★v6
+FIX: Two clocks (Anti-Pattern #19). Only the score's scrub acts own scroll; Lenis only
+     smooths native scroll; the WebGL scene and the frame canvas subscribe to progress;
+     programmatic jumps route through lenis.scrollTo.
+
+FAILURE: "Reduced motion shows a blank section" ★v6
+FIX: An entrance target stayed hidden. Mark ic-js in <head> with the 3 s failsafe; in
+     reduced mode set every [data-ic] to its final state before anything else runs.
 ```
 
 ---

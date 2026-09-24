@@ -7,6 +7,38 @@
 
 Before any research, before any screenshots, before anything — classify the project and select the execution mode. Every downstream decision depends on getting these two right.
 
+> **★v6 — ORIENT also names the mechanism and scans the engines.** Two more things are recorded
+> here that every later phase leans on: the product's one true **mechanism** (Discovery Interview
+> Q8 — the signature moment will act it out) and the **power engines** actually present
+> (`node engines/detect.mjs`). When the run starts from an Iron Canvas Studio bible, its decisions
+> are recorded here as given — ORIENT does not re-ask them.
+
+---
+
+## Step 0 ★v6: Intake — Is There a Studio Bible?
+
+If the operator arrives with a production bible compiled by Iron Canvas Studio
+(`studio/index.html` → `studio/compile.mjs`: treatment · score · engine jobs · config · mission),
+its decisions are **starting positions recorded here as given**. The interview (Step 1b) only
+fills what the bible left blank.
+
+| Bible field | Recorded at ORIENT as | Carried to |
+|---|---|---|
+| `treatment.register` | `treatment_register` | the DIS cap and every register gate |
+| `treatment.surface` | `surface_pack` | the pack dispatch (Step 1) |
+| `treatment.depth` | `depth_intensity_hint` | Phase 2 DIS (the final value is computed there) |
+| `treatment.mechanism` | `mechanism_sentence` (Q8) | FEEL `signature`, the score's one signature act |
+| `treatment.feel_line`, `treatment.personality` | starting inputs | FEEL — the kinetic signature is still written at Phase 2 |
+| `treatment.gauntlet`, `treatment.engine_gates` | recorded as given | FORGE / IMMERSE / GENERATE |
+| `score` | the starting `score.json` | PACKAGE 3.9 (rewritten there, then preflighted) |
+| `jobs` | the starting engine jobs | PACKAGE 3.9b |
+| `config` | `canvas.config.json` | the power-engine scan (Step 4b) |
+
+Keep the bible's files with the run (`iron_canvas_output/`). FEEL, SCOUT and the gauntlet still do
+the creative work — a bible sets the starting direction, never the verdict. A placeholder left in
+the bible (for example *"(name the one true mechanism in a sentence — if you cannot, stop and
+ask)"*) is a blank, not a decision: ask.
+
 ---
 
 ## Step 1: Classify the Project Type
@@ -22,6 +54,7 @@ Read the project brief, URL, or client description and assign a type:
 | **E** | Enhancement of existing live site | Per original type | Per original type | Per original type | Match existing |
 | **F** | New site from scratch (no existing design) | Per type | Per type | Per type | TBD in Phase 4 |
 | **G** ★v5.0 | Game frontend — title/menus/HUD/overlays/companion | `game-realtime` (EXPERIMENTAL) | NO | 0.8 (title screen only; HUD ≤ 0.5) | Per delivery: web-native or engine via UNREAL-ADAPTER |
+| **H** ★v6 | Film / motion piece — launch film, promo, explainer, cut-downs, OG video, loops | `film` (EXPERIMENTAL) | NO (the film score's timeline is the clock) | per `surfaces/film/PACK.md` | one film score, three lanes: code (HyperFrames) · video (Seedance 2.5) · Blender |
 
 **Type A world-dispatch rule ★v5.0:** if the depth hint resolves Tier III *sustained* (the
 world IS the experience — the "website or transcript?" test in `surfaces/immersive-3d/PACK.md`),
@@ -38,6 +71,37 @@ physics → panel physics + data-motion grammar.
 **Type E note:** Phase 1 STUDY is NON-NEGOTIABLE and must complete before any other phase. Identity Erasure (Anti-Pattern #5) is highest risk here.
 
 **Type F note:** Start at Phase 2 (FEEL), not Phase 1. Use competitor sites for Phase 1 DNA reference.
+
+**Type H note ★v6:** Dispatch `surfaces/film/PACK.md` when the deliverable is a timed piece of
+video — even one cut from a site Iron Canvas built. A site *and* its launch film are two runs
+sharing one feel-profile (one pack per run). A launch film cut from this run's own page is
+PREMIERE (Phase 8), not a separate run.
+
+---
+
+## Step 1b ★v6: The Discovery Interview (Q8 — the Mechanism)
+
+Before any code, run the structured interview (v4; Q8 added in v6). Its answers feed
+`orient-decision.json → interview_summary` and the Site DNA Profile. With a Studio bible, ask only
+what the bible left blank.
+
+```
+Q1: DATA ORIGIN — Where does content come from? (CMS, static, API, manual)
+Q2: PRIORITY HIERARCHY — What are the top 3 things a visitor must see/do?
+Q3: INTERACTION LEVEL — Passive consumption vs. active engagement?
+Q4: RESPONSIVENESS — Mobile-first? Desktop-dominant? Parity?
+Q5: COMPETITIVE POSITIONING — What should this feel better than?
+Q6: ASSET INVENTORY — What visual assets exist? What must be generated?
+Q7: PERFORMANCE TIER — Speed-critical? Motion-heavy? Balanced?
+Q8: THE MECHANISM ★v6 — In one sentence, what is this product's one true mechanism?
+    (If you cannot name it in one sentence, stop and ask. The signature moment will act it out.)
+```
+
+**Why Q8 matters.** The mechanism sentence is the seed of the whole score. FEEL carries it into
+`feel-profile.json → signature.mechanism_sentence`; PACKAGE writes the one signature act that acts
+it out; the engines film it. Example: *"signals converge on one governed checkpoint and fan out
+into six operating surfaces."* A mechanism is never invented to fill the field — an unanswered Q8
+is escalated to the operator, not guessed.
 
 ---
 
@@ -57,6 +121,13 @@ MISSION: Orchestrator + Research + Validation + 5 Build Agents + QA
          Time: Fastest with highest quality ceiling
 ```
 
+**★v6 — SOLO is the most common real-world mode.** It caps how many systems activate and how
+loud they are — **never the aliveness floor**. Every mode ships ARRIVAL (one designed first
+moment, ≤ 1.5 s), HEARTBEAT (one perpetual low-amplitude element on co-prime periods), HAND-FEEL
+(every control answers hover, press and focus), BREATH (air + one ambient layer) and a COMPOSED
+STILL (reduced motion rests on the designed final frame). At SOLO that can be a 600 ms arrival and
+one breathing dot; it is never nothing (Anti-Pattern #18 LIFELESS).
+
 **Decision guide:**
 - Type A (animated site): SWARM recommended, MISSION for flagship
 - Type B (marketing): SWARM or SOLO
@@ -64,6 +135,7 @@ MISSION: Orchestrator + Research + Validation + 5 Build Agents + QA
 - Type D (e-commerce): SWARM (Agent-D is critical for scroll sequence frames)
 - Type E (enhancement): SOLO (Phase 1 requires careful sequential study)
 - Type F (new scratch): MISSION for best results
+- Type H (film / motion piece) ★v6: per `surfaces/film/PACK.md`
 
 ---
 
@@ -112,6 +184,34 @@ for additional provisioning patterns and credential management detail.
 
 ---
 
+## Step 4b ★v6: Power-Engine Scan
+
+```bash
+node engines/detect.mjs          # reads canvas.config.json → .ic/power-engines.json
+```
+
+The scan reads the operator's toggles (`canvas.config.json` — copied from
+`engines/canvas.config.example.json`, or the Studio bible's `config`) and records what is actually
+present — Blender, Seedance 2.5, audio, imagery, film — each in one of four states, with its named
+fallback:
+
+| State | Meaning | What the build does |
+|---|---|---|
+| `enabled` | requested and present | its jobs are written at PACKAGE 3.9b and run in ASSET FORGE (5a) |
+| `available` | present, not requested | nothing — the operator decides |
+| `missing` | requested, absent | the engine prints its plan and exits 2; the build takes the fallback |
+| `disabled` | switched off | nothing |
+
+**Engines are detected, never provisioned** — at every autonomy tier. Secrets come from the
+environment only (`FAL_KEY`, `ELEVENLABS_API_KEY`, …); no engine signs up, buys credits or writes
+a credential. A toggle says an engine is **available**; the Treatment Register says whether it is
+**appropriate**, and both must agree: R0/R1 all off · R2 the signature only (Blender only at depth
+≥ 0.4) · R3 on · R4 on + the twin camera. A missing engine never blocks a build — every engine
+degrades to a named fallback: Blender → procedural three.js → §19 point cloud → Tier I still ·
+video → HyperFrames → §19 flow field → poster · audio → WebAudio synth → no audio UI.
+
+---
+
 ## Step 5: Record the ORIENT Decision
 
 Output this before proceeding:
@@ -119,16 +219,27 @@ Output this before proceeding:
 ```json
 {
   "project_name": "",
-  "project_type": "A/B/C/D/E/F",
+  "project_type": "A/B/C/D/E/F/G/H",
   "type_description": "1-sentence rationale for the type assignment",
   "execution_mode": "SOLO / SWARM / MISSION",
   "mode_rationale": "1-sentence rationale",
   "phase_emphasis": [],
   "agents_to_spawn": [],
   "tech_stack_default": "MINIMAL / STANDARD / ELEVATED / IMMERSIVE",
-  "surface_pack": "web / app-dashboard / immersive-3d / game-realtime",
-  "treatment_register": "R0 / R1 / R2 / R3 / R4 — from the task's AMBITION, not the brand's loudness (CD3 Law 1); caps the DIS ceiling. See references/claude-design-3.md",
+  "surface_pack": "web / app-dashboard / immersive-3d / game-realtime / film",
+  "treatment_register": "R0 / R1 / R2 / R3 / R4 — from the task's AMBITION, not the brand's loudness (CD3 Law 1); caps the DIS ceiling, never the aliveness floor. See references/claude-design-3.md",
   "depth_intensity_hint": 0.0,
+  "mechanism_sentence": "★v6 Q8 — one sentence: the product's one true mechanism (escalate when blank; never invent)",
+  "power_engines": { "blender": "enabled", "video": "missing", "audio": "disabled", "imagery": "enabled", "film": "enabled" },
+  "interview_summary": {
+    "data_origin": "",
+    "priority_hierarchy": [],
+    "interaction_level": "",
+    "responsiveness": "",
+    "competitive_positioning": "",
+    "asset_inventory": "",
+    "performance_tier": ""
+  },
   "agent_autonomy": {
     "tier": 2,
     "tier_label": "GUIDED",
@@ -171,9 +282,12 @@ IMMERSIVE: GSAP + Three.js + Lenis + Custom GLSL + Barba.js
 
 ## Phase 0 Completion Criteria
 
+- [ ] ★v6 Studio bible intake: if a bible exists, its decisions are recorded as given and only its blanks are asked
 - [ ] Project type assigned with rationale
-- [ ] Surface pack dispatched (`web` or `app-dashboard`) ★v5.0
-- [ ] **Treatment Register (R0–R4) chosen from the TASK's ambition + recorded ★v5.1** (CD3 — caps the whole DIS; see references/claude-design-3.md). Not the brand's loudness; when unsure, drop a register.
+- [ ] Surface pack dispatched (`web` / `app-dashboard` / `immersive-3d` / `game-realtime` / ★v6 `film`) ★v5.0
+- [ ] **Treatment Register (R0–R4) chosen from the TASK's ambition + recorded ★v5.1** (CD3 — caps the whole DIS; see references/claude-design-3.md). Not the brand's loudness; when unsure, drop a register — ★v6 **never below the aliveness floor. Restraint is not stillness.**
+- [ ] ★v6 Discovery Interview Q1–Q8 answered — **the mechanism sentence (Q8) recorded**, or escalated to the operator (never invented)
+- [ ] ★v6 Power-engine scan run (`node engines/detect.mjs`) — `power_engines` recorded with each engine's state and fallback
 - [ ] Depth intensity hint recorded (final value computed at Phase 2 DIS) ★v5.0
 - [ ] Execution mode selected with rationale
 - [ ] Phase emphasis defined

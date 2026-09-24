@@ -2,6 +2,27 @@
 
 > The technical deep-dive for building Apple-style scroll-driven image sequence animations.
 
+## One Clock ★v6 (read first)
+
+Scroll is the playhead, and there is exactly **one** of it per viewport:
+
+- **Lenis only smooths native scroll** — import it from the `lenis` package, drive it from GSAP's
+  ticker (`gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0)`), and decide
+  reduced motion *before* constructing it (reduced motion gets native scroll, no Lenis at all).
+- **ScrollTrigger reads it** — `lenis.on('scroll', ScrollTrigger.update)`.
+- **WebGL and every DOM chapter subscribe to one progress value** — with the Score Runtime,
+  `show.on('progress', (actId, p) => …)`; the frame sequence below *is* its section's `scrub` act,
+  so the canvas draws from that progress instead of creating a second pinned trigger. Nothing reads
+  `window.scrollY` on its own.
+- **Programmatic jumps go through `lenis.scrollTo`** — never `window.scrollTo` beside a smoothed
+  scroll.
+- **Reduced motion neither pins nor scrubs:** the section rests on its designed still (the act's
+  `reduced` meaning — often the final frame or the poster).
+
+Two owners in one viewport — a pinned GSAP section and a WebGL camera reading scroll, or a
+parallax library fighting Lenis — is **Anti-Pattern #19 TWO CLOCKS**: jumps stutter, `seek` lands
+in the wrong place, the film and the page drift apart.
+
 ## How It Works
 
 A pre-rendered series of frames (extracted from video or AI-generated) is drawn onto an HTML5 `<canvas>` element. Scroll position maps directly to frame index. Scroll down = forward. Scroll up = reverse. It's a digital flipbook controlled by your thumb.
@@ -46,7 +67,9 @@ A pre-rendered series of frames (extracted from video or AI-generated) is drawn 
 npm install gsap
 ```
 
-GSAP's ScrollTrigger is free for most use cases. Check [gsap.com/pricing](https://gsap.com/pricing) for commercial licensing.
+★v6: the entire GSAP toolset — ScrollTrigger, SplitText, Flip, MorphSVG, DrawSVG — is free since
+GSAP 3.13 (see SKILL.md §12); check [gsap.com/pricing](https://gsap.com/pricing) for the current
+terms. Smooth scroll, when used, is the `lenis` package (`npm install lenis`).
 
 ## Preloader Pattern
 
@@ -95,9 +118,12 @@ const frames = await preloadFrames(
 
 ```javascript
 const dpr = Math.min(window.devicePixelRatio, 2);
-canvas.width = window.innerWidth * dpr;
+canvas.width = window.innerWidth * dpr;     // assigning width resets the context transform
 canvas.height = window.innerHeight * dpr;
-ctx.scale(dpr, dpr);
+canvas.style.width = '100vw';
+canvas.style.height = '100vh';
+// Draw in device pixels (canvas.width / canvas.height). Add ctx.scale(dpr, dpr) only if you
+// draw in CSS pixels instead — never both, or every frame renders dpr× too large on HiDPI.
 ```
 
 ## Content Overlay Timing

@@ -1,4 +1,4 @@
-# Depth Language — Iron Canvas v5.0
+# Depth Language — Iron Canvas v5.0 (+ ★v6 the listening world)
 ## *The z-axis grammar. One language, three altitudes, dialed 0–1.*
 
 > **Position in pipeline:** Phase 2 (FEEL) output → `design_intensity.systems.depth_language` → Phase 4 (FORGE) + Phase 6 (COMPOSE) input
@@ -141,6 +141,32 @@ playful ≥ 7        → FOV breathing, overshoot easing, camera reacts to curso
 Focus pulls (DoF rack between bands) are the Tier III signature move — use at section
 transitions, maximum once per section.
 
+### ★v6 — The listening world (one clock)
+
+The world never reads scroll. It subscribes to the score's progress —
+`show.on('progress', (actId, p) => world.setAct(actId, p))` — so camera, colour, density and every
+DOM chapter play as **one continuous shot**; the signature act's `call` hook fires the peak.
+Scroll still drives everything (Hard Rule 3) — through **one** progress value: Lenis only smooths
+native scroll, ScrollTrigger reads it, the scrub acts own it, and programmatic jumps route through
+`lenis.scrollTo`. A camera reading `window.scrollY` beside a pinned section is Anti-Pattern #19
+TWO CLOCKS.
+
+- **The field recedes behind quiet chapters** — it dims and slows while the visitor reads (at most
+  30 % of the foreground's speed) and returns for the signature. Depth has tempo as well as bands:
+  the quiet chapter is what makes the climax land.
+- **Colours come from tokens** — the RGB mirror triplets (`--accent-rgb: 224 187 110`, the same
+  triplet CSS uses as `rgb(var(--accent-rgb) / 0.2)`), never hard-coded. Fog is the palette.
+- Reference: `showcase/living-canvas/world.js`.
+
+### ★v6 — The twin camera
+
+When Blender and video are both on (register ≥ R2, depth ≥ 0.4 — the R4 default), the signature
+scene's camera rail is authored **once**: Blender's `clay-camera` job renders the move through flat
+grey clay and writes `camera-rail.json` (the stations in three.js space); Seedance 2.5 takes the
+clay clip as `@Video1` — camera path, speed and blocking only; the WebGL rail here reads the same
+stations. **The film and the site match shot for shot.** Clay renders carry no gizmos, grids,
+outlines, overlays or frame counters — anything visible in the clay comes back as an object.
+
 ---
 
 ## BPM ACTIVATION DRIVERS
@@ -188,6 +214,26 @@ world behind a data grid is Anti-Pattern #15.
 Selection rule mirrors §19: climb the registry only when the look demands it. A Tier II
 product orbit does not need R3F because "we might scale it."
 
+**★v6 — WebGPU / TSL preference.** WebGPU ships in every major browser: for **new Tier III
+worlds** prefer `WebGPURenderer` with TSL node materials — one codebase compiles to WGSL (WebGPU)
+and GLSL (the WebGL2 fallback is automatic). The `bold ≥ 9 frontier` row above still gates the
+heaviest shader work; the preference is about the renderer, not about raising depth.
+
+**★v6 — Blender GLBs are budgeted Tier II / III assets.** Hero objects and world pieces from the
+Blender engine (`engines/blender`, headless — never the MCP in production) enter as Draco GLBs
+with a provenance sidecar, lazy-loaded behind the DOM shell. **Budgets fail the job, they do not
+advise it:**
+
+| Tier | Triangles | File size | Draw calls |
+|---|---|---|---|
+| II Staged | ≤ 150,000 | ≤ 1.5 MB | ≤ 100 |
+| III Inhabited | ≤ 600,000 | ≤ 8 MB | ≤ 300 |
+
+KTX2 textures are a post step (glTF-Transform: ETC1S for colour, UASTC for data); bake static hero
+lighting to a second UV set. Code first: a GLB that duplicates what three.js could build
+procedurally is weight without value. Fallback: procedural three.js → a §19 point cloud → a Tier I
+composed-depth still.
+
 ---
 
 ## PERFORMANCE GATES
@@ -222,6 +268,8 @@ TRIGGERS: prefers-reduced-motion · no WebGL2 · <30fps sustained 3s (auto-demot
    FORGE, not patched during VERIFY.
 3. **SCROLL OWNS THE CAMERA** — camera position is a pure function of scroll position.
    No autonomous drift that fights the user. (Cursor-reactive ±2° micro-response allowed.)
+   ★v6: read it through the score's progress (one clock — `show.on('progress')`), never
+   `window.scrollY` directly.
 4. **DEPTH SERVES HIERARCHY** — z-band assignment follows information priority. If the
    primary CTA is in FAR, the grammar is broken.
 5. **ONE WORLD** — a single scene/material metaphor per project. Voxel hero + particle

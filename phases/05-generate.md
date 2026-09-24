@@ -1,31 +1,58 @@
-# Phase 5: GENERATE — Artifact Assessment + Context-Aware Creation
+# Phase 5: GENERATE — The Media Tournament ★v6 + Context-Aware Creation
 
 > ⚠️ **THIS PHASE IS NEVER OPTIONAL.**
 >
 > Phase 5 always runs. What changes is whether it results in artifact generation
-> or a documented skip decision. Agents that skip Phase 5 entirely without
-> running the Artifact Assessment Gate are in violation of Iron Canvas protocol.
+> or a documented skip decision. ★v6: the Artifact Assessment Gate now runs at the end of
+> PACKAGE (phases/03.9-package.md 3.9b), so the engine jobs are known before FORGE and the
+> ASSET FORGE lane (5a) runs in parallel with the build agents. Agents that reach Phase 5
+> without an `artifact-assessment.json` are in violation of Iron Canvas protocol — stop and
+> run the gate at 3.9b.
 >
 > The Crown Collection failure — runs producing zero images on a site with
 > zero product photography — happened because Phase 5 was not explicitly routed.
 > This file fixes that permanently.
 
+## The Rule
+
+Before generating ANY image, you must know EXACTLY where it goes, how the CSS treats it, and what the surrounding context looks like. Generate for the context, not for the prompt.
+
+★v6 — and nothing generated ships on the builder's say-so. Phase 5 is **the media tournament**:
+everything forged — stills, loops, films, meshes, cues, most of it already made in ASSET FORGE
+(5a) — competes; a blind critic judges it in situ; only a selected, verified, provenanced winner
+reaches `public/`. An artifact that looks spectacular alone and dropped-in on the page is a
+failure; one that looks like it was always part of the design is the goal.
+
 ---
 
-## MANDATORY FIRST ACTION: READ ROUTING.MD
+## MANDATORY FIRST ACTION: READ THE ASSESSMENT + THE REFERENCES
 
 Before executing any step in this phase:
 ```
-READ: ROUTING.md → § ARTIFACT ASSESSMENT GATE
+READ: artifact-assessment.json           (★v6 written at PACKAGE 3.9b — scores, decision,
+                                           artifacts, engine jobs, engine gates)
 READ: references/model-selection.md
 READ: references/prompt-engineering.md
+READ: references/power-engines.md §7     (★v6 the ledger — the tournament's rules)
 ```
+If `artifact-assessment.json` is missing, STOP: return to PACKAGE and run the gate
+(phases/03.9-package.md 3.9b — criteria in ROUTING.md § ARTIFACT ASSESSMENT GATE). The engine
+jobs and the ASSET FORGE lane depend on it.
 
 ---
 
-## STEP 1: RUN THE ARTIFACT ASSESSMENT GATE
+## STEP 1: CONFIRM THE ASSESSMENT (★v6 — the gate ran at PACKAGE 3.9b)
 
-Score each criterion 1-5. This is not optional. Every site gets scored.
+The gate's five criteria, its decision bands and the `artifact-assessment.json` schema moved to
+PACKAGE 3.9b, beside the engine jobs they produce. Here, confirm before generating:
+
+```
+□ decision recorded: GENERATE / CONDITIONAL / SKIP
+  (SKIP still runs this phase — the OG image is always generated — then Phase 6)
+□ every artifact listed with its section, act, class, engine and engine status
+□ ASSET FORGE (5a) candidates exist in the run ledger for every engine job — or the fallback is recorded
+□ R2+: a site with no images will not finish with still no images (code-driven and generative visuals count)
+```
 
 > **★v5.2 — at R2–R4, the artifacts this gate greenlights are GAUNTLET-FORGED.** A signature
 > artifact (a scroll sequence, a §19 generative background, a hero still, an OG render) that
@@ -34,94 +61,52 @@ Score each criterion 1-5. This is not optional. Every site gets scored.
 > diff + seeded reproducibility), and only the survivor ships.** Fleet width R2 = 2 · R3 = 3 ·
 > R4 = 3–4, round cap 3. Register-gated: **OFF at R0/R1** — a utilitarian artifact is built
 > once, well (looping it is Anti-Pattern #17). Protocol: [`../references/gauntlet-loop.md`](../references/gauntlet-loop.md).
+> ★v6: for generated media the tournament's counts apply (Step 1b).
+
+**If SKIP:** generate the OG image, record the skip, proceed to Phase 6.
+**If GENERATE / CONDITIONAL:** run the tournament (Step 1b) over ASSET FORGE's candidates, then
+generate what is still missing (Steps 2–9).
+
+---
+
+## STEP 1b ★v6: THE MEDIA TOURNAMENT
+
+Everything forged — stills, loops, films, meshes, cues — competes and is judged:
 
 ```
-CRITERION 1: IMAGE ABSENCE (1-5)
-  5 = No images anywhere on the site (ZERO imagery — like Crown Collection)
-  3 = Some images but weak, generic, or heavily missing in key sections
-  1 = Rich, high-quality existing imagery throughout every section
-  Score: ___
-
-CRITERION 2: VISUAL STORYTELLING OPPORTUNITY (1-5)
-  5 = Physical product that MUST be seen to be desired (body butter, car, food)
-  3 = Service/concept that benefits from visual representation
-  1 = Pure information/text service with no visual anchor
-  Score: ___
-
-CRITERION 3: SCROLL SEQUENCE VIABILITY (1-5)
-  5 = Product has a reveal story (open/close, ingredient explosion, transformation)
-  3 = A process or journey could be shown through scrolled frames
-  1 = No natural reveal — content is better delivered statically
-  Score: ___
-
-CRITERION 4: COMPETITIVE PREMIUM GAP (1-5)
-  5 = Competitors have cinematic imagery and the site looks cheap without it
-  3 = Would help differentiate but not critical for credibility
-  1 = Industry norm is text-forward — imagery would feel out of place
-  Score: ___
-
-CRITERION 5: BRAND PERSONALITY ALIGNMENT (1-5)
-  5 = Bold ≥ 7, Avant-garde ≥ 6, feel profile is "luxury/cinematic/premium"
-  3 = Mixed scores — some visuals appropriate
-  1 = Serious + Corporate + Minimal — artifacts would feel intrusive
-  Score: ___
-
-TOTAL: ___ / 25
+CANDIDATES   by register: R2 2 · R3 3 · R4 4 (up to 8 for an identity film) · stills: 4 variants
+CRITIC       a blind cross-family critic scores candidates in situ — never the builder's self-report
+             "Prefer a slightly quieter frame with strong identity over a spectacular but
+              interchangeable frame."
+SELECT       engines/ledger.mjs select — a written reason (≥ 16 characters) or no selection
+VERIFY       engines/ledger.mjs verify — every file re-hashed; any drift fails
+ENCODE       bg-loop · brand-film · scroll-tied (15 fps WebP frames) · poster (40 % in)
+PROMOTE      only selected, unchanged candidates reach public/ — each with a provenance sidecar
+MEASURED     a clip is described by its measured length and size, never by the requested ones
 ```
 
-### DECISION
-
-```
-20-25: ✅ GENERATE — MANDATORY. Proceed to Step 2 immediately.
-       Scroll engine: ASSESS in Criterion 3. If 4-5, scroll engine is required.
-       Open Chrome for Leonardo if product is physical.
-
-13-19: ✅ GENERATE — RECOMMENDED. Proceed to Step 2 for priority artifacts.
-       Scroll engine: Only if Criterion 3 scored 3+.
-       Use Nano Banana Pro as primary engine.
-
-8-12:  ⚠️ CONDITIONAL. Generate only what directly addresses the lowest-scoring
-       weakness. Document which artifacts were created and why.
-       Skip scroll engine unless Criterion 3 scored ≥ 3.
-
-1-7:   ❌ SKIP. Write skip rationale in artifact-assessment.json.
-       Proceed to Phase 6. Phase 6 still runs (may still need integration work).
+```bash
+node engines/ledger.mjs list    --run .ic/runs/<ts>-<name>
+node engines/ledger.mjs select  --run .ic/runs/<ts>-<name> --candidate <file> --reason "why this one, in a sentence"
+node engines/ledger.mjs verify  --run .ic/runs/<ts>-<name>      # re-hashes every file; exit 1 on drift
+node engines/ledger.mjs encode  --in <file> --profile bg-loop|brand-film|scroll-tied|poster --out <dir>
+node engines/ledger.mjs promote --run .ic/runs/<ts>-<name> --candidate <file> --to public/video/hero.mp4
 ```
 
-### WRITE artifact-assessment.json
-
-```json
-{
-  "phase": 5,
-  "project": "[name]",
-  "criteria_scores": {
-    "image_absence": 0,
-    "visual_storytelling": 0,
-    "scroll_sequence_viability": 0,
-    "competitive_premium_gap": 0,
-    "brand_personality_alignment": 0
-  },
-  "total_score": 0,
-  "decision": "GENERATE / CONDITIONAL / SKIP",
-  "confidence": "HIGH / MEDIUM / LOW",
-  "scroll_engine_needed": true,
-  "three_d_needed": false,
-  "artifacts_to_generate": [
-    {
-      "name": "",
-      "section": "",
-      "priority": "CRITICAL / HIGH / MEDIUM",
-      "engine": "Nano Banana Pro / Leonardo / Grok / GPT Image",
-      "is_scroll_frame_sequence": false
-    }
-  ],
-  "rationale": "",
-  "skip_rationale": null
-}
+```
+.ic/runs/<ts>-<name>/              gitignored — masters never enter the repo
+  manifest.json                    jobs + items: sha256, measured media / mesh facts, selection + reason
+  inputs/  candidates/  web/  evidence/
+public/video/hero.mp4                         only reviewed web encodes are promoted
+public/video/hero.mp4.provenance.json         engine · tool · model · prompt · seed · params · inputs · rights · cost
 ```
 
-**If SKIP:** Write rationale, save artifact-assessment.json, proceed to Phase 6.
-**If GENERATE:** Continue to Step 2.
+**Never silently promote candidate 1.** Engine-made media (Blender · Seedance 2.5 · audio · clips
+made in a provider's UI and brought in with `video.mjs ingest`) runs through the ledger; stills
+from an image tool follow the same steps — candidates, a blind critic, a written reason — and ship
+with the same provenance fields beside the file. The poster is taken from 40 % in, never frame 0
+(first frames are often black or unsettled). At R0/R1 the engines are gated off, so the tournament
+is small — the discipline is the same.
 
 ---
 
@@ -133,12 +118,16 @@ Based on the artifact-assessment.json decision, load these before prompting:
 ALWAYS load for Phase 5:
   → references/model-selection.md        (which engine for which artifact type)
   → references/prompt-engineering.md     (how to write context-aware prompts)
+  → references/power-engines.md          (★v6 engine gates, the twin camera, the ledger)
 
 If scroll sequence planned (Criterion 3 ≥ 3):
   → references/scroll-engine.md          (architecture + frame specs)
 
 If Leonardo work planned (any physical product):
   → references/leonardo-blueprints.md    (Blueprint workflow guide)
+
+If designed motion or a film is planned (★v6):
+  → references/code-driven-assets.md     (HyperFrames — the deterministic film renderer)
 ```
 
 ---
@@ -156,7 +145,7 @@ For EVERY artifact, complete this before writing the prompt:
 □ Record opacity
 □ Record border radius / clip path
 □ Note palette hex codes from site-dna-profile.json
-□ Note emotional target from feel-profile.json
+□ Note emotional target from feel-profile.json — ★v6 and the act's emotion (in → out) from the score
 □ Determine aspect ratio required
 □ Determine display resolution (hero = 2K, secondary = 1K, close-up = 4K)
 ```
@@ -176,6 +165,9 @@ Never write a prompt until every box above is checked.
 ```
 
 ### Full Example — Crown Collection Body Butter
+
+★v6: the hexes below are this product's own (a matte black jar, a brushed gold lid). Every project
+writes its own from `site-dna-profile.json` — never copy them as a house palette (Anti-Pattern #3).
 
 ```
 Luxury body butter in a matte black glass jar (6oz, wide-mouth) with brushed
@@ -206,7 +198,16 @@ Lifestyle placement:             Leonardo Product In Scene
 Cross-frame lighting:            Leonardo Custom Relight (CRITICAL for sequences)
 Background swap:                 Leonardo Background Change
 Container expansion:             Leonardo Instant Outpaint
+Film / loops / transitions:      Seedance 2.5 (engines/video — fal queue or ingest) ★v6
+Hero object / camera rail:       Blender headless (engines/blender) ★v6 — the twin camera with Seedance
+Signature cues / beds:           ElevenLabs sound generation (engines/audio) ★v6
+Designed motion film:            HyperFrames (the page's own score, seeked frame by frame) ★v6
 ```
+
+★v6 engines are gated by the register (R0/R1 off · R2 the signature only · R3 on · R4 on + the
+twin camera) and by `power_engines` (a `missing` engine takes its fallback — video → HyperFrames →
+§19 flow field → poster). Their jobs were written at PACKAGE 3.9b and ran in ASSET FORGE (5a);
+here they are judged, not started.
 
 ### Nano Banana Pro Command
 
@@ -289,8 +290,9 @@ curl https://cloud.leonardo.ai/api/rest/v1/generations/{generationId} \
 ```
 FOR EACH ARTIFACT:
 1. Write prompt following formula
-2. Generate 4 VARIANTS (not 1 — always 4)
-3. Preview all 4 before selecting
+2. Generate 4 VARIANTS (not 1 — always 4) for stills
+   ★v6 video by register: R2 2 · R3 3 · R4 4 candidates
+3. Preview all 4 before selecting — ★v6 a blind critic scores them, never your self-report
 4. Test best variant IN SITU:
    - Place in actual page HTML
    - Screenshot the section with artifact in place
@@ -300,7 +302,16 @@ FOR EACH ARTIFACT:
      c. Does it FEEL like it was always part of this design?
 5. If doesn't blend naturally → adjust prompt → regenerate → retest
 6. NEVER force-fit. Anti-Pattern #4 and #6 are your risks here.
+7. ★v6 Select with a written reason → verify → encode → promote with provenance (Step 1b).
+   NEVER silently promote candidate 1.
 ```
+
+**★v6 TIMING BY EMOTIONAL WEIGHT** (storyboards, sequences, films): spend frames, seconds and
+scroll where the drama is — the lid lifting, the light escaping — and let the settle be long and
+quiet. The score's signature act gets the most; quiet acts get the least.
+
+**★v6 NO IMAGE SITS DEAD (R2+):** every image gets a living entrance and a slow life — a Ken Burns
+drift, a parallax band, a light response — on the house personality, stopped under reduced motion.
 
 ---
 
@@ -328,6 +339,19 @@ Frame 10: Lid descending back toward jar
 Frame 11: Jar reassembled, slight rotation from start angle
 Frame 12: Final hero pose, subtle glow, premium stillness
 ```
+
+### Interpolation Strategy — timing by emotional weight (restored ★v6)
+
+*Restored verbatim from the v1.0 GENERATE phase (`ddb94ef:phases/05-generate.md` L108–L112):*
+
+- Generate 30-60 carefully chosen frames (NOT 200 unique AI frames)
+- Canvas transitions handle smooth interpolation between them
+- More frames at critical moments (lid opening, ingredient explosion)
+- Fewer frames during slow transitions (subtle glow, settling)
+
+The keyframes above follow it: frames 03–08 crowd the reveal; 01–02 and 09–12 are the settle. The
+same rule governs the score (the signature act gets the most scroll) and the film (the most seconds
+go where the drama is). The web budget below still caps the delivered set at 40-60 frames.
 
 ### Base Prompt Consistency Protocol
 
@@ -357,6 +381,17 @@ Count:           40-60 frames (sweet spot: smooth + fast loading)
 Total budget:    ≤5MB desktop + ≤2.5MB mobile
 Naming:          frame_0001.webp through frame_0060.webp
 ```
+
+★v6: `node engines/ledger.mjs encode --in <selected clip> --profile scroll-tied --out <dir>` makes
+the 15 fps WebP desktop + mobile sets from a selected clip. Two stills can become the source clip
+through Google Flow ("Frames to Video") or Seedance 2.5 image-to-video with `end_image_url` (set
+first = last for a seamless loop). Scroll-tied motion is never a `<video>` (Anti-Pattern #7).
+
+★v6 **Review the in-betweens before extraction.** An interpolation engine invents the frames
+between your keyframes. Sample the generated clip (a contact sheet of evenly spaced frames), match
+each sample to the keyframes it sits between, and approve or reject it in the ledger — framings or
+content that no keyframe contained, shipped unseen, is **Anti-Pattern #22 UNREVIEWED
+INTERPOLATION**.
 
 ### Test Protocol
 
@@ -406,15 +441,16 @@ For each artifact, write the CSS that makes it blend:
   max-width: 600px;
 }
 
-/* Gradient overlay — text readability over image */
+/* Gradient overlay — text readability over image
+   ★v6: the scrim is the section's own ground through its RGB mirror token, never a hard-coded hex */
 .hero-product-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to right,
-    rgba(10, 14, 20, 0.9) 0%,
-    rgba(10, 14, 20, 0.4) 50%,
+    rgb(var(--bg-rgb) / 0.9) 0%,
+    rgb(var(--bg-rgb) / 0.4) 50%,
     transparent 100%
   );
   pointer-events: none;
@@ -433,8 +469,14 @@ For each artifact, write the CSS that makes it blend:
 Before proceeding to Phase 6:
 
 ```
-□ artifact-assessment.json written with score + decision
+□ artifact-assessment.json present with score + decision (★v6 written at PACKAGE 3.9b)
 □ If GENERATE: all priority artifacts generated
+□ OG image generated (always — no score threshold)
+□ ★v6 Every candidate scored by a blind critic in situ; every selection carries a written reason
+□ ★v6 engines/ledger.mjs verify passes; only selected, unchanged candidates promoted — each with a .provenance.json
+□ ★v6 Clips described by their measured length and size (ffprobe), never the requested ones
+□ ★v6 R2+: no image sits dead — a living entrance and a slow life, stopped under reduced motion
+□ ★v6 Interpolated in-betweens sampled, matched to their keyframes and approved in the ledger (no Anti-Pattern #22)
 □ All artifacts tested in situ (not just reviewed in isolation)
 □ Every artifact has CSS integration written (artifact-css.css)
 □ Scroll frames: 10-frame prototype tested before full set
@@ -473,6 +515,18 @@ FAILURE: "Chrome can't be opened / Leonardo unavailable"
 FIX: Use Nano Banana Pro exclusively for all artifact generation.
      Document: "Leonardo workflow skipped — browser unavailable."
      Schedule Leonardo passes when Chrome access is restored.
+
+FAILURE: "Candidate 1 shipped because nobody chose" ★v6
+FIX: ledger promote refuses an unselected candidate. Blind critic → select with a
+     written reason → verify → promote. Never silently promote candidate 1.
+
+FAILURE: "The film is described as 10 s but plays 9.5 s" ★v6
+FIX: Measured, never inferred. Every candidate is ffprobed and hashed; describe a clip
+     by its measured length and size, never by the length that was requested.
+
+FAILURE: "An engine is missing and the build stalled" ★v6
+FIX: A missing engine never blocks a build. It exits 2 with its plan; take the named
+     fallback (video → HyperFrames → §19 flow field → poster) and record it.
 ```
 
 ---

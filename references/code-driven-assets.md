@@ -1,10 +1,17 @@
-# Code-Driven Assets — Iron Canvas v4.2
+# Code-Driven Assets — Iron Canvas v4.2 (+ ★v6 HyperFrames renderer)
 ## *Deterministic generation. No AI cost. No frame drift. Infinite resolution.*
 
 > **The fourth asset class.** v4 classified assets as scroll-tied / looping / static — all AI-generated.
 > v4.2 adds CODE-DRIVEN: assets defined in code, rendered deterministically. SVG, Remotion, Hyperframes.
 > **Position in pipeline:** Phase 5 GENERATE (alongside AI engines) + Phase 6 COMPOSE (integration)
 > **Primary agents:** Agent-D (Artifacts) owns generation, Agent-B (Motion) + Agent-C (UI) own integration
+>
+> **★v6 — HyperFrames is now a real renderer.** HeyGen's HyperFrames (Apache-2.0) renders plain
+> HTML + GSAP / three.js / CSS into MP4, MOV with alpha, WebM with alpha or PNG sequences — with a
+> determinism contract and `lint` / `check` / `snapshot` commands. It is the default film renderer
+> for PREMIERE (Phase 8) and for designed motion here; the v4.2 "Hyperframe" method (code-defined
+> frame sequences, Capability 3) is what it performs. **Remotion stays an adapter** for React-first
+> teams — it needs a company licence above 3 employees.
 
 ---
 
@@ -63,8 +70,8 @@ INTENSITY 0.7–1.0 (MISSION ceiling):
 ```
 
 ### Implementation libraries
-- **GSAP DrawSVGPlugin** — stroke draw-on (premium, requires GSAP license; CSS stroke-dashoffset is the free equivalent)
-- **GSAP MorphSVGPlugin** — true path morphing with point-matching (or `flubber` as free alternative)
+- **GSAP DrawSVGPlugin** — stroke draw-on (★v6 free since GSAP 3.13, with the whole GSAP toolset; CSS stroke-dashoffset is the zero-dependency equivalent)
+- **GSAP MorphSVGPlugin** — true path morphing with point-matching (★v6 free since GSAP 3.13; `flubber` remains an alternative)
 - **CSS `@keyframes` + `stroke-dashoffset`** — free self-drawing effect, works everywhere
 - **SMIL `<animate>`** — declarative, no JS, great for looping morphs (used in the showcase)
 - **`feTurbulence` / `feDisplacementMap`** — native SVG filters for organic motion, zero dependencies
@@ -95,6 +102,7 @@ INTENSITY 0.7–1.0 (MISSION ceiling):
 **What it is:** A React framework for making real video programmatically. You write components; Remotion renders them frame-by-frame to MP4/WebM/GIF via headless Chromium. Every frame is deterministic and driven by `useCurrentFrame()`.
 
 **Access:** `npm i remotion @remotion/cli` — runs locally or in CI, renders with `npx remotion render`
+**Licence ★v6:** free for individuals and teams of up to 3; **a company licence is required above 3 employees** — check before choosing it. HyperFrames (Apache-2.0, below) is the default renderer; Remotion is the adapter for React-first teams.
 **Agent owner:** Agent-D (composition authoring) + Agent-B (integration of rendered output)
 
 ### When Iron Canvas uses Remotion
@@ -115,10 +123,12 @@ GOOGLE FLOW (v4 — AI interpolation):
 REMOTION (v4.2 — code interpolation):
   ✓ Geometric, typographic, data-driven motion
   ✓ Exact brand shapes, precise timing, real numbers
-  ✓ Free, deterministic, re-renderable at any resolution/fps
+  ✓ Deterministic, re-renderable at any resolution/fps (★v6 free up to 3 employees; company licence above)
   ✗ Not for photorealistic organic imagery (use AI for that)
 
 RULE: Organic motion → Flow. Designed/data motion → Remotion.
+★v6: Designed/data motion → HyperFrames by default (Remotion when the team is React-first);
+     photoreal organic motion → Flow or Seedance 2.5.
 ```
 
 ### Remotion → scroll sequence pipeline (replaces v4 default for designed sequences)
@@ -134,6 +144,7 @@ RULE: Organic motion → Flow. Designed/data motion → Remotion.
 ```
 
 ### Remotion → OG video pipeline (extends v4 mandatory OG image)
+*(★v6: the same pipeline runs on HyperFrames by default — render the page's OG card timeline, seeked; still frame as og-image.jpg)*
 ```
 1. Author <OGCard/> — brand logo + tagline + animated accent (uses design tokens)
 2. Render: npx remotion render OGCard public/og-video.mp4 --codec=h264
@@ -161,6 +172,27 @@ RULE: Organic motion → Flow. Designed/data motion → Remotion.
 **What it is:** Iron Canvas's named technique for **code-defined, high-fidelity frame sequences** — the deterministic evolution of v4's Keyframe Interpolation. Instead of generating 2 AI stills and letting Flow guess the in-betweens (drift-prone), a Hyperframe sequence is defined parametrically in code and rendered to exact frames.
 
 **Agent owner:** Agent-B (parametric definition) + Agent-D (render + extraction)
+
+### ★v6 — the HyperFrames renderer
+
+The technique now has a real renderer: **HyperFrames** (HeyGen, Apache-2.0) takes plain HTML +
+GSAP / three.js / CSS and renders MP4, MOV with alpha, WebM with alpha or PNG sequences.
+
+```
+DETERMINISM CONTRACT (the render is frame-exact only if the page obeys it)
+  timelines   GSAP timelines are PAUSED and SEEKED to each frame's time — never played
+  no clock    no wall clock: Date.now, performance.now-driven loops, requestAnimationFrame, timers
+  seeded      every random choice seeded (mulberry32) — frame 30 is identical on every render
+  loaded      every font, image and model loaded before frame 0
+  locked      fps and size fixed up front
+COMMANDS      lint (the contract) · check (the composition) · snapshot (stills to review) · render
+```
+
+Because the Score Runtime's timelines are seekable (`show.seek(actId, p)`), the page's own score
+can be rendered as film: one timeline → the launch film, social cut-downs, README loops, the OG
+video (PREMIERE, Phase 8). Before render, review a 12-frame contact sheet "as a motion designer";
+after render, ffprobe it — a film is measured, never described. Rendered films go through the
+ledger (`engines/ledger.mjs`) like every generated asset.
 
 ### The lineage
 ```
@@ -240,6 +272,12 @@ The v4 taxonomy gains a fourth class. Agent-D classifies EVERY asset before inte
 
 When an asset can stay live (SVG), it should — zero payload beyond the markup, infinite resolution, fully editable.
 
+★v6 — the taxonomy now has seven classes: these four, plus **MESH** (a Blender GLB — Draco,
+budgeted by tier: II ≤ 150k tris / 1.5 MB, III ≤ 600k / 8 MB — lazy-loaded behind the DOM shell),
+**FILM** (Seedance 2.5 or the HyperFrames renderer — a 1080p + AAC brand-film encode, poster from
+40 % in, never autoplays with sound) and **CUE** (audio — off by default, behind a visible toggle).
+Code stays the first answer: an engine earns its place only by adding what code cannot.
+
 ---
 
 ## ENGINE REGISTRY — v4.2 ADDITIONS
@@ -249,9 +287,10 @@ Added to the Phase 3/5 engine registry (references/model-selection.md):
 | Engine | Type | Best For | Phase | Cost |
 |--------|------|----------|-------|------|
 | **Inline SVG + CSS/SMIL** ★v4.2 | Code → vector | Logos, morphs, patterns, icons | 3,5,6 | Free |
-| **GSAP DrawSVG/MorphSVG** ★v4.2 | Code → vector motion | Premium SVG choreography | 6 | License |
-| **Remotion** ★v4.2 | Code → video | Data motion graphics, OG video, designed sequences | 5 | Free |
+| **GSAP DrawSVG/MorphSVG** ★v4.2 | Code → vector motion | Premium SVG choreography | 6 | Free since GSAP 3.13 ★v6 |
+| **Remotion** ★v4.2 | Code → video | Data motion graphics, OG video, designed sequences (★v6 adapter) | 5 | Free ≤ 3 employees; company licence above ★v6 |
 | **Hyperframes (A/B/C)** ★v4.2 | Code → frames | Deterministic scroll sequences (non-photographic) | 5 | Free |
+| **HyperFrames renderer** ★v6 | HTML → video | The launch film, OG video, designed loops and frames | 5, 8 | Free (Apache-2.0) |
 
 These sit ALONGSIDE the AI engines (Nano Banana Pro, Whisk, Flow, Leonardo) — not replacing them. The Asset Classification gate routes each asset to AI or code-driven based on whether it's organic or designed.
 

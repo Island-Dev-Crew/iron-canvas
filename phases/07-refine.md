@@ -1,10 +1,19 @@
-# Phase 7: REFINE — Iterative Polish
+# Phase 7: REFINE — Iterative Polish (+ VERIFY Axes 6 and 7)
 
 > The refinement loop: LOOK → REACT → DESCRIBE → FIX → LOOK AGAIN
+>
+> ★v6 — *"Look. React. Describe. Fix. Look again. This loop runs until every pixel earns its place.
+> We review on mobile and desktop. We check spacing at 2am on a dim screen."*
 
 ## The Rule
 
 You are never done after one pass. Premium quality requires iteration. Look at the result, react honestly, describe what's wrong, fix it, look again. Repeat until you'd be proud to show it.
+
+★v6: minimum **2 complete passes** before verification, and the loop ends only when every pixel
+earns its place **and all 7 axes pass** — including Axis 6 (CD3 Treatment & Soul) and **Axis 7
+(Aliveness), which is never waived at any register**. The canonical scorecard is the 7-axis FINAL
+SIGN-OFF (SKILL.md §10); this file carries the loop and the operational halves of Axis 6 (the
+Design Quality Gate) and Axis 7 (the Aliveness Gate).
 
 ## The Refinement Loop
 
@@ -17,6 +26,8 @@ LOOK → REACT → DESCRIBE → FIX → LOOK AGAIN
 
 ### LOOK
 Screenshot the page. Full page desktop. Full page mobile. Each section individually. Look at it like a user seeing it for the first time.
+★v6 — and **record the first 5 seconds and a 15-second slow scroll**. Watch them like a user seeing
+it for the first time: a screenshot cannot show an arrival, a heartbeat, or a quiet chapter.
 
 ### REACT
 Gut reaction. What feels off? What catches your eye (good or bad)? Don't analyze yet — just react.
@@ -26,12 +37,28 @@ Now articulate: WHY does that thing feel off? Be specific:
 - "The hero text competes with the background — not enough contrast"
 - "Product cards feel static — missing hover lift effect"
 - "The scroll animation stutters at 40% progress — frame gap too large"
+- ★v6 "The pause act moves" · "Nothing breathes once the arrival ends" · "Two climaxes touch"
 
 ### FIX
 Apply the fix. One thing at a time.
 
 ### LOOK AGAIN
 Screenshot again. Did the fix work? Did it create new problems?
+→ REPEAT until every pixel earns its place and all 7 axes pass.
+
+### The Critic's Four Lenses ★v6
+
+Review as three critics at once — an **Awwwards judge**, a **principal engineer**, an
+**accessibility auditor** — *"Be honest. Sycophancy here is expensive."* — plus a fourth, a
+**creative director**, who asks the original questions of every recording and reads the score's
+director's notes:
+
+- *"Does the motion serve the story, or is it noise?"*
+- *"What would make someone say 'show me that again'?"*
+- *"Which section feels leftover?"*
+
+At R2–R4 the gauntlet's blind critic uses the same four lenses and scores Axis 7 from the
+recordings (`references/gauntlet-loop.md`).
 
 ## Quality Checklist (Per Site — Adapt to DNA)
 
@@ -48,7 +75,7 @@ Screenshot again. Did the fix work? Did it create new problems?
 - [ ] Color contrast passes WCAG AA (4.5:1 for body text)
 
 ### Interaction Quality
-- [ ] Hover/active/focus states on every interactive element
+- [ ] Hover/active/focus states on every interactive element (★v6 hand-feel — part of the aliveness floor)
 - [ ] Scroll animations fire smoothly (no mobile jank)
 - [ ] Touch targets ≥ 44×44px on mobile
 - [ ] No unexpected layout shifts during interaction
@@ -99,7 +126,7 @@ background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
 transform: scale(1.02);
 /* Use: */
 transform: scale(1.02) translateY(-4px);
-box-shadow: 0 12px 40px rgba(var(--brand-rgb), 0.2);
+box-shadow: 0 12px 40px rgb(var(--accent-rgb) / 0.2);   /* ★v6 RGB mirror token: a space-separated triplet */
 ```
 
 ### Problem: Mobile scroll is laggy
@@ -110,6 +137,14 @@ box-shadow: 0 12px 40px rgba(var(--brand-rgb), 0.2);
   .parallax { transform: none !important; }
 }
 ```
+★v6: keep one ambient layer and the heartbeat on mobile (a light ladder costs nothing) — the
+aliveness floor holds at 375 px. Mobile preserves ONE signature animation, never zero.
+
+### Problem: It's correct, but it feels dead ★v6
+**Fix:** Anti-Pattern #18 LIFELESS. Walk the floor: is there an ARRIVAL (one choreographed first
+≤ 1.5 s)? a HEARTBEAT (one perpetual low-amplitude element on co-prime periods)? HAND-FEEL (hover,
+press and focus on every control)? BREATH (air + one ambient layer)? a COMPOSED STILL? Restraint
+decides how much moves — never whether anything breathes.
 
 ## DESIGN QUALITY GATE — Anti-Slop Audit + CD3 Axis 6 (Treatment & Soul ★v5.1)
 
@@ -123,7 +158,7 @@ box-shadow: 0 12px 40px rgba(var(--brand-rgb), 0.2);
 ### Axis 6 — Treatment & Soul (a BLOCKING axis; full battery in SKILL.md §10 / references/claude-design-3.md)
 - [ ] **Register match** — output sits within the `treatment_register` cap (R0–R4) set at ORIENT, AND the register itself matches the TASK's ambition (not merely internally consistent)
 - [ ] **Soul** — a stranger can name the subject from the design alone; nothing reskins cleanly onto another brand
-- [ ] **Anti-slop** — trips zero items in the CD3 canon (references/anti-patterns.md #16 Slop Tells / #17 Register Mismatch) unless the DNA pinned one
+- [ ] **Anti-slop** — trips zero items in the CD3 canon (references/anti-patterns.md #16 Slop Tells / #17 Register Mismatch) unless the DNA pinned one — ★v6 including the named model defaults on the project's veto list (PRD §11): after the first render, name what reads as default (cream grounds, an italic accent word in every headline, "01 / 02 / 03" labels, monospace eyebrows, pill buttons, "→" on every link) and append it
 - [ ] **Copy carries** — labels/controls/errors read human; active voice; no system-speak
 - [ ] **Both themes** — if two ship, both are deliberate + legible (or single-theme is a stated choice)
 - [ ] **One unforgettable thing** — a single deliberate moment the page is built around
@@ -198,10 +233,55 @@ box-shadow: 0 12px 40px rgba(var(--brand-rgb), 0.2);
 
 ---
 
+## ALIVENESS GATE — VERIFY Axis 7 ★v6 (need 6/6 — never waived, at any register)
+
+> *"Kinetic Energy — Everything feels alive, intentional, moving."* Proven by recordings, not
+> adjectives. The amplitude follows the register; the presence does not. This gate sits beside the
+> Design Quality Gate: Axis 6 stops the over-produced (#17 Register Mismatch), Axis 7 stops the
+> under-produced (#18 LIFELESS). Under-producing fails as surely as over-producing.
+
+```
+□ ARRIVAL — a choreographed first ≤ 1.5 s, never everything at once
+            evidence: a video of the first 5 seconds
+□ HEARTBEAT — one perpetual low-amplitude element on co-prime periods; ≥ 1 animation running in
+            view at rest; paused off-screen   evidence: the 15-second slow scroll + a computed-style probe
+□ HAND-FEEL — 100% of interactive elements change on hover AND focus; press feels physical
+            evidence: hover/focus sweep screenshots or an automated state diff
+□ BREATH — air (≥ 20% of each viewport) + one ambient layer (grain / light ladder / breathing mesh)
+□ COMPOSED STILL — reduced motion rests on the designed final frame: every entrance target visible,
+            nothing blank, the kill switch leaves the page readable   evidence: a reduced-motion recording
+□ THE SCORE HELD — one signature, one clock, every act's emotion recognisable in its station screenshot
+            (scripts/ic-preflight.mjs PASS + templates/scroll-capture.spec.ts station screenshots)
+HARD FAIL (blocks ship): a page with nothing moving at rest · an entrance target that can stay
+  hidden · two scroll owners fighting in one viewport · reduced motion that still pins or scrubs
+```
+
+**Re-read, never waived.** A calm R0 tool is still a *living* one: at R0 the arrival is 600 ms and
+the heartbeat is one breathing dot — that passes; nothing passes nothing. Axis 2's felt questions
+are re-read at R0/R1 ("do state changes feel physical and calm?") rather than dropped.
+
+**On fail, route:**
+
+| Fail | Return To |
+|------|-----------|
+| Arrival / heartbeat missing | Agent-B — the score's load act; the heartbeat wrapper (`data-breath`) |
+| Hand-feel gaps | Agent-C — Sweep 1 hand-feel floor on every interactive element |
+| Composed still fails | Agent-B + Agent-A — the `ic-js` failsafe, reduced-mode settled states |
+| Score broke (two clocks, no signature) | Phase 3.9 — rewrite the score; re-run `scripts/ic-preflight.mjs` |
+
+Evidence protocol: `references/evidence-qa.md` · the floor: `references/motion-language.md` §2 and §17.
+
+---
+
 ## Phase 7 Completion Criteria
 
 - [ ] Full refinement loop completed (minimum 2 passes)
+- [ ] ★v6 The first 5 seconds and a 15-second slow scroll recorded and watched, desktop and mobile
 - [ ] All quality checklist items pass
+- [ ] Design Quality Gate passes — Axis 6 ≥ 5/6 with zero HARD FAILs
+- [ ] ★v6 The design contract holds — `node scripts/ic-contract.mjs --contract design-contract.json <build>` clean (Anti-Pattern #21 DEFAULTS AS DECISIONS)
+- [ ] ★v6 Aliveness Gate passes — Axis 7 6/6 with its evidence (never waived)
+- [ ] ★v6 No open flags — every risk note and every red test resolved or waived by the operator; "verified" is never narrated over a failing test (Anti-Pattern #20 FLAGGED BUT SHIPPED)
 - [ ] Desktop, tablet, and mobile verified with screenshots
 - [ ] Performance metrics within targets
 - [ ] Final screenshot captures saved for documentation

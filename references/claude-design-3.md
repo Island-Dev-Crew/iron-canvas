@@ -1,12 +1,17 @@
 # Claude Design 3 — The Treatment Doctrine
 
-> **The soul of Iron Canvas, made law.** Every other system in this repo answers
+> **The conscience of Iron Canvas, made law** — paired with **the voice** (SKILL.md §0.1 THE
+> VOICE: what the work must feel like — *"Kinetic Energy — Everything feels alive, intentional,
+> moving"*). ★v6: CD3 once called itself the soul, but its soul is grounding and truth, and it
+> carries no motion; the voice carries the feeling. Neither overrides the other: **CD3 decides how
+> much; the voice decides what it should feel like; the aliveness floor guarantees never
+> lifeless.** Every other system in this repo answers
 > *how much* (DIS intensity) or *how deep* (Depth Language) or *how the brand feels*
 > (Brand Personality Matrix). Claude Design 3 answers the two questions that sit
 > *above* all of them and govern every phase: **what treatment does this actually
-> call for, and is it grounded in something real?** Read this before Phase 0. It is
-> the ceiling and the conscience — the DIS decides magnitude, CD3 decides register
-> and truth.
+> call for, and is it grounded in something real?** Read this before Phase 0, right after
+> SKILL.md §0.1. It is the ceiling and the conscience — the DIS decides magnitude, CD3 decides
+> register and truth.
 >
 > **Position in pipeline:** governs ORIENT(0) register selection → sharpens STUDY(1)
 > + FEEL(2) grounding → sets the DIS *reading* at FORGE(4) → adds an axis at VERIFY(7).
@@ -41,10 +46,32 @@ placed on this range at ORIENT, from the task's ambition (not the brand's loudne
 > can need an R0 dashboard or an R2 editorial page. **Register = the task's ambition;
 > BPM = the brand's voice; DIS = the magnitude of effect.** All three compose.
 
-**When unsure, drop a register.** A well-composed R1 page is never wrong; an
-over-produced R3 page on an R0 task is design malpractice. Match complexity to the
-vision: maximal directions need elaborate execution; restrained directions need
-*precision* in spacing, type, and detail. Elegance is executing the chosen register well.
+**When unsure, drop a register — never below the aliveness floor. Restraint is not
+stillness.** A well-composed R1 page is never wrong; an over-produced R3 page on an R0 task
+is design malpractice; ★v6 a crafted R0 dashboard that breathes is a win, and a dead one is
+Anti-Pattern #18 LIFELESS. Match complexity to the vision: maximal directions need elaborate
+execution; restrained directions need *precision* in spacing, type, and detail. Elegance is
+executing the chosen register well.
+
+**★v6 — the aliveness floor sits under every register.** The register caps the *amount* of
+treatment; it never removes the five things every surface ships, R0 to R4: **ARRIVAL** (one
+designed first moment, ≤ 1.5 s — never everything at once), **HEARTBEAT** (one perpetual,
+low-amplitude element on co-prime periods, so it never visibly loops), **HAND-FEEL** (every
+interactive element answers hover, press and focus), **BREATH** (air plus one ambient layer —
+grain felt not seen, a light ladder, a mesh that breathes) and a **COMPOSED STILL** (reduced
+motion rests on the designed final frame — never blank). At R0 that is a 600 ms arrival and one
+breathing status dot; at R4 the whole world satisfies it. "Restraint is the deliverable" at R0
+means restraint of *amount*, never of *life*. Full floor: `references/motion-language.md` §2.
+
+### The counterweight — Anti-Pattern #18 LIFELESS ★v6
+
+LAW 1 used to fail only one way: over-producing (#17 Register Mismatch). Under-producing had no
+failure mode at all, so the default drift was downward — register caps, SOLO ceilings and "when
+unsure, drop a register" applied to the floor instead of the ceiling, until output was precise
+and dead. **#18 LIFELESS** is the counterweight: a page — or a dashboard, or a tool — that is
+correct and dead (nothing arrives; nothing breathes at rest; buttons change colour and nothing
+else; reduced motion shows a blank) fails as surely as an over-produced one. VERIFY Axis 7
+(Aliveness) proves the floor with recordings, at every register.
 
 ---
 
@@ -103,6 +130,15 @@ These hold at **every** register, R0 through R4 — they are the floor of craft:
    encode state in form (pill/chip/severity stripe) so what needs attention reads at a
    glance; semantic color (good/warn/critical) is separate from the accent hue. Charts
    get the same care as type. (Governs the R0/R1 registers and the Dashboard surface.)
+7. **★v6 — A design plan before code** (the Claude design method). Before the first component is
+   built, write the plan: **4–6 named colours with roles** (ground, surface, text, muted, accent,
+   signal — each named for its job, not its hue), **1–2 type families** with their roles, and a
+   **deliberate scale**. Review the plan for genericness *before* building — a default caught in
+   the plan costs a line; caught in the build it costs a rebuild. The plan goes into PRD Section 1
+   and is made machine-readable as `design-contract.json` (SKILL.md 3.9d, template:
+   `templates/design-contract.json`) — every slot a decision from the DNA, never a template
+   pre-fill — which `node scripts/ic-contract.mjs` checks against every build, in CI. Pre-fills
+   shipped as if chosen are Anti-Pattern #21 DEFAULTS AS DECISIONS.
 
 ---
 
@@ -123,6 +159,23 @@ pinned, **never spend the freedom on a default.** The full veto list lives in
 - library defaults (shadcn/Tailwind base) shipped as if they were a finished design
 
 A design that trips the canon with nothing pinned to justify it **fails VERIFY**.
+
+### ★v6 — the registry grows every run
+
+A general "avoid the AI look" only swaps one default for another; **named negatives work.** The
+canon above is a floor, not the whole list. Current model defaults to question on sight — each
+needs a reason from the DNA (with one they are choices; without one they are defaults):
+
+- cream or off-white grounds
+- an italic accent word in every headline
+- "01 / 02 / 03" section labels
+- monospace eyebrow labels
+- pill buttons
+- "→" appended to every link
+
+**After the first render, the Art Director names what it saw that reads as default and appends it
+to the project's veto list** (PRD Section 11 — "Named model defaults seen in the first render").
+The registry therefore grows every run; the next run starts with it.
 
 ---
 
@@ -147,9 +200,13 @@ CD3 governs; it does not replace. The wiring:
   materials/vocabulary as design inputs; the BPM still sets brand voice.
 - **FORGE (Phase 4) + DIS:** the DIS reads its 9 systems *within* the register ceiling.
   At R0 the systems sit near 0 **on purpose** — that is executed restraint, and Agent-A/C
-  deliver information-design polish, not a stripped maximalism.
+  deliver information-design polish, not a stripped maximalism. ★v6 The aliveness floor still
+  ships at R0 (a 600 ms arrival, one breathing dot, hand-feel on every control): a dial at 0.0
+  means "this system is off", never "this page is dead".
 - **VERIFY (Phase 7):** CD3 adds **Axis 6 — Treatment & Soul** (below). It does not
   weaken the Awwwards axes; it stops a beautiful-but-off-register or soulless output.
+  ★v6 Its partner is **Axis 7 — Aliveness** (need 6/6, never waived at any register): Axis 6
+  stops the over-produced, Axis 7 stops the lifeless.
 
 ### VERIFY · Axis 6 — Treatment & Soul (need ≥ 5/6; any hard-fail blocks)
 
@@ -166,6 +223,9 @@ HARD FAIL (any one blocks ship): lorem in a shipped surface · a default font st
 
 ---
 
-**No authority without evidence.** CD3 is enforced at VERIFY with captured proof
-(screenshots, the register on record, the anti-slop pass) — never asserted. The
-treatment is a decision on the record, not a vibe. Roll Tide.
+**No authority without evidence — and ★v6 no evidence without intent.** CD3 is enforced at
+VERIFY with captured proof (screenshots, the register on record, the anti-slop pass) — never
+asserted. The treatment is a decision on the record, not a vibe. And the proof must answer an
+intent that was written down first: the lens, the reference vibe and every act's emotion are
+required *inputs* — sensory words direct the work; evidence proves it. *Adjectives direct.
+Evidence proves.* Roll Tide.

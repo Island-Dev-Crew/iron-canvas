@@ -500,6 +500,9 @@ Build continues.
 ```
 
 **Example: Agent-B needs GSAP SplitText but no Club license (Tier 3, Class B)**
+> ★v6 note: historical premise — the whole GSAP toolset, SplitText included, has been free since
+> GSAP 3.13, so this particular blocker no longer occurs. The reroute pattern below still applies
+> to any paid or unavailable dependency (a font without a licence, a missing engine key).
 ```
 Attempt 1: Import SplitText → license error
 Attempt 2: Check if project has GSAP Club → no
