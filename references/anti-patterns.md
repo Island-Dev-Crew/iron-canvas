@@ -1,8 +1,15 @@
-# Anti-Patterns — What Iron Canvas Must NEVER Do
+# Anti-Patterns & Design Quality Gates — What Iron Canvas Must NEVER Do
 
 > These are the mistakes that turn premium enhancement into generic destruction. Memorize them.
+> Section I covers workflow anti-patterns (process failures).
+> Section II covers design-level AI tells (output failures).
+> Both sections are mandatory reading for ALL agents at EVERY phase start.
 
-## The 17 Anti-Patterns (#1–11 v4 core · #12–15 v4.2/v5.0 · #16–17 CD3 v5.1)
+---
+
+## SECTION I: WORKFLOW ANTI-PATTERNS
+
+### The 22 Anti-Patterns (#1–11 v4 core · #12–15 v4.2/v5.0 · #16–17 CD3 v5.1 · #18–22 v6)
 
 ### 1. Cookie-Cutter
 **What it looks like:** All sites end up with the same palette, fonts, and layout.
@@ -134,5 +141,247 @@ sound, transitions).
 ### 17. Register Mismatch ★v5.1 — wrong treatment for the task
 **Looks like:** a maximal R3 spectacle on an internal admin tool; a scroll-jacked hero on a status dashboard; OR the inverse — a flat, unconsidered R0 treatment on a flagship brand page that needed a point of view. Effort aimed at the wrong altitude.
 **Why:** treating "how much design" as a fixed setting instead of calibrating the treatment to the task's ambition (CD3 Law 1).
-**Prevent:** set `treatment_register` (R0–R4) at ORIENT from the task, not the brand's loudness; the register caps the DIS ceiling. When unsure, drop a register — restraint executed well beats spectacle misapplied.
+**Prevent:** set `treatment_register` (R0–R4) at ORIENT from the task, not the brand's loudness; the register caps the DIS ceiling. When unsure, drop a register — restraint executed well beats spectacle misapplied — **never below the aliveness floor (#18).**
 **Red flag:** DIS reading exceeds the register cap; an R0 task carrying gradient orbs and kinetic type; a flagship shipped with library defaults and no unforgettable moment.
+
+## v6 ADDITIONS — The Living Canvas (Anti-Patterns #18–22)
+
+### 18. Lifeless ★v6 — correct and dead
+**Looks like:** nothing arrives, it is simply there; nothing breathes at rest; buttons change colour and nothing else; flat grounds with no air and no light; reduced motion shows a blank. FEEL.md named it on day one: *"Overly minimalist (empty without purpose)"* and *"'We built this in a weekend' energy."*
+**Why:** restraint misread as stillness — register caps, SOLO ceilings and "drop a register" applied to the floor instead of the ceiling; gates that measure discipline (no jank, no errors) but never life.
+**Prevent:** the aliveness floor at every register — ARRIVAL, HEARTBEAT, HAND-FEEL, BREATH, COMPOSED STILL (SKILL.md §0.1; `references/motion-language.md` §2) — proven by VERIFY Axis 7 with recordings. The counterweight to #17: under-producing fails as surely as over-producing.
+**Red flag:** zero running animations in view one second after load; a control whose hover and focus styles equal its rest style; a reduced-motion screenshot with empty sections.
+
+### 19. Two Clocks ★v6 — two things own the scroll
+**Looks like:** a pinned GSAP act and a WebGL camera reading `window.scrollY`; a parallax library fighting Lenis; `seek` landing in the wrong place; reduced motion still scrubbing; the film and the page drifting apart.
+**Why:** motion coordinated through prose, each agent wiring its own listener.
+**Prevent:** one clock — only the score's `scrub` acts own scroll; Lenis only smooths native scroll; WebGL and every DOM chapter subscribe to the runtime's progress; programmatic jumps go through `lenis.scrollTo`. `scripts/ic-preflight.mjs` rejects a second owner.
+**Red flag:** any `scroll` event listener outside the runtime; `pin: true` on an act whose trigger is not `scrub`.
+
+### 20. Flagged but Shipped ★v6 — a known risk treated as FYI
+**Looks like:** an agent notes "this emblem resembles a licensed character" or "the display face fell back to a comic font" — and both ship; a handoff that says "verified" while a P0 test is still red.
+**Why:** risk notes and red tests are read as commentary instead of blockers; narration substitutes for evidence.
+**Prevent:** every flagged item is resolved or explicitly waived by the operator before HANDOFF; a red P0 test blocks the word "verified" anywhere in the handoff. Adjectives direct; evidence proves.
+**Red flag:** a risk list in the transcript that never reaches the handoff; "it all works" beside a failing test.
+
+### 21. Defaults as Decisions ★v6 — template pre-fills shipped as choices
+**Looks like:** the PRD template's blurred shadow ladder, translucent hairlines, radius ladder, four easing curves or a generic font fallback appear in the build because they were pre-filled, not because the DNA chose them.
+**Why:** a filled-in template reads like a decision; nobody decides what is already written down.
+**Prevent:** the design contract (SKILL.md §5 3.9d) — every slot is a decision taken from the DNA; `scripts/ic-contract.mjs` checks the build against it in CI. Taste enforced, not advisory.
+**Red flag:** the contract and the template are identical; a font stack whose only fallback is the generic family when the contract names a floor.
+
+### 22. Unreviewed Interpolation ★v6 — generated in-betweens shipped unseen
+**Looks like:** keyframe interpolation or image-to-video adds framings, zooms or content no keyframe contained ("no zoom" ignored), and the clip goes straight into a scroll sequence or a film.
+**Why:** the keyframes were reviewed; the frames between them were assumed.
+**Prevent:** after any interpolation, sample frames and match them to the keyframes; flag shots that match none for approve-or-reject in the ledger (`select` needs a written reason). In film work the board locks only after three probe frames pass.
+**Red flag:** a 150-frame sequence promoted with no contact sheet; a clip described by its requested length instead of its measured one.
+
+---
+
+## SECTION II: DESIGN SLOP — AI TELLS TO ELIMINATE
+
+> These are the CSS patterns, content patterns, and component patterns that make
+> AI-generated output look generic ("slop"). Even when the Iron Canvas pipeline
+> is followed perfectly, agents can still produce output with these tells.
+> Every agent MUST scan their output against this list before committing.
+> One-line entries ending in "→ see …" are rules the Phase 7 Design Quality Gate (phases/07-refine.md)
+> or the CD3 canon (#16 above · references/claude-design-3.md) already states with the same fix —
+> kept here as cross-references, never as a second copy.
+
+### Visual & CSS Tells
+
+```
+❌ Pure #000000 black anywhere
+   → Use off-black (#0a0a0a, #111111), Zinc-950, or charcoal
+   → True black creates harsh contrast and screams "default"
+
+❌ Neon / outer glow box-shadows
+   → Use inner borders or shadows tinted to the background hue
+   → Example: box-shadow: 0 8px 24px oklch(from var(--color-accent) l c h / 0.3)
+
+❌ Default Tailwind shadows (shadow-md, shadow-lg, shadow-xl)
+   → Always customize. Tint shadows to background. Use diffused, wide-spread shadows
+   → Example: shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]
+
+❌ Oversaturated accent colors (saturation > 80%) → see phases/07-refine.md (Color & Surface Audit)
+
+❌ Excessive gradient text on large headers
+   → Use gradient text ONLY as a focused accent, never on primary display text
+
+❌ h-screen for full-height sections
+   → ALWAYS use min-h-[100dvh] to prevent catastrophic iOS Safari viewport jumping
+
+❌ Complex flexbox percentage math: w-[calc(33%-1rem)]
+   → ALWAYS use CSS Grid: grid grid-cols-1 md:grid-cols-3 gap-6
+
+❌ Emojis in code, markup, text content, headings, or alt text
+   → Replace with high-quality icons (Phosphor, Radix) or clean SVG primitives
+
+❌ Arbitrary z-index values (z-50, z-[9999])
+   → Reserve z-indexes strictly for systemic layers: nav, modals, overlays, tooltips
+
+❌ Animating top, left, width, or height
+   → Animate exclusively via transform and opacity for GPU acceleration
+
+❌ backdrop-blur on scrolling containers
+   → Apply blur ONLY to fixed/sticky elements (nav, overlays). Scrolling blur = GPU meltdown
+
+❌ Grain/noise overlays on scrolling containers → see phases/07-refine.md (Color & Surface Audit)
+```
+
+### Typography Tells
+
+```
+❌ Inter font for premium or creative contexts (default, unless the Brand Personality Matrix / register justifies it)
+   → Use: Geist, Outfit, Cabinet Grotesk, Satoshi, Clash Display
+   → Inter is acceptable ONLY for functional/data UIs where the BPM scores it
+   → NOTE: This is a guardrail, not an absolute ban. If Phase 1 DNA extraction
+     finds Inter already in use and the brand identity requires it, preserve it.
+
+❌ Oversized H1s that just "scream"
+   → Control hierarchy with weight and color, not just massive scale
+   → Use tracking-tighter and font-weight contrast, not font-size alone
+
+❌ System fonts as the only choice (Arial, Helvetica, -apple-system alone) → see phases/07-refine.md (Typography Audit) + CD3 HARD FAIL (a default font stack with no reason)
+
+❌ Orphan words in headings (single word on last line) → see phases/07-refine.md (Typography Audit)
+
+❌ Only Regular (400) and Bold (700) weights → see phases/07-refine.md (Typography Audit)
+
+❌ All-caps subheaders everywhere
+   → Mix lowercase italics, sentence case, or small-caps for variety
+
+❌ Serif fonts in dashboard/software UIs
+   → Serif in dashboards is ALWAYS wrong. Use sans-serif + monospace pairing
+   → NOTE: Serif is fine for editorial/creative when BPM avant-garde ≥ 6
+```
+
+### Layout Tells
+
+```
+❌ Centered Hero when BPM Bold ≥ 5 (default, unless the Brand Personality Matrix / register justifies it)
+   → Default to split screen (50/50), left-aligned content, or asymmetric whitespace
+   → NOTE: Centered IS acceptable for brands with Bold < 5 (refined/conservative)
+
+❌ 3-column equal card feature rows (default, unless the Brand Personality Matrix / register justifies it)
+   → Use 2-column zig-zag, asymmetric grid, masonry, or horizontal scroll
+   → The "three equal cards horizontally" is the #1 AI layout fingerprint
+
+❌ Cards of equal height forced by flexbox when content varies
+   → Allow variable heights or use masonry when content length differs
+
+❌ Uniform border-radius on everything
+   → Vary: tighter on inner elements, softer on containers
+
+❌ Symmetrical vertical padding everywhere → see phases/07-refine.md (Layout Audit)
+
+❌ No overlap or depth at all
+   → Use negative margins to create layering when appropriate
+
+❌ Buttons not bottom-aligned in card groups
+   → Pin CTAs to bottom of cards so they form a clean horizontal line
+
+❌ Edge-to-edge layouts with no max-width → see phases/07-refine.md (Layout Audit)
+```
+
+### Content Tells (The "Jane Doe" Effect)
+
+```
+❌ Generic names: "John Doe", "Jane Smith" → see phases/07-refine.md (Content Audit)
+
+❌ Startup slop names: "Acme", "Nexus", "SmartFlow", "TechCorp"
+   → Invent premium, contextual brand names
+
+❌ Fake round numbers: 99.99%, 50%, $100.00, 1234567
+   → Use organic, messy data: 47.2%, $99.00
+
+❌ AI copywriting clichés
+   → BANNED: "Elevate", "Seamless", "Unleash", "Next-Gen", "Game-changer",
+     "Delve", "Tapestry", "In the world of...", "Revolutionary"
+   → Write plain, specific language. Concrete verbs.
+
+❌ Lorem Ipsum anywhere → see phases/07-refine.md (Content Audit) + CD3 LAW 2 / HARD FAIL (never lorem)
+
+❌ Broken Unsplash links
+   → Use: https://picsum.photos/seed/{contextual_name}/800/600
+   → Or: SVG UI Avatars for placeholder avatars
+
+❌ Same avatar image for multiple users → see phases/07-refine.md (Content Audit)
+
+❌ All blog post dates identical → see phases/07-refine.md (Content Audit)
+
+❌ "Oops!" error messages → see phases/07-refine.md (Content Audit) + CD3 LAW 2 (errors say what failed and how to fix it)
+
+❌ Exclamation marks in success messages
+   → Be confident, not loud
+
+❌ Title Case On Every Header
+   → Use sentence case instead
+```
+
+### Component Tells
+
+```
+❌ Generic card look (border + shadow + white bg) as default
+   → Cards exist ONLY when elevation communicates hierarchy
+   → For high-density: replace with border-t, divide-y, or negative space
+
+❌ Generic circular spinners for loading → see phases/07-refine.md (Component Audit)
+
+❌ Always one filled button + one ghost button
+   → Add text links or tertiary styles to reduce visual noise
+
+❌ Accordion FAQ sections as default
+   → Try side-by-side list, searchable help, or progressive disclosure
+
+❌ 3-card carousel testimonials with dots
+   → Use masonry wall, embedded social posts, or single rotating quote
+
+❌ Modals for everything
+   → Use inline editing, slide-over panels, or expandable sections for simple actions
+
+❌ Avatar circles exclusively
+   → Try squircles or rounded squares for differentiation
+
+❌ shadcn/ui in its generic default state → see phases/07-refine.md (Component Audit) + #16 Slop Tells
+
+❌ Standard Lucide/Feather icons exclusively
+   → Use Phosphor, Heroicons, or custom sets. Standardize stroke width globally
+```
+
+### External Resource Tells
+
+```
+❌ Import hallucinations — importing packages not in package.json
+   → ALWAYS check package.json before importing. Output install command if missing
+
+❌ Missing favicon → see phases/07-refine.md (Code Quality Audit)
+
+❌ Missing meta tags → see phases/07-refine.md (Code Quality Audit)
+
+❌ Commented-out dead code → see phases/07-refine.md (Code Quality Audit)
+
+❌ Div soup → see phases/07-refine.md (Code Quality Audit)
+
+❌ Hardcoded pixel widths for layout → see phases/07-refine.md (Code Quality Audit)
+```
+
+### Red Flags for Design Slop
+
+```
+🚩 The output could have been generated by any AI without reading the DNA Profile
+🚩 You used Inter/Arial/Helvetica without the DNA Profile specifying it
+🚩 You wrote "Lorem ipsum" or "Acme Corp" anywhere
+🚩 All your card shadows are default Tailwind values
+🚩 Your Hero section is centered text over a dark image — unless the Brand Personality Matrix / register justifies it
+🚩 You have 3 equal cards in a row as a "features" section — unless the Brand Personality Matrix / register justifies it
+🚩 Every number in the UI is a round, fake value
+🚩 The loading state is a generic circular spinner
+🚩 You used h-screen instead of min-h-[100dvh]
+🚩 You imported a library without checking package.json
+```
+
+---
+
+*Iron Canvas v4.2 — references/anti-patterns.md*
+*Design slop rules derived from taste-skill analysis, adapted to Iron Canvas's DNA-first philosophy*

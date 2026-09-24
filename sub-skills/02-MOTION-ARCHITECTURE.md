@@ -13,6 +13,9 @@ protocol: 2 of 4
 requires: design_brief.json (from Protocol 1)
 ---
 
+> **Archival — superseded.** Kept for history. The live doctrine is SKILL.md v6 (§7b Choreography)
+> and `references/motion-language.md`. Do not execute this file.
+
 # IRON CANVAS — PROTOCOL 2: MOTION ARCHITECTURE
 ### *Animation System Design & Scene-by-Scene Choreography Blueprint*
 
@@ -235,7 +238,6 @@ Document for every major section:
 
 ## GATE 2 — ARCHITECTURE COHERENCE CHECK
 
-- [ ] All 7 animation categories addressed (A-G) or marked N/A? ✓/✗
 - [ ] Tech stack declared with no conflicts? ✓/✗
 - [ ] Reduce-motion fallback planned? ✓/✗
 - [ ] Performance budget defined? ✓/✗

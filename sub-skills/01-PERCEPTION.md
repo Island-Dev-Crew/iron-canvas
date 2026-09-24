@@ -12,6 +12,9 @@ parent_skill: iron-canvas-master
 protocol: 1 of 4
 ---
 
+> **Archival — superseded.** Kept for history. The live doctrine is SKILL.md v6 (§7b Choreography)
+> and `references/motion-language.md`. Do not execute this file.
+
 # IRON CANVAS — PROTOCOL 1: PERCEPTION PROTOCOL
 ### *Deep Design DNA Extraction & Intent Mapping*
 

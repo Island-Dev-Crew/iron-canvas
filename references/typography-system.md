@@ -7,6 +7,23 @@
 
 ---
 
+## STEP 0: RIGHTS GATE
+
+> Every face named in this file is a *candidate*, never a license — many are commercial.
+
+```
+RULE:   production needs license certainty 10/10 — the foundry's own license text, read at
+        license_url, naming THIS use (commercial web, self-hosting, subsetting). Anything less →
+        rejected for production; it may still compete as a specimen in Step 2B.
+        Trials are specimen-only; a font directory or blog is discovery, never a license.
+RECORD: one lite FontRecord per approved face → feel-profile.json → typography.font_records[]:
+        { "family", "foundry", "version", "license_url",
+          "permissions": { "commercial_web", "self_host", "subsetting" } }   ← booleans
+        Agent-A loads ONLY faces with an approved record. A false permission blocks that use.
+```
+
+---
+
 ## STEP 1: TYPE PERSONALITY CLASSIFICATION
 
 After running the Brand Personality Matrix (Phase 2), classify type personality:
@@ -31,7 +48,7 @@ Avant-garde 3-6 + Bold 3-6    →  REFINED
   Energy: Quiet confidence, elegant spacing, premium restraint
 
 Avant-garde 1-4 + Bold 1-4    →  FUNCTIONAL
-  Display fonts: Inter, Lato, Source Sans 3, IBM Plex Sans
+  Display fonts: Inter, Lato, Source Sans 3, IBM Plex Sans   ← Inter only with a stated reason (CD3 anti-slop canon)
   Energy: Clarity above all, 16px+ body, high x-height
 ```
 
@@ -55,17 +72,36 @@ ROLE 2: BODY / READING (p, li, blockquote)
 
 ROLE 3: ACCENT / MONO (labels, captions, code, nav)
   Purpose: Creates contrast and system feel. Often a geometric sans or mono.
-  Examples: DM Mono, JetBrains Mono (for data/code), Space Grotesk (labels)
+  Examples: DM Mono, JetBrains Mono (for data/code), Space Grotesk (labels)   ← Space Grotesk only with a stated reason (CD3 anti-slop canon)
   Size: 0.75-0.9rem, tight tracking (0.05-0.1em), all-caps for small labels
 ```
 
 **Pairing examples by personality:**
 ```
 EXPRESSIVE:   Clash Display + Satoshi + DM Mono
-EDITORIAL:    GT Alpina + GT America + Space Grotesk
+EDITORIAL:    GT Alpina + GT America + Space Grotesk   ← Space Grotesk only with a stated reason (CD3 anti-slop canon)
 COMMANDING:   ABC Monument Grotesk + same font lighter weight + IBM Plex Mono
 REFINED:      Cormorant Garamond + Jost + Cormorant (italic for accent)
-FUNCTIONAL:   Inter Variable + Inter + JetBrains Mono
+FUNCTIONAL:   Inter Variable + Inter + JetBrains Mono   ← Inter only with a stated reason (CD3 anti-slop canon)
+```
+
+---
+
+## STEP 2B: SPECIMEN TOURNAMENT
+
+> A lookup table picks a category; real copy picks the face. Numerals, long headings and
+> acronyms are where fonts fail — so test there, never on a pangram.
+
+```
+CANDIDATES: 2–3 pairings from Step 2, each rights-clearable per Step 0
+RENDER each in the page's real CSS with the project's REAL strings:
+  hero thesis · the longest heading · a 65ch paragraph · numerals, dates, percentages
+  (tabular AND proportional) · acronyms and proper nouns · buttons, labels, nav · italics
+AT:     desktop (1440px) AND mobile (375px) — screenshot both; the screenshot IS the specimen
+JUDGE:  where does each face fail on THIS copy? (a ragged or widowed long heading, jittering
+        numerals, shouting acronyms, body too light or too heavy at 65ch, labels that blur on mobile)
+WINNER: fails least → clears Step 0 → gets its FontRecord. State the reason in one line
+        (why this face, for this subject) — CD3's anti-slop canon requires it for any "safe" face.
 ```
 
 ---
@@ -159,7 +195,8 @@ The feel profile output of Phase 2 must include:
     "display_entry_animation": "char-stagger | word-fade | block-fade | none",
     "heading_tracking": "-0.03em",
     "body_line_height": "1.7",
-    "font_source": "self-hosted | google | variable"
+    "font_source": "self-hosted | google | variable",
+    "font_records": ["one FontRecord per approved face — Step 0"]
   }
 }
 ```

@@ -38,7 +38,7 @@ Design all 5 before calling a component done.
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s power1.inOut, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.45, 0, 0.55, 1), box-shadow 0.2s ease;
   box-shadow: 0 2px 8px oklch(from var(--color-accent) l c h / 0.3);
 
   /* Hover — GSAP magnetic (Tier 2+) or CSS lift (Tier 1) */
@@ -185,7 +185,7 @@ form.addEventListener('submit', async (e) => {
     background: var(--color-accent);
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 0.3s power1.inOut;
+    transition: transform 0.3s cubic-bezier(0.45, 0, 0.55, 1);
   }
 
   &:hover {
@@ -353,5 +353,232 @@ document.querySelectorAll('.card-3d').forEach(card => {
 
 ---
 
+## HIGH-END COMPONENT PATTERNS (v4.2)
+
+### Double-Bezel ("Doppelrand") Card Architecture
+
+Premium cards that look like machined hardware — a glass plate sitting in an aluminum tray.
+Use when BPM luxury ≥ 7.
+
+```css
+/* Outer Shell */
+.card-double-bezel {
+  background: oklch(from var(--color-surface) calc(l - 0.03) c h);
+  border: 1px solid oklch(from var(--color-text) l c h / 0.05);
+  padding: 6px; /* p-1.5 */
+  border-radius: 2rem;
+}
+
+/* Inner Core */
+.card-double-bezel__inner {
+  background: var(--color-surface);
+  border-radius: calc(2rem - 0.375rem); /* concentric curve */
+  padding: var(--space-8);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+```
+
+### Button-in-Button Trailing Icon
+
+Arrow icons nested in their own wrapper — never naked next to text.
+
+```css
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6);
+  border-radius: 9999px; /* full pill */
+}
+
+.btn-with-icon__arrow {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: oklch(from var(--color-text) l c h / 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.btn-with-icon:hover .btn-with-icon__arrow {
+  transform: translate(2px, -1px) scale(1.05);
+}
+```
+
+### Liquid Glass Refraction Panel
+
+True glassmorphism with simulated edge refraction.
+
+```css
+.glass-panel {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: oklch(from var(--color-surface) l c h / 0.7);
+  border: 1px solid oklch(from var(--color-text) l c h / 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),   /* top edge refraction */
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),        /* bottom edge */
+    0 20px 40px -15px rgba(0, 0, 0, 0.08);      /* ambient shadow */
+  border-radius: 1.5rem;
+}
+```
+
+### Fluid Island Navigation
+
+Floating glass pill nav with hamburger morph and staggered reveal.
+
+```css
+/* Closed state — floating pill */
+.nav-island {
+  position: fixed;
+  top: 1.5rem; /* mt-6 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  border-radius: 9999px;
+  backdrop-filter: blur(24px);
+  background: oklch(from var(--color-surface) l c h / 0.85);
+  border: 1px solid oklch(from var(--color-text) l c h / 0.08);
+  padding: var(--space-2) var(--space-4);
+  z-index: 100;
+  transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  /* ★v6 note: `all` here animates width, height and top — layout properties that GATE 1 forbids.
+     In production morph the pill with FLIP (measure → transform) or a same-document View
+     Transition, and transition only transform, opacity and border-radius. */
+}
+
+/* Expanded overlay */
+.nav-island.expanded {
+  width: 100vw;
+  height: 100dvh;
+  top: 0;
+  border-radius: 0;
+  backdrop-filter: blur(48px);
+  background: oklch(from var(--color-surface) l c h / 0.9);
+}
+```
+
+```javascript
+/* Hamburger morph to X */
+const hamburgerMorph = gsap.timeline({ paused: true });
+hamburgerMorph
+  .to('.hamburger-line-1', { y: 6, rotation: 45, duration: 0.3, ease: 'power2.inOut' })
+  .to('.hamburger-line-2', { opacity: 0, duration: 0.15 }, '<')
+  .to('.hamburger-line-3', { y: -6, rotation: -45, duration: 0.3, ease: 'power2.inOut' }, '<');
+
+/* Staggered nav link reveal */
+const navReveal = gsap.timeline({ paused: true });
+document.querySelectorAll('.nav-island-link').forEach((link, i) => {
+  navReveal.fromTo(link,
+    { y: 48, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' },
+    i * 0.05 // stagger
+  );
+});
+```
+
+### Eyebrow Tags (Section Preheaders)
+
+```css
+.eyebrow {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.625rem; /* text-[10px] */
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  background: oklch(from var(--color-accent) l c h / 0.1);
+  color: var(--color-accent);
+}
+```
+
+---
+
+## CREATIVE ARSENAL — NAMED PATTERNS (v4.2)
+
+> Agents can reference these by name during Phase 5/6 when selecting interaction
+> patterns. Each pattern has a recommended motion tier minimum.
+> **Min Register** (★v6) is the lowest CD3 Treatment Register the pattern suits — R0 Utilitarian ·
+> R1 Functional · R2 Editorial · R3 Maximalist · R4 Immersive (`references/claude-design-3.md`).
+> Both minimums must hold: the register caps the treatment, the tier caps the motion.
+
+### Navigation & Menus
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Mac OS Dock Magnification | Nav icons scale fluidly on hover proximity | Tier 3 | R2 |
+| Magnetic Button | Buttons physically pull toward cursor | Tier 2 | R1 |
+| Gooey Menu | Sub-items detach from main button like viscous liquid | Tier 3 | R2 |
+| Dynamic Island | Pill-shaped UI morphing to show status/alerts | Tier 2 | R1 |
+| Contextual Radial Menu | Circular menu expanding at click coordinates | Tier 3 | R2 |
+| Floating Speed Dial | FAB springing out into curved secondary actions | Tier 2 | R1 |
+| Mega Menu Reveal | Full-screen dropdowns with stagger-fade content | Tier 2 | R1 |
+
+### Layout & Grids
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Bento Grid | Asymmetric, tile-based grouping (Apple Control Center) | Tier 1 | R0 |
+| Masonry Layout | Staggered grid without fixed row heights (Pinterest) | Tier 1 | R0 |
+| Chroma Grid | Grid tiles with continuously animating color gradients | Tier 3 | R3 |
+| Split Screen Scroll | Two screen halves sliding in opposite directions | Tier 2 | R2 |
+| Curtain Reveal | Hero section parting in the middle on scroll | Tier 3 | R2 |
+
+### Cards & Containers
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Parallax Tilt Card | 3D-tilting card tracking mouse coordinates | Tier 2 | R2 |
+| Spotlight Border Card | Card borders illuminating under cursor | Tier 2 | R1 |
+| Glassmorphism Panel | Frosted glass with inner refraction borders | Tier 1 | R0 |
+| Holographic Foil Card | Iridescent rainbow reflections shifting on hover | Tier 3 | R3 |
+| Tinder Swipe Stack | Physical stack of cards user can swipe away | Tier 3 | R2 |
+| Morphing Modal | Button seamlessly expanding into full-screen dialog | Tier 2 | R1 |
+
+### Scroll Animations
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Sticky Scroll Stack | Cards stick and physically stack during scroll | Tier 2 | R1 |
+| Horizontal Scroll Hijack | Vertical scroll → horizontal gallery pan | Tier 2 | R2 |
+| Locomotive Scroll Sequence | Video/3D frames tied directly to scrollbar | Tier 2 | R2 |
+| Zoom Parallax | Background image zooming in/out on scroll | Tier 2 | R2 |
+| Scroll Progress Path | SVG vector lines drawing as user scrolls | Tier 2 | R1 |
+| Liquid Swipe Transition | Page transitions wiping like viscous liquid | Tier 3 | R3 |
+
+### Galleries & Media
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Dome Gallery | 3D gallery feeling like panoramic dome | Tier 3 | R3 |
+| Coverflow Carousel | 3D carousel, center focused, edges angled back | Tier 2 | R2 |
+| Drag-to-Pan Grid | Boundless grid draggable in any direction | Tier 3 | R3 |
+| Accordion Image Slider | Narrow strips expanding fully on hover | Tier 1 | R1 |
+| Hover Image Trail | Mouse leaves trail of popping/fading images | Tier 3 | R3 |
+| Glitch Effect Image | RGB-channel shifting digital distortion on hover | Tier 2 | R2 |
+
+### Typography & Text
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Kinetic Marquee | Text bands reversing/speeding on scroll | Tier 2 | R2 |
+| Text Mask Reveal | Massive type as transparent window to video bg | Tier 3 | R3 |
+| Text Scramble Effect | Matrix-style character decoding on load/hover | Tier 2 | R2 |
+| Circular Text Path | Text curved along spinning circular path | Tier 2 | R2 |
+| Gradient Stroke Animation | Outlined text with running gradient stroke | Tier 2 | R2 |
+| Kinetic Typography Grid | Grid of letters dodging/rotating from cursor | Tier 3 | R3 |
+
+### Micro-Interactions & Effects
+| Pattern | Description | Min Tier | Min Register |
+|---------|-------------|----------|--------------|
+| Particle Explosion Button | CTAs shattering into particles on success | Tier 3 | R3 |
+| Liquid Pull-to-Refresh | Mobile reload acting like water droplets | Tier 3 | R2 |
+| Skeleton Shimmer | Shifting light reflections across placeholders | Tier 1 | R0 |
+| Directional Hover Aware Button | Fill entering from mouse entry side | Tier 2 | R1 |
+| Ripple Click Effect | Visual waves from precise click coordinates | Tier 2 | R1 |
+| Animated SVG Line Drawing | Vectors drawing their own contours | Tier 2 | R1 |
+| Mesh Gradient Background | Lava-lamp animated color blobs | Tier 2 | R2 |
+| Lens Blur Depth | Dynamic focus blur highlighting foreground | Tier 2 | R0 |
+
+---
+
 *Iron Canvas v4.2 — references/interaction-library.md*
 *Consumed by: agent-prompts/agent-c-ui.md*
+*Creative Arsenal patterns derived from taste-skill analysis + Awwwards reference*
