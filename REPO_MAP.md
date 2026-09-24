@@ -122,14 +122,21 @@ iron-canvas/
 ## File Count
 
 ```
-Root files:          13
+v6.0 (tracked files)
+Root files:          10
+References:          30
+Engines:             14   ★v6 (detect · ledger · lib · blender · video · audio · config · examples · README)
 Phases:              12
+Templates:           10
+Showcase:             8   (origin + contract ★v6 · living-canvas ★v6 · depth · about-page)
+Surfaces:             7   (contract + 5 packs + Unreal adapter)
 Agent prompts:        7
-References:          19
-Templates:            8
-Sub-skills:           4
+Runtime:              5   ★v6
+Sub-skills:           4   (archival)
+Scripts:              3   ★v6
+Studio:               2   ★v6
 ─────────────────────────
-TOTAL:               63 files across 6 folders + root
+TOTAL:              112 files across 11 folders + root   (v5.2: 77)
 ```
 
 ---
