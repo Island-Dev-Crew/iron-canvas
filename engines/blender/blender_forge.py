@@ -37,6 +37,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 SEED = int(JOB.get("seed", 5417))
 RND = random.Random(SEED)
 FILES = []
+EXPECTED = {}  # frames each render folder must contain — the wrapper counts them (artifact proof)
 
 
 def reset():
@@ -87,18 +88,32 @@ def workbench(scene, clay=True):
 
 
 def camera(scene, fov_deg=40.0):
+    """A camera whose `fov` means what three.js means by it: the VERTICAL field of view.
+
+    Blender's default sensor fit applies `angle` to the wider side of the frame (horizontal on a
+    16:9 render), while THREE.PerspectiveCamera.fov is vertical — so the same number would render a
+    much tighter shot than the site. Fitting the sensor vertically makes the two agree.
+    Returns (rig, camera, target): the rig carries position and aim, the camera carries roll.
+    """
     cam_data = bpy.data.cameras.new("Camera")
-    cam_data.angle = math.radians(fov_deg)
+    cam_data.sensor_fit = "VERTICAL"
+    cam_data.angle_y = math.radians(fov_deg)
+    rig = bpy.data.objects.new("CameraRig", None)
+    scene.collection.objects.link(rig)
+    shake = bpy.data.objects.new("Handheld", None)  # rig (aim) → handheld (seeded shake) → camera (roll)
+    scene.collection.objects.link(shake)
+    shake.parent = rig
     cam = bpy.data.objects.new("Camera", cam_data)
     scene.collection.objects.link(cam)
+    cam.parent = shake  # identity local transforms: the camera looks where the rig looks; its local Z-rotation is roll
     scene.camera = cam
     target = bpy.data.objects.new("Target", None)
     scene.collection.objects.link(target)
-    track = cam.constraints.new("TRACK_TO")
+    track = rig.constraints.new("TRACK_TO")
     track.target = target
     track.track_axis = "TRACK_NEGATIVE_Z"
     track.up_axis = "UP_Y"
-    return cam, target
+    return rig, cam, target
 
 
 def web_to_blender(p):
@@ -140,14 +155,81 @@ def job_selftest():
     scene.render.resolution_x, scene.render.resolution_y = 320, 180
     workbench(scene)
     bpy.ops.mesh.primitive_cube_add(size=1.2)
-    cam, target = camera(scene)
-    cam.location = (3.0, -3.0, 2.2)
+    rig, cam, target = camera(scene)
+    rig.location = (3.0, -3.0, 2.2)
     render_frames(scene, "selftest", 1, 1)
     export_glb(OUT / "selftest.glb", draco=False)
 
 
+EASE = {"bezier": "BEZIER", "linear": "LINEAR", "constant": "CONSTANT"}
+
+
+def key_handheld(cam, first, last, fps, spec):
+    """Seeded, smooth, separable handheld noise on the Handheld empty — baked into the render and the rail.
+
+    spec: {"seed": 5417, "pos_amp_m": 0.015, "rot_amp_deg": 0.35, "freq_hz": 0.8}. Two sines per axis at
+    f and 2.31 f with seeded phases: organic, never periodic within a shot, identical on every run.
+    """
+    shake = cam.parent
+    rnd = random.Random(int(spec.get("seed", SEED)))
+    pos_amp = float(spec.get("pos_amp_m", 0.015))
+    rot_amp = math.radians(float(spec.get("rot_amp_deg", 0.35)))
+    freq = float(spec.get("freq_hz", 0.8))
+    phases = [(rnd.uniform(0, math.tau), rnd.uniform(0, math.tau)) for _ in range(5)]
+
+    def wave(k, t):
+        a, b = phases[k]
+        return 0.62 * math.sin(math.tau * freq * t + a) + 0.38 * math.sin(math.tau * 2.31 * freq * t + b)
+
+    keyframe_interpolation("LINEAR")
+    for f in range(first, last + 1):
+        t = (f - first) / fps
+        shake.location = (pos_amp * wave(0, t), pos_amp * wave(1, t), 0.0)
+        shake.rotation_euler = (rot_amp * wave(2, t), rot_amp * wave(3, t), rot_amp * 0.5 * wave(4, t))
+        shake.keyframe_insert("location", frame=f)
+        shake.keyframe_insert("rotation_euler", frame=f)
+
+
+def verbalise_move(stations, seconds):
+    """The move in words, compiled into the Seedance prompt so the text and the clay reference agree."""
+    a, b = stations[0], stations[-1]
+    travel = math.dist(a["position"], b["position"])
+    fov_a, fov_b = float(a.get("fov", 40)), float(b.get("fov", 40))
+    roll = max(abs(float(s.get("roll", 0))) for s in stations)
+    push = "push-in" if (b["position"][2] < a["position"][2]) else "pull-back"
+    parts = [f"{push} of {travel:.1f} m over {seconds:g} s"]
+    if abs(fov_b - fov_a) >= 1:
+        parts.append(f"lens {'tightening' if fov_b < fov_a else 'widening'} {fov_a:g}° → {fov_b:g}° (vertical)")
+    if roll >= 0.5:
+        parts.append(f"up to {roll:g}° of roll")
+    eases = sorted({str(s.get("ease", "bezier")) for s in stations[:-1]})
+    parts.append(f"{'/'.join(eases)} easing")
+    return ", ".join(parts)
+
+
+def bake_rail_samples(scene, cam, first, last):
+    """Sample the evaluated camera at every frame, in three.js space.
+
+    Blender's own F-curves decide every in-between; the web rail plays these samples back instead of
+    re-interpolating the stations, so the film and the site cannot drift apart.
+    Each sample: [px, py, pz, qx, qy, qz, qw, fov_vertical_degrees].
+    """
+    from mathutils import Quaternion  # noqa: E402 — only importable inside Blender
+    basis = Quaternion((1.0, 0.0, 0.0), math.radians(-90.0))
+    samples = []
+    for f in range(first, last + 1):
+        scene.frame_set(f)
+        m = cam.matrix_world
+        p = m.translation
+        q = basis @ m.to_quaternion()
+        samples.append([round(v, 5) for v in (p.x, p.z, -p.y, q.x, q.y, q.z, q.w, math.degrees(cam.data.angle_y))])
+    return samples
+
+
 def job_clay_camera():
-    """Rail stations: [{"t": 0..1, "position": [x,y,z], "target": [x,y,z], "fov": 40}], web coordinates."""
+    """Rail stations: [{"t": 0..1, "position": [x,y,z], "target": [x,y,z], "fov": 40, "roll": 0,
+    "ease": "bezier|linear|constant"}], web coordinates. `fov` is VERTICAL degrees (three.js);
+    `roll` is degrees about the view axis; `ease` shapes the segment LEAVING that station."""
     scene = reset()
     w, h = JOB.get("resolution", [1280, 720])
     scene.render.resolution_x, scene.render.resolution_y = int(w), int(h)
@@ -177,23 +259,48 @@ def job_clay_camera():
             bpy.context.active_object.scale = (size[0], size[2], size[1])
     if not JOB.get("blocking"):
         bpy.ops.mesh.primitive_plane_add(size=80, location=(0, 0, -2.5))
-    cam, target = camera(scene, JOB.get("stations", [{}])[0].get("fov", 40))
-    keyframe_interpolation("BEZIER")  # eased dolly between stations, like the WebGL rail
     stations = sorted(JOB.get("stations", []), key=lambda s: s.get("t", 0))
     if len(stations) < 2:
         raise SystemExit("clay-camera needs at least 2 rail stations")
-    last = max(1, round(seconds * fps))
+    rig, cam, target = camera(scene, stations[0].get("fov", 40))
+    last = max(2, round(seconds * fps))
     for st in stations:
+        # A keyframe's interpolation governs the segment after it, so set the preference per station.
+        keyframe_interpolation(EASE.get(str(st.get("ease", "bezier")).lower(), "BEZIER"))
         frame = 1 + round(float(st.get("t", 0)) * (last - 1))
-        cam.location = web_to_blender(st["position"])
-        cam.keyframe_insert("location", frame=frame)
+        rig.location = web_to_blender(st["position"])
+        rig.keyframe_insert("location", frame=frame)
         target.location = web_to_blender(st.get("target", [0, 0, 0]))
         target.keyframe_insert("location", frame=frame)
-        cam.data.angle = math.radians(float(st.get("fov", 40)))
+        cam.rotation_euler = (0.0, 0.0, math.radians(float(st.get("roll", 0))))
+        cam.keyframe_insert("rotation_euler", index=2, frame=frame)
+        cam.data.angle_y = math.radians(float(st.get("fov", 40)))
         cam.data.keyframe_insert("lens", frame=frame)
-    render_frames(scene, "clay-frames", 1, last)
-    (OUT / "camera-rail.json").write_text(json.dumps({"schema": "ic-camera-rail/1", "space": "three.js", "fps": fps, "seconds": seconds, "stations": stations}, indent=2), encoding="utf-8")
+    if JOB.get("handheld"):
+        key_handheld(cam, 1, last, fps, JOB["handheld"])
+    samples = bake_rail_samples(scene, cam, 1, last)
+    rail = {
+        "schema": "ic-camera-rail/2", "space": "three.js", "fov": "vertical-degrees",
+        "fps": fps, "seconds": seconds, "frames": last, "aspect": round(int(w) / int(h), 5),
+        "move": verbalise_move(stations, seconds),
+        "handheld": JOB.get("handheld") or None,
+        "sample_format": ["px", "py", "pz", "qx", "qy", "qz", "qw", "fov"],
+        "stations": stations, "samples": samples,
+    }
+    (OUT / "camera-rail.json").write_text(json.dumps(rail, indent=1), encoding="utf-8")
     FILES.append(str(OUT / "camera-rail.json"))
+    if JOB.get("_sheet"):
+        # The approval gate: 21 stills across the move, reviewed as a sheet before any full render.
+        folder = OUT / "sheet"
+        folder.mkdir(parents=True, exist_ok=True)
+        for i in range(21):
+            scene.frame_set(1 + round(i * (last - 1) / 20))
+            scene.render.filepath = str(folder / f"still_{i:02d}.png")
+            bpy.ops.render.render(write_still=True)
+            FILES.append(scene.render.filepath)
+        return
+    render_frames(scene, "clay-frames", 1, last)
+    EXPECTED["clay-frames"] = last
 
 
 def job_hero_object():
@@ -227,10 +334,10 @@ def job_hero_object():
     (OUT / f"{JOB.get('name', 'hero')}.stats.json").write_text(json.dumps({"triangles": tris, "materials": len(hero.data.materials)}), encoding="utf-8")
     scene.render.resolution_x = scene.render.resolution_y = 768
     workbench(scene, clay=False)
-    cam, target = camera(scene, 32)
+    rig, cam, target = camera(scene, 32)  # square frame: vertical 32° = horizontal 32°
     for i, angle in enumerate((0, 90, 180, 270)):
         a = math.radians(angle)
-        cam.location = (math.sin(a) * s * 2.6, -math.cos(a) * s * 2.6, s * 0.7)
+        rig.location = (math.sin(a) * s * 2.6, -math.cos(a) * s * 2.6, s * 0.7)
         scene.render.filepath = str(OUT / "turntable" / f"view_{i}.png")
         bpy.ops.render.render(write_still=True)
         FILES.append(scene.render.filepath)
@@ -256,9 +363,10 @@ def job_turntable():
     pivot.keyframe_insert("rotation_euler", frame=1)
     pivot.rotation_euler = (0, 0, math.radians(360 * frames / (frames + 1)))
     pivot.keyframe_insert("rotation_euler", frame=frames)
-    cam, target = camera(scene, 30)
-    cam.location = (0, -6.5, 1.6)
+    rig, cam, target = camera(scene, 18)  # vertical 18° ≈ 31° horizontal at 16:9
+    rig.location = (0, -6.5, 1.6)
     render_frames(scene, "turntable-frames", 1, frames)
+    EXPECTED["turntable-frames"] = frames
 
 
 def job_matcap():
@@ -303,6 +411,6 @@ if __name__ == "__main__":
     JOBS[kind]()
     (OUT / "result.json").write_text(json.dumps({
         "schema": "ic-blender-result/1", "type": kind, "seed": SEED, "blender": bpy.app.version_string,
-        "params": JOB, "files": FILES,
+        "params": JOB, "files": FILES, "expected_frames": EXPECTED,
     }, indent=2), encoding="utf-8")
     print(f"[blender-forge] {kind} → {len(FILES)} file(s) in {OUT}")

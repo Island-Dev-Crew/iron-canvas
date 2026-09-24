@@ -5,7 +5,7 @@
 
 export const REGISTERS = {
   R0: { name: 'Utilitarian', cap: 0.2, job: 'A tool, admin, internal report, docs', craft: 'information design — hierarchy, state in form, one accent, zero decoration' },
-  R1: { name: 'Functional', cap: 0.35, job: 'A page that must convert', craft: 'a clear thesis hero, one memorable moment, motion that clarifies flow' },
+  R1: { name: 'Functional', cap: 0.5, job: 'A page that must convert', craft: 'a clear thesis hero, one memorable moment, motion that clarifies flow' },
   R2: { name: 'Editorial', cap: 0.7, job: 'A page people keep or share; a brand experience', craft: 'a point of view, typography with character, an orchestrated reveal' },
   R3: { name: 'Maximalist', cap: 0.9, job: 'A flagship, an Awwwards run', craft: 'layered depth, grid-breaking composition, atmosphere, a signature technique' },
   R4: { name: 'Immersive', cap: 1.0, job: 'A world — the scene is the site', craft: 'inhabited depth, a camera rail, one material, the evidence gate' },
@@ -43,6 +43,25 @@ const STAGE = {
   recover: 'let the eye rest — supporting proof, lower energy',
   climax: 'the one unforgettable moment — the mechanism, acted out at full scale',
   resolve: 'the calm after light — the invitation, the action',
+};
+// Starting positions only: FEEL rewrites every one of these in the subject's own words.
+const CONTRACT = {
+  establish: { job: 'orient', in: 'curious', out: 'drawn in', reduced: 'the headline, the lede and the ground, at rest' },
+  accelerate: { job: 'establish_stakes', in: 'drawn in', out: 'leaning forward', reduced: 'the cards laid out, every one legible' },
+  pause: { job: 'inspect_detail', in: 'leaning forward', out: 'calm and attentive', reduced: 'one sentence and the air around it' },
+  reveal: { job: 'explain_system', in: 'attentive', out: 'surprised', reduced: 'the signature visual as its composed final frame' },
+  recover: { job: 'trace_evidence', in: 'surprised', out: 'reassured', reduced: 'the proof — numbers at their final values' },
+  climax: { job: 'explain_system', in: 'reassured', out: 'awed', reduced: 'the mechanism at its peak, held as a still' },
+  resolve: { job: 'commit', in: 'awed', out: 'ready to act', reduced: 'the offer and the action, nothing moving' },
+};
+
+/** The aliveness floor at each register — CD3 shapes the amplitude, nothing removes it (SKILL.md §0.1). */
+export const FLOOR = {
+  R0: { arrival: '600–900 ms — title, content, actions in three steps', heartbeat: 'one breathing status dot or a live-data tick', hand_feel: 'hover, press and focus on every control', breath: 'air and a light ladder', still: 'the same tool, at rest' },
+  R1: { arrival: 'a thesis hero that lands in ≤ 1.2 s', heartbeat: 'one ambient element in the hero', hand_feel: 'hover, press and focus on every control; a tick on the primary action', breath: 'air, a light ladder, grain felt not seen', still: 'the hero and every section at their final frames' },
+  R2: { arrival: 'an orchestrated reveal ≤ 1.5 s — never everything at once', heartbeat: 'one heartbeat plus a breathing atmosphere', hand_feel: 'full hand-feel — lift, press, lean on fine pointers', breath: 'air, grain, a mesh that breathes', still: 'every act on its settled frame' },
+  R3: { arrival: 'the full load choreography, phases 0–5', heartbeat: 'a living layer in every act, co-prime periods', hand_feel: 'full hand-feel with magnetic fields where the cursor dial allows', breath: 'atmosphere, grain, the light ladder, the field receding behind quiet acts', still: 'every act on its settled frame; the scene as a composed still' },
+  R4: { arrival: 'the loader as a brand moment, then one camera-settle move to station 0', heartbeat: 'the world itself breathes — fog, particles, light', hand_feel: 'the world answers the hand — cursor lean, spatial sound on the signature', breath: 'fog as brand, one light, air around every overlay', still: 'a Tier I still of the world plus the kill switch' },
 };
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -140,14 +159,22 @@ export function compileBible(b) {
     depth, immersive_lane: immersive ? 'Agent F + Phase 4.5 IMMERSE + §22 evidence gate' : 'off (composed depth by Agent-A tokens)',
     gauntlet, personality: { id: brief.personality, curve: PERSONALITIES[brief.personality] },
     arc: arc.map((s) => ({ stage: s, intent: STAGE[s], signature: s === signatureStage })),
+    floor: FLOOR[brief.register],
   };
 
   const score = {
-    title: brief.subject, logline: brief.idea, personality: brief.personality,
+    title: brief.subject, logline: brief.idea, register: brief.register, surface: brief.surface,
+    personality: brief.personality,
     tempo: { still: 1.5, slow: 1.25, measured: 1, brisk: 0.85, fast: 0.7 }[brief.feel.tempo] ?? 1,
     seed: 5417, breath: { amplitude: R >= 2 ? 1 : 0.5 },
+    signature: signatureStage,
     acts: arc.map((stage, i) => ({
-      id: stage, el: `#act-${stage}`, intent: STAGE[stage],
+      id: stage, el: `#act-${stage}`,
+      stage, job: CONTRACT[stage].job,
+      role: stage === signatureStage ? 'signature' : stage === 'pause' ? 'stillness' : 'support',
+      intent: STAGE[stage],
+      emotion: { in: CONTRACT[stage].in, out: CONTRACT[stage].out },
+      reduced: CONTRACT[stage].reduced,
       trigger: i === 0 ? 'load' : (R >= 2 && (stage === signatureStage || R >= 3)) ? 'scrub' : 'enter',
       ...(i > 0 && (R >= 2 && (stage === signatureStage || R >= 3)) ? { start: 'top top', end: 'bottom bottom', scrub: 0.9 } : {}),
       shots: shotsFor(stage, brief, stage === signatureStage),
@@ -240,13 +267,15 @@ export function compileBible(b) {
     `GAUNTLET       ${gauntlet.on ? `on — ${gauntlet.width} candidates, blind cross-family critic (${gauntlet.why})` : gauntlet.why}`,
     `POWER ENGINES  ${on.join(' · ') || 'none'}${twin ? ' — TWIN CAMERA: Blender clay rail → Seedance @Video1; the same rail drives the WebGL camera' : ''}`,
     `THE ARC        ${arc.join(' → ')}  (signature at ${signatureStage})`,
+    `ALIVENESS      arrival: ${FLOOR[brief.register].arrival} · heartbeat: ${FLOOR[brief.register].heartbeat}`,
     ...(gates.length ? [`ENGINE GATES   ${gates.join(' · ')}`] : []),
     '',
     'Deliver:',
-    '1. The page, its motion authored as a score performed by runtime/canvas-score.js (starting score below).',
+    '1. The page, its motion authored as a score performed by runtime/canvas-score.js (starting score below) —',
+    '   FEEL rewrites every act\'s emotion and still meaning in the subject\'s own words; node scripts/ic-preflight.mjs must pass.',
     '2. Every generated asset through engines/ledger.mjs: selected with a written reason, verified, promoted with provenance.',
-    `3. Evidence: ${immersive ? 'the §22 immersion scorecard ≥ 4.0 with zero auto-fails, ' : ''}CD3 Axis 6 (treatment & soul), reduced-motion and no-WebGL proofs, zero console errors, zero horizontal overflow, screenshots at every act.`,
-    'The floor is never flat. Motion is the soul, not the garnish. One unforgettable moment.',
+    `3. Evidence: ${immersive ? 'the §22 immersion scorecard ≥ 4.0 with zero auto-fails, ' : ''}CD3 Axis 6 (treatment & soul), Axis 7 (aliveness — the first 5 s, a 15 s slow scroll, a reduced-motion recording), reduced-motion and no-WebGL proofs, zero console errors, zero horizontal overflow, screenshots at every act.`,
+    'The floor is never flat. Nothing ships lifeless. Motion is the soul, not the garnish. One unforgettable moment.',
   ].join('\n');
 
   return { treatment, score, jobs, config, mission };

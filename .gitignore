@@ -4,3 +4,4 @@ node_modules/
 
 # Power Engine runs: candidates, masters, evidence (never committed)
 .ic/
+__pycache__/

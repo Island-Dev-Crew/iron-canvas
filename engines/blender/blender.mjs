@@ -2,6 +2,7 @@
 // Iron Canvas · Blender engine wrapper (Windows-first). Runs blender_forge.py headless in its own process.
 //
 //   node engines/blender/blender.mjs plan     --job job.json      what would run, and where
+//   node engines/blender/blender.mjs sheet    --job job.json      clay-camera: 21 stills + sheet.png + the rail — approve before run
 //   node engines/blender/blender.mjs run      --job job.json      render/export into .ic/runs/<ts>-<name>/
 //   node engines/blender/blender.mjs selftest                     prove the install (cube → frame + GLB)
 //
@@ -9,7 +10,7 @@
 // Headless scripts, not the MCP server, are the production path: the official Blender MCP executes model-written
 // code without guards — keep it for sessions a human is watching.
 import { spawnSync } from 'node:child_process';
-import { existsSync, writeFileSync, mkdtempSync } from 'node:fs';
+import { existsSync, writeFileSync, mkdtempSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,13 +29,19 @@ let job;
 if (cmd === 'selftest') {
   job = { type: 'selftest', name: 'selftest', seed: 1 };
 } else {
-  if (!a.job || !existsSync(a.job)) { console.error('usage: blender.mjs plan|run --job job.json  (or: selftest)'); process.exit(EXIT.ERROR); }
+  if (!a.job || !existsSync(a.job)) { console.error('usage: blender.mjs plan|sheet|run --job job.json  (or: selftest)'); process.exit(EXIT.ERROR); }
   job = readJSON(a.job);
+  if (cmd === 'sheet') {
+    if (job.type !== 'clay-camera') { console.error('sheet applies to clay-camera jobs'); process.exit(EXIT.ERROR); }
+    job = { ...job, _sheet: true, name: `${job.name || 'clay'}-sheet` };
+  }
 }
 const blender = findBlender(config.engines?.blender?.binary || '');
 const outputs = {
   selftest: ['selftest/frame_0001.png', 'selftest.glb'],
-  'clay-camera': ['clay-frames/frame_*.png', 'clay.mp4 (flat grey, delivery aspect — the Seedance @Video1 camera reference)', 'camera-rail.json (the same stations for the WebGL rail)'],
+  'clay-camera': job._sheet
+    ? ['sheet/still_00..20.png → sheet.png (7×3) — approve before the full render', 'camera-rail.json (baked samples + the move in words)']
+    : ['clay-frames/frame_*.png (counted: artifact proof)', 'clay.mp4 (flat grey, delivery aspect — the Seedance @Video1 camera reference)', 'camera-rail.json (ic-camera-rail/2: baked per-frame samples for runtime/camera-rail.js)'],
   'hero-object': [`${job.name || 'hero'}.glb`, `${job.name || 'hero'}.stats.json`, 'turntable/view_0..3.png'],
   turntable: ['turntable-frames/frame_*.png → encode with ledger.mjs --profile scroll-tied'],
   matcap: [`${job.name || 'matcap'}.png`],
@@ -66,6 +73,23 @@ if (r.status !== 0 || !existsSync(path.join(out, 'result.json'))) {
   process.exit(EXIT.ERROR);
 }
 const result = readJSON(path.join(out, 'result.json'));
+
+// Artifact proof: a render counts as done only when every expected frame exists (a clean exit code is not enough).
+for (const [folder, expected] of Object.entries(result.expected_frames || {})) {
+  const dir = path.join(out, folder);
+  const got = existsSync(dir) ? readdirSync(dir).filter((f) => /\.png$/i.test(f)).length : 0;
+  if (got !== expected) { console.error(`artifact proof failed: ${folder} has ${got} frame(s), expected ${expected}`); process.exit(EXIT.ERROR); }
+}
+
+// The approval gate: tile the 21 stills into one sheet and stop before the full render.
+if (job._sheet) {
+  if (!which('ffmpeg')) { console.error('ffmpeg is required to tile the sheet'); process.exit(EXIT.ERROR); }
+  const tile = spawnSync('ffmpeg', ['-y', '-v', 'error', '-i', path.join(out, 'sheet', 'still_%02d.png'), '-vf', 'scale=480:-2,tile=7x3:padding=6:margin=6', '-frames:v', '1', path.join(out, 'sheet.png')], { encoding: 'utf8' });
+  if (tile.status !== 0) { console.error(tile.stderr); process.exit(EXIT.ERROR); }
+  const rail = readJSON(path.join(out, 'camera-rail.json'));
+  console.log(`✓ sheet → ${path.join(out, 'sheet.png')}\n  move: ${rail.move}\n  Approve it (who, and why) before the full render: node engines/blender/blender.mjs run --job ${a.job}`);
+  process.exit(EXIT.OK);
+}
 
 // The clay frames become the camera reference clip Seedance reads.
 if (job.type === 'clay-camera') {

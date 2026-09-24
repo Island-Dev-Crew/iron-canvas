@@ -29,7 +29,7 @@ where those providers are used). Nothing is written to disk, nothing is ever sig
 
 | Engine | Command | Makes | Fallback when off |
 |---|---|---|---|
-| **Blender** | `node engines/blender/blender.mjs plan\|run --job job.json` · `selftest` | `clay-camera` reference clips + camera rails · `hero-object` GLB (Draco) + turntable · `turntable` frames · `matcap` light | procedural three.js → §19 point cloud → Tier I still |
+| **Blender** | `node engines/blender/blender.mjs plan\|sheet\|run --job job.json` · `selftest` | `clay-camera` reference clips + baked camera rails (roll, per-segment ease, seeded handheld, the move in words; `sheet` = 21 stills to approve first) · `hero-object` GLB (Draco) + turntable · `turntable` frames · `matcap` light — every render frame-counted | procedural three.js → §19 point cloud → Tier I still |
 | **Video** (Seedance 2.5) | `node engines/video/video.mjs plan\|run\|ingest --job shot.json` | films, loops, transitions — fal queue automated; Dreamina / Higgsfield / ModelArk via `ingest` | HyperFrames → §19 flow field → poster |
 | **Audio** (ElevenLabs) | `node engines/audio/audio.mjs plan\|run --job cue.json` | ambient beds, signature cues | no audio UI, or a synthesized WebAudio bed |
 | **Ledger** | `node engines/ledger.mjs list\|select\|verify\|encode\|promote` | selection with reasons, re-hash verification, web encodes, provenance sidecars | — |
@@ -43,12 +43,15 @@ The strongest thing these two engines do together:
 ```bash
 node engines/blender/blender.mjs run --job engines/examples/living-canvas-rail.clay.json
 #   → clay.mp4           grey, flat-shaded, 5 s: the camera move and blocking, nothing else
-#   → camera-rail.json   the same stations, in three.js space
+#   → camera-rail.json   ic-camera-rail/2: the stations + one baked sample per frame (three.js space)
 node engines/video/video.mjs run --job engines/examples/living-canvas-trailer.shot.json
 #   @Video1 = clay.mp4 (camera and blocking only) · @Image1 = a style frame (palette and light only)
 ```
 
-The film inherits the clay render's exact camera; the site's WebGL rail reads `camera-rail.json`.
+The film inherits the clay render's exact camera; the site's WebGL camera plays the same baked
+samples with [`runtime/camera-rail.js`](../runtime/camera-rail.js) (`rail.apply(camera, progress)`).
+Station `fov` is **vertical** degrees, as in three.js — the job fits Blender's sensor vertically so
+the number means the same thing in both. Stations may also carry `roll` and a per-segment `ease`.
 **Film and site match shot for shot.** Clay renders carry no gizmos, grids, outlines, or frame
 counters — those come back in the generation as objects.
 
@@ -73,6 +76,11 @@ since it was recorded. `verify` re-hashes every file instead of trusting the sto
 - `ingest` of a 9.5 s clip → measured 9.5 s 1280×720 @24 fps +audio, provenance written
 - `select` rejects a one-word reason; `verify` passes, then **fails after a one-byte tamper**; `encode` poster / bg-loop / scroll-tied (143 + 143 frames); `promote` writes the sidecar
 - audio `plan`, and `run` without a key → exit 2
+- v6: `blender_forge.py` compiles with the vertical-FOV camera, the roll + handheld rig, the baked
+  `ic-camera-rail/2` samples and the 21-still `sheet` gate; `sheet` without Blender → exit 2 with its plan
+- v6: `runtime/camera-rail.js` — 9 unit checks (look-at, roll, slerp, baked playback within 0.008 units of
+  the rail over 96 frames, `apply` sets fov + projection); the old job's FOV convention would have made the
+  clay film 1.78× tighter than the site — fixed
 
 **Not yet proven here:** a real Blender render (Blender is not installed on this machine — run
 `node engines/blender/blender.mjs selftest` where it is) and a paid fal generation (no key used).

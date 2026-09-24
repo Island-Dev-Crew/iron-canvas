@@ -244,6 +244,105 @@
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
 } }
 </script>
+<!-- The score — the motion contract. Performed by runtime/canvas-score.js, checked by
+     `node scripts/ic-preflight.mjs showcase/living-canvas/index.html`. -->
+<script type="application/json" id="ic-score" data-ic-score>
+{
+  "title": "The Living Canvas",
+  "logline": "An idea goes in. A world comes out.",
+  "register": "R4",
+  "surface": "immersive-3d",
+  "personality": "silk",
+  "tempo": 1,
+  "seed": 5417,
+  "breath": { "amplitude": 1 },
+  "signature": "world",
+  "acts": [
+    { "id": "slate", "el": "#slate", "trigger": "load",
+      "stage": "establish", "job": "orient", "role": "support",
+      "intent": "the title card — anticipation before the first light",
+      "emotion": { "in": "curious", "out": "expectant" },
+      "reduced": "the title, the credits and the cue, at rest",
+      "shots": [
+        { "at": 0.0, "target": ".credits", "verb": "scramble", "duration": 1.1, "note": "the signal decoding — the studio clears its throat" },
+        { "at": 0.35, "target": "h1", "verb": "unveil", "split": "chars", "stagger": 0.035 },
+        { "at": 1.25, "target": ".voice", "verb": "focus", "personality": "bloom", "note": "the page's one accent: light opening on the promise" },
+        { "at": 1.9, "target": ".cue", "verb": "fade" }
+      ] },
+    { "id": "spark", "el": "#spark", "trigger": "scrub", "start": "top top", "end": "bottom bottom", "scrub": 0.9,
+      "stage": "establish", "job": "orient", "role": "support",
+      "intent": "a single light, breathing — every world begins as one point",
+      "emotion": { "in": "expectant", "out": "drawn in" },
+      "reduced": "the single light as a still, beside its line",
+      "shots": [
+        { "at": 0.02, "target": ".slate-label", "verb": "fade", "personality": "drift", "duration": 0.1 },
+        { "at": 0.06, "target": "h2", "verb": "unveil", "split": "lines", "personality": "drift", "duration": 0.22, "stagger": 0.05 },
+        { "at": 0.3, "target": ".voice", "verb": "rise", "personality": "drift", "duration": 0.16 },
+        { "at": 0.82, "target": "#spark h2", "verb": "lift", "personality": "drift", "duration": 0.16 },
+        { "at": 0.84, "target": "#spark .voice, #spark .slate-label", "verb": "defocus", "personality": "drift", "duration": 0.14 }
+      ] },
+    { "id": "feel", "el": "#feel", "trigger": "scrub", "start": "top top", "end": "bottom bottom", "scrub": 0.9,
+      "stage": "accelerate", "job": "explain_system", "role": "support",
+      "intent": "the field awakens — time gets a temperament, and the curves draw themselves",
+      "emotion": { "in": "drawn in", "out": "moved" },
+      "reduced": "the personality curves fully drawn beside their names",
+      "shots": [
+        { "at": 0.02, "target": ".slate-label", "verb": "fade", "personality": "drift", "duration": 0.1 },
+        { "at": 0.05, "target": "h2", "verb": "unveil", "split": "words", "personality": "drift", "duration": 0.18, "stagger": 0.03 },
+        { "at": 0.24, "target": ".curve .ease", "verb": "draw", "personality": "drift", "duration": 0.22, "stagger": 0.06 },
+        { "at": 0.42, "target": ".voice", "verb": "focus", "personality": "drift", "duration": 0.14 },
+        { "at": 0.82, "target": ".curves", "verb": "sink", "personality": "drift", "duration": 0.14 },
+        { "at": 0.84, "target": "#feel h2", "verb": "lift", "personality": "drift", "duration": 0.16 },
+        { "at": 0.86, "target": "#feel .voice, #feel .slate-label", "verb": "defocus", "personality": "drift", "duration": 0.14 }
+      ] },
+    { "id": "score", "el": "#score", "trigger": "scrub", "start": "top top", "end": "bottom bottom", "scrub": 0.9,
+      "stage": "pause", "job": "explain_system", "role": "support",
+      "intent": "a held breath — the method laid out as a score you can read, motion written like music",
+      "emotion": { "in": "moved", "out": "trusting the craft" },
+      "reduced": "the score strip with every shot visible and the playhead at rest",
+      "shots": [
+        { "at": 0.02, "target": ".slate-label", "verb": "fade", "personality": "drift", "duration": 0.1 },
+        { "at": 0.05, "target": "h2", "verb": "unveil", "split": "lines", "personality": "drift", "duration": 0.18 },
+        { "at": 0.2, "target": ".shot", "verb": "tilt", "personality": "drift", "duration": 0.18, "stagger": 0.035 },
+        { "at": 0.36, "target": ".playhead", "verb": "wipe", "personality": "drift", "duration": 0.4 },
+        { "at": 0.52, "target": ".voice", "verb": "rise", "personality": "drift", "duration": 0.12 },
+        { "at": 0.84, "target": ".strip", "verb": "lift", "personality": "drift", "duration": 0.14 },
+        { "at": 0.86, "target": "#score h2", "verb": "lift", "personality": "drift", "duration": 0.16 },
+        { "at": 0.88, "target": "#score .voice, #score .slate-label", "verb": "defocus", "personality": "drift", "duration": 0.14 }
+      ] },
+    { "id": "world", "el": "#world", "trigger": "scrub", "start": "top top", "end": "bottom bottom", "scrub": 0.9,
+      "stage": "climax", "job": "explore_network", "role": "signature",
+      "intent": "you are inside the world now — the corridor of arches opens around the camera",
+      "emotion": { "in": "trusting", "out": "awed" },
+      "reduced": "a composed still of the corridor of arches — the world's resting frame",
+      "fallback": "no WebGL: the three depth bands over the tinted ground",
+      "shots": [
+        { "at": 0.04, "target": ".slate-label", "verb": "fade", "personality": "drift", "duration": 0.1 },
+        { "at": 0.08, "target": "h2", "verb": "unveil", "split": "lines", "personality": "drift", "duration": 0.18 },
+        { "at": 0.26, "target": ".voice", "verb": "focus", "personality": "drift", "duration": 0.12 },
+        { "at": 0.0, "target": ".b-near", "verb": "drift", "personality": "drift", "duration": 1, "from": { "y": 120 }, "to": { "y": -140 } },
+        { "at": 0.0, "target": ".b-mid", "verb": "drift", "personality": "drift", "duration": 1, "from": { "y": 80 }, "to": { "y": -90 } },
+        { "at": 0.0, "target": ".b-far", "verb": "drift", "personality": "drift", "duration": 1, "from": { "y": 40 }, "to": { "y": -45 } },
+        { "at": 0.84, "target": "#world h2", "verb": "lift", "personality": "drift", "duration": 0.16 },
+        { "at": 0.86, "target": "#world .voice, #world .slate-label", "verb": "defocus", "personality": "drift", "duration": 0.14 }
+      ] },
+    { "id": "premiere", "el": "#premiere", "trigger": "scrub", "start": "top top", "end": "bottom bottom", "scrub": 0.9, "hold": 0.4,
+      "stage": "resolve", "job": "commit", "role": "support",
+      "intent": "the calm after light — the canvas, the numbers, and the invitation to begin",
+      "emotion": { "in": "awed", "out": "ready to begin" },
+      "reduced": "the closing line, the counts at their final values, and the calls to action",
+      "shots": [
+        { "at": 0.0, "target": ".slate-label", "verb": "fade", "personality": "drift", "duration": 0.08 },
+        { "at": 0.03, "target": "h2", "verb": "bloom", "personality": "drift", "duration": 0.16 },
+        { "at": 0.12, "target": "h2", "verb": "sweep", "personality": "drift", "duration": 0.22 },
+        { "at": 0.18, "target": ".voice", "verb": "rise", "personality": "drift", "duration": 0.1 },
+        { "at": 0.24, "target": ".stat", "verb": "rise", "personality": "drift", "duration": 0.1, "stagger": 0.025 },
+        { "at": 0.26, "target": ".stat b", "verb": "count", "personality": "drift", "duration": 0.16, "stagger": 0.02 },
+        { "at": 0.34, "target": ".ctas", "verb": "rise", "personality": "drift", "duration": 0.1 }
+      ] }
+  ]
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
@@ -251,66 +350,8 @@
   import { performScore } from '../../runtime/canvas-score.js';
   import { createWorld, ACTS } from './world.js';
 
-  const exitsAt = (target, at = 0.82) => [
-    { at, target: `${target} h2`, verb: 'lift', personality: 'drift', duration: 0.16 },
-    { at: at + 0.02, target: `${target} .voice, ${target} .slate-label`, verb: 'defocus', personality: 'drift', duration: 0.14 },
-  ];
-
-  const score = {
-    title: 'The Living Canvas',
-    logline: 'An idea goes in. A world comes out.',
-    personality: 'silk', tempo: 1, seed: 5417,
-    breath: { amplitude: 1 },
-    acts: [
-      { id: 'slate', el: '#slate', trigger: 'load', intent: 'the title card — anticipation', shots: [
-        { at: 0.0, target: '.credits', verb: 'scramble', duration: 1.1 },
-        { at: 0.35, target: 'h1', verb: 'unveil', split: 'chars', personality: 'silk', stagger: 0.035 },
-        { at: 1.25, target: '.voice', verb: 'focus', personality: 'bloom' },
-        { at: 1.9, target: '.cue', verb: 'fade', personality: 'tide' },
-      ] },
-      { id: 'spark', el: '#spark', trigger: 'scrub', start: 'top top', end: 'bottom bottom', scrub: 0.9, intent: 'establish — a single light, breathing', shots: [
-        { at: 0.02, target: '.slate-label', verb: 'fade', personality: 'drift', duration: 0.1 },
-        { at: 0.06, target: 'h2', verb: 'unveil', split: 'lines', personality: 'drift', duration: 0.22, stagger: 0.05 },
-        { at: 0.3, target: '.voice', verb: 'rise', personality: 'drift', duration: 0.16 },
-        ...exitsAt('#spark'),
-      ] },
-      { id: 'feel', el: '#feel', trigger: 'scrub', start: 'top top', end: 'bottom bottom', scrub: 0.9, intent: 'accelerate — the field awakens, time gets a temperament', shots: [
-        { at: 0.02, target: '.slate-label', verb: 'fade', personality: 'drift', duration: 0.1 },
-        { at: 0.05, target: 'h2', verb: 'unveil', split: 'words', personality: 'drift', duration: 0.18, stagger: 0.03 },
-        { at: 0.24, target: '.curve .ease', verb: 'draw', personality: 'drift', duration: 0.22, stagger: 0.06 },
-        { at: 0.42, target: '.voice', verb: 'focus', personality: 'drift', duration: 0.14 },
-        { at: 0.82, target: '.curves', verb: 'sink', personality: 'drift', duration: 0.14 },
-        ...exitsAt('#feel', 0.84),
-      ] },
-      { id: 'score', el: '#score', trigger: 'scrub', start: 'top top', end: 'bottom bottom', scrub: 0.9, intent: 'pause, then reveal — motion written like music', shots: [
-        { at: 0.02, target: '.slate-label', verb: 'fade', personality: 'drift', duration: 0.1 },
-        { at: 0.05, target: 'h2', verb: 'unveil', split: 'lines', personality: 'drift', duration: 0.18 },
-        { at: 0.2, target: '.shot', verb: 'tilt', personality: 'drift', duration: 0.18, stagger: 0.035 },
-        { at: 0.36, target: '.playhead', verb: 'wipe', personality: 'drift', duration: 0.4 },
-        { at: 0.52, target: '.voice', verb: 'rise', personality: 'drift', duration: 0.12 },
-        { at: 0.84, target: '.strip', verb: 'lift', personality: 'drift', duration: 0.14 },
-        ...exitsAt('#score', 0.86),
-      ] },
-      { id: 'world', el: '#world', trigger: 'scrub', start: 'top top', end: 'bottom bottom', scrub: 0.9, intent: 'climax — you are inside the world now', shots: [
-        { at: 0.04, target: '.slate-label', verb: 'fade', personality: 'drift', duration: 0.1 },
-        { at: 0.08, target: 'h2', verb: 'unveil', split: 'lines', personality: 'drift', duration: 0.18 },
-        { at: 0.26, target: '.voice', verb: 'focus', personality: 'drift', duration: 0.12 },
-        { at: 0.0, target: '.b-near', verb: 'drift', personality: 'drift', duration: 1, from: { y: 120 }, to: { y: -140 } },
-        { at: 0.0, target: '.b-mid', verb: 'drift', personality: 'drift', duration: 1, from: { y: 80 }, to: { y: -90 } },
-        { at: 0.0, target: '.b-far', verb: 'drift', personality: 'drift', duration: 1, from: { y: 40 }, to: { y: -45 } },
-        ...exitsAt('#world', 0.84),
-      ] },
-      { id: 'premiere', el: '#premiere', trigger: 'scrub', start: 'top top', end: 'bottom bottom', scrub: 0.9, hold: 0.4, intent: 'resolve — the canvas, and the calm after light', shots: [
-        { at: 0.0, target: '.slate-label', verb: 'fade', personality: 'drift', duration: 0.08 },
-        { at: 0.03, target: 'h2', verb: 'bloom', personality: 'drift', duration: 0.16 },
-        { at: 0.12, target: 'h2', verb: 'sweep', personality: 'drift', duration: 0.22 },
-        { at: 0.18, target: '.voice', verb: 'rise', personality: 'drift', duration: 0.1 },
-        { at: 0.24, target: '.stat', verb: 'rise', personality: 'drift', duration: 0.1, stagger: 0.025 },
-        { at: 0.26, target: '.stat b', verb: 'count', personality: 'drift', duration: 0.16, stagger: 0.02 },
-        { at: 0.34, target: '.ctas', verb: 'rise', personality: 'drift', duration: 0.1 },
-      ] },
-    ],
-  };
+  // The score lives in the page as data (#ic-score) — one source for the runtime, the preflight and the critic.
+  const score = JSON.parse(document.getElementById('ic-score').textContent);
 
   document.getElementById('score-json').textContent = JSON.stringify(score, null, 2);
 
