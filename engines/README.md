@@ -82,5 +82,13 @@ since it was recorded. `verify` re-hashes every file instead of trusting the sto
   the rail over 96 frames, `apply` sets fov + projection); the old job's FOV convention would have made the
   clay film 1.78× tighter than the site — fixed
 
+**The twin-camera parity check** — [`blender/parity.html`](blender/parity.html) renders the clay
+blocking in three.js from the baked rail and compares silhouettes with Blender's frames (first,
+middle, last; PASS = IoU ≥ 0.90). `?selftest` proves the metric without Blender: the correct vertical
+fov scores 1.000, the old horizontal-fov reading 0.30 / 0.22 / 0.00. On a machine with Blender,
+`node engines/blender/handoff.mjs` runs the whole proof (selftest → 21-still sheet → full clay render →
+the parity URL), resumes after fixes, and `handoff.mjs complete` records the result in
+`blender/evidence/twin-camera-parity.json`.
+
 **Not yet proven here:** a real Blender render (Blender is not installed on this machine — run
 `node engines/blender/blender.mjs selftest` where it is) and a paid fal generation (no key used).
