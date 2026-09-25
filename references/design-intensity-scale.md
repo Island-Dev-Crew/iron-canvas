@@ -1,9 +1,12 @@
-# Design Intensity Scale (DIS) — Iron Canvas v5.1
+# Design Intensity Scale (DIS) — Iron Canvas v6
 ## *One design language. Nine systems. Zero compromise on craft.*
 
 > **Position in pipeline:** Phase 2 (FEEL) output → DIS calculation → Phase 4 (FORGE) input
 > **What it replaces:** Ad-hoc per-agent decisions about "how much" animation/glass/effects
 > **What it preserves:** DNA-first philosophy — the site's personality drives intensity, not templates
+> **★v6:** the Treatment Register caps the whole scale (task ambition); Mode sets the ceiling
+> (horsepower); Brand DNA sets the floor; **the aliveness floor sits under everything, and no cap
+> removes it** (SKILL.md §0.1, §17).
 
 ---
 
@@ -14,9 +17,11 @@ Iron Canvas has a design language ceiling — the most visually impressive outpu
 ```
 DESIGN INTENSITY = f(Treatment Register cap, Execution Mode ceiling, Brand Personality Matrix scores)
 
-Treatment Register (CD3 §0) sets the OUTERMOST CAP (task ambition, R0–R4) — applied last  ★v5.1
+Treatment Register (CD3 §0.2) sets the OUTERMOST CAP (task ambition, R0–R4) — applied last  ★v5.1
 Mode sets the CEILING (maximum available intensity, by team horsepower)
 BPM scores set the FLOOR and OVERRIDES (DNA-driven activation)
+★v6 The ALIVENESS FLOOR (arrival · heartbeat · hand-feel · breath · composed still) sits UNDER all
+    three — every cap shapes its amplitude; none removes it
 ```
 
 The mode never forces features ON — it only limits how many can activate.
@@ -55,11 +60,38 @@ is an over-produced output and **fails VERIFY Axis 6**. Register is orthogonal t
 a *serious/classic* brand can take an R0 dashboard or an R2 editorial page. Full
 doctrine: [claude-design-3.md](claude-design-3.md).
 
+**★v6 — the register caps the ceiling, never the floor.** Near 0.0 at R0 still means a designed
+arrival (600–900 ms), one heartbeat (a breathing status dot, a live-data tick), hand-feel on every
+control, air plus one ambient layer, and a composed still. "When unsure, drop a register — never
+below the aliveness floor. Restraint is not stillness." An R0 output that is correct and dead
+fails **VERIFY Axis 7** exactly as an over-produced one fails Axis 6.
+
 ---
 
 ## THE NINE DESIGN SYSTEMS
 
 Every Iron Canvas output is composed of nine independently scalable design systems. Each system has an intensity value from 0.0 (off) to 1.0 (maximum). *(Systems 1–8 established v4.2; System 9 added v5.0.)*
+
+### ★v6 — What each dial FEELS like
+
+A number without a feeling is how the doctrine went mechanical; every dial gets its felt
+description back:
+
+| # | Low (0.1–0.3) | Mid (0.4–0.6) | High (0.8–1.0) |
+|---|---|---|---|
+| 1 Mesh atmosphere | a ground that is not quite flat — light pooling in one corner | a mesh that breathes on 20–40 s loops | weather — colour moving like light through smoke |
+| 2 Glass depth | one frosted surface where it earns it | glass strata — layers you can almost touch | a glass world; every surface refracts the one below |
+| 3 Kinetic type | words arrive on the house curve, once | lines unveil out of masks; one scramble for a signal | type is the performance — characters, sweeps, morphs |
+| 4 Particle field | dust in a sunbeam — you notice it on the second look | a slow current behind the hero | a living field that answers the cursor |
+| 5 Border luminance | hairlines that warm to the accent on hover | edges that catch light as you pass | light running along every seam |
+| 6 Scroll sequences | one short scrub that clarifies | a product turning under your thumb | "a digital flipbook controlled by your thumb" — the whole story |
+| 7 Magnetic cursor | the native cursor, respected | a trailing ring with weight (lerp 0.12) | a field that leans every control toward you |
+| 8 Micro-polish | every state answers — hover, press, focus | toasts, loaders and empties that are composed | sound as haptic depth, delight in the details |
+| 9 Depth language | composed: elevation, focus blur, parallax bands | staged: one scene as a window | inhabited: the scene is the site |
+
+**A dial at 0.0 means "this system is off", not "this page is dead."** The aliveness floor is not
+one of the nine systems — it sits under all of them (see MODE CEILINGS and step 0 of the
+calculation).
 
 ### System 1: GRADIENT MESH ATMOSPHERE
 **What it controls:** Background gradient orbs, oklch color diffusion, ambient depth
@@ -191,16 +223,18 @@ FUNCTIONAL (minimal ≥ 8):    → 0.0-0.2 intensity, near-static, content-first
 
 | Intensity | Behavior |
 |-----------|----------|
-| 0.0 | Default system cursor |
-| 0.1–0.3 | Custom cursor dot (CSS only), no magnetism |
-| 0.4–0.6 | Trailing cursor with smooth follow, scale on hover |
-| 0.7–0.8 | Magnetic attraction on interactive elements, blend-mode invert |
-| 0.9–1.0 | Full WebGL cursor with shader effects, strong magnetic fields, trail |
+| 0.0–0.29 | The native system cursor, respected (★v6 — matches the Agent-C tiers: below 0.3 native) |
+| 0.3–0.6 | Trailing ring with weight (lerp 0.12), smooth follow, scale on hover |
+| 0.61–0.89 | Magnetic attraction on interactive elements, blend-mode invert |
+| 0.9–1.0 | Full WebGL cursor with shader effects, strong magnetic fields, trail — R3+ only |
 
-**BPM activation drivers:**
-- `bold ≥ 5` → minimum 0.3 intensity (trailing dot)
-- `bold ≥ 7` → minimum 0.5 intensity (magnetic)
-- `bold ≥ 9` AND `avant_garde ≥ 8` → minimum 0.8 (WebGL cursor)
+Cursor effects run only under `(hover: hover) and (pointer: fine)` and only when motion is allowed.
+
+**BPM activation drivers** (★v6 reconciled to the Brand Personality Matrix thresholds — Bold 5-7
+trailing, Bold 8-10 magnetic — and the tier boundaries above):
+- `bold ≥ 5` → minimum 0.3 intensity (trailing ring)
+- `bold ≥ 8` → minimum 0.7 intensity (magnetic)
+- `bold ≥ 9` AND `avant_garde ≥ 8` → minimum 0.9 (WebGL cursor, R3+ only)
 - Touch device detected → force 0.0 (ALWAYS check touch before init)
 - `classic ≥ 8` → cap at 0.3 (custom cursors read as experimental)
 
@@ -222,6 +256,11 @@ FUNCTIONAL (minimal ≥ 8):    → 0.0-0.2 intensity, near-static, content-first
 - `playful ≥ 7` → minimum 0.6 (playful brands need micro-delight)
 - `bold ≥ 7` → minimum 0.5 (bold brands benefit from feedback richness)
 - `serious ≥ 9` → cap at 0.4 (professional contexts = restraint)
+
+**★v6 Sound (inside System 8)** — invited, never imposed: off by default behind a visible toggle;
+one timbre per brand; cues at the signature and the commit only; ambient beds only at 0.9–1.0 and
+R3+; spatial (HRTF) in R4 worlds; synthesized WebAudio before any file. With no sound, ship no
+sound UI. → references/motion-language.md §13
 
 ### System 9: DEPTH LANGUAGE ★v5.0
 **What it controls:** z-axis composition — elevation, focus blur, glass strata, parallax bands, WebGL scenes, camera choreography
@@ -249,27 +288,42 @@ FUNCTIONAL (minimal ≥ 8):    → 0.0-0.2 intensity, near-static, content-first
 ## MODE CEILINGS
 
 The execution mode sets the maximum number of systems that can activate and caps their intensity.
+★v6 — reconciled to SKILL.md §17: nine systems, not eight (System 9 Depth Language is never OFF).
 
 ```
 ┌─────────┬───────────┬─────────────┬──────────────────────────────────┐
 │ Mode    │ Max       │ Intensity   │ Default Active Systems           │
 │         │ Systems   │ Ceiling     │                                  │
 ├─────────┼───────────┼─────────────┼──────────────────────────────────┤
-│ MISSION │ 8/8       │ 1.0         │ ALL — mesh, glass, type, parti-  │
+│ MISSION │ 9/9       │ 1.0         │ ALL — mesh, glass, type, parti-  │
 │         │           │             │ cles, borders, scroll, cursor,   │
-│         │           │             │ polish                           │
+│         │           │             │ polish, depth                    │
 ├─────────┼───────────┼─────────────┼──────────────────────────────────┤
-│ SWARM   │ 6/8       │ 0.7         │ mesh, glass, type, borders,      │
-│         │           │             │ scroll, polish                   │
+│ SWARM   │ 7/9       │ 0.7         │ mesh, glass, type, borders,      │
+│         │           │             │ scroll, polish, depth            │
 │         │           │             │ (particles + cursor OFF by       │
 │         │           │             │ default — BPM can override)      │
 ├─────────┼───────────┼─────────────┼──────────────────────────────────┤
-│ SOLO    │ 3/8       │ 0.4         │ mesh (subtle), type, polish      │
+│ SOLO    │ 4/9       │ 0.4         │ mesh (subtle), type, polish,     │
+│         │           │             │ composed depth                   │
 │         │           │             │ (glass, particles, borders,      │
 │         │           │             │ scroll, cursor OFF by default —  │
 │         │           │             │ BPM can override)                │
 └─────────┴───────────┴─────────────┴──────────────────────────────────┘
 ```
+
+```
+Depth (System 9) is never OFF — every project carries ≥ 0.1 composed depth. The mode ceiling
+caps its ALTITUDE: SOLO ≤ 0.35 (Tier I) · SWARM ≤ 0.7 (Tier II) · MISSION ≤ 1.0 (Tier III).
+★v6 The ALIVENESS FLOOR (SKILL.md §0.1) is never OFF either. Mode ceilings, register caps and BPM
+suppression shape its AMPLITUDE — a 600 ms arrival and one breathing dot at SOLO/R0 — and never
+remove it. A dial at 0.0 means "this system is off", not "this page is dead".
+```
+
+**★v6 — SOLO caps systems, never the aliveness floor.** SOLO is the most common real-world mode
+(a single Claude Code session running Iron Canvas is SOLO). It limits how many systems activate
+and how loud they are; it never ships a page without an arrival, a heartbeat, hand-feel, breath
+and a composed still. That was the v5.x drift this table used to cause (Anti-Pattern #18 LIFELESS).
 
 ### BPM Override Rules
 
@@ -320,14 +374,11 @@ Phase 2 (FEEL) output now includes a `design_intensity` object calculated from B
       "border_luminance":   { "intensity": 0.6, "active": true },
       "scroll_sequences":   { "intensity": 0.7, "active": true },
       "magnetic_cursor":    { "intensity": 0.8, "active": true },
-      "micro_polish":       { "intensity": 0.7, "active": true }
+      "micro_polish":       { "intensity": 0.7, "active": true },
+      "depth_language":     { "intensity": 0.8, "active": true, "tier": "III" }
     },
-    "total_active": 8,
-    "aggregate_intensity": 0.71,
-    "override_log": [
-      "bold=9 → cursor unlocked (BPM override)",
-      "avant_garde=8 → scroll_sequences minimum 0.6 (BPM floor)"
-    ]
+    "aggregate_intensity": 0.72,
+    "override_log": ["bold=9 → cursor unlocked", "avant_garde=8 → scroll min 0.6"]
   }
 }
 ```
@@ -335,6 +386,8 @@ Phase 2 (FEEL) output now includes a `design_intensity` object calculated from B
 ### Calculation Algorithm
 
 ```
+0. ★v6 RESERVE THE ALIVENESS FLOOR first — arrival, heartbeat, hand-feel, breath, composed
+   still. Every step below shapes their amplitude; no step removes them.
 FOR each of the 9 systems (Systems 1–8 + System 9 Depth Language — the register clamps all nine):
   1. Check mode default → is this system active by default for this mode?
   2. Calculate BPM-driven intensity:
@@ -346,11 +399,13 @@ FOR each of the 9 systems (Systems 1–8 + System 9 Depth Language — the regis
      → Final intensity = min(BPM intensity, mode_ceiling)
   5. Apply BPM ceiling cap:
      → If any suppressing BPM axis applies (e.g., classic ≥ 8 caps cursor) → apply cap
-  6. Apply Treatment Register cap ★v5.1 (CD3 — OUTERMOST, applied last):
-      → Final intensity = min(step-5 result, register_cap[treatment_register])
+  6. Apply the surface pack cap ★v5.0:
+     → the dispatched pack's DIS profile (surfaces/*/PACK.md §3) — floors and caps per system
+  7. Apply Treatment Register cap ★v5.1 (CD3 — OUTERMOST, applied last):
+      → Final intensity = min(step-6 result, register_cap[treatment_register])
       → register_cap: R0 0.2 · R1 0.5 · R2 0.7 · R3 0.9 · R4 1.0
       → This is what resolves an R0 utilitarian task near 0 even under a bold BPM floor
-   7. Log any overrides for transparency
+  8. Log any overrides for transparency
 ```
 
 ---
@@ -410,18 +465,21 @@ TIER 3 — IMMERSIVE (LCP < 4.0s):
   → Total JS budget: 500KB with code splitting
 ```
 
-**Resolution order when constraints conflict:**
+**Resolution order when constraints conflict** (★v6 reconciled to SKILL.md §17 — surface pack caps added):
 ```
 1. Performance Tier (hard cap — user experience)
-2. BPM suppression caps (DNA says "not this")
-3. Mode ceiling (structural limit)
-4. BPM activation floors (DNA says "at least this much")
-5. Treatment Register cap ★v5.1 (CD3 — the OUTERMOST clamp, applied LAST):
-     final_intensity = min(result_of_1-4, register_cap)
+2. Surface pack caps (the terrain says "not here") ★v5.0
+3. BPM suppression caps (DNA says "not this")
+4. Mode ceiling (structural limit)
+5. BPM activation floors (DNA says "at least this much")
+6. Treatment Register cap ★v5.1 (CD3 — the OUTERMOST clamp, applied LAST):
+     final_intensity = min(result_of_1-5, register_cap)
    A BPM activation floor can never push a system above the task's register.
    e.g. bold≥6's 0.4 depth floor is clamped to 0.2 on an R0 task — no staged
    scene on a utilitarian tool (Anti-Patterns #15 / #17). The register is thus a
    GENERATIVE constraint here, not only a reactive VERIFY-Axis-6 check.
+★v6 None of the six touches the aliveness floor (step 0 above): they resolve the nine
+   systems' intensities; the floor's five elements ship at whatever amplitude remains.
 ```
 
 ---
@@ -438,6 +496,9 @@ How to prevent: The DIS calculation runs BOTH inputs. Mode sets ceiling, BPM set
 
 **Red flag:** If `aggregate_intensity > 0.7` and `serious ≥ 8`, something is miscalibrated.
 **Red flag:** If `aggregate_intensity < 0.3` and `bold ≥ 8`, something is miscalibrated.
+**★v6 counterweight:** low intensity is never an excuse for a dead page. Whatever the aggregate,
+the aliveness floor ships — a page with nothing moving at rest is Anti-Pattern #18 LIFELESS, the
+opposite failure to #12 and #17, and it fails VERIFY Axis 7 at every register.
 
 ---
 
@@ -452,14 +513,15 @@ Use as a North Star reference when calibrating the DIS for any project.
 
 ---
 
-*Design Intensity Scale — Iron Canvas v5.1 (Systems 1–8 v4.2 · System 9 v5.0 · Treatment Register cap v5.1)*
+*Design Intensity Scale — Iron Canvas v6 (Systems 1–8 v4.2 · System 9 v5.0 · Treatment Register cap v5.1 · aliveness floor + felt dials v6)*
 *"The ceiling is the same for every project. The site's DNA decides how high to climb."*
+*"The floor is never flat — and never still."*
 
 ---
 
 ## HIGH DYNAMIC RANGE — THE FULL SPAN
 
-Iron Canvas's high-dynamic-range axis is the **Treatment Register (CD3 §0 — R0 Utilitarian → R4
+Iron Canvas's high-dynamic-range axis is the **Treatment Register (CD3 §0.2 — R0 Utilitarian → R4
 Immersive, set by TASK AMBITION)**. The register caps the DIS; the DIS then resolves the *same*
 design language to a point within it, alongside the three BPM-driven axes below. Each end is
 first-class. (Execution Mode is a *horsepower* input, not the HDR axis — restraint at R0 is

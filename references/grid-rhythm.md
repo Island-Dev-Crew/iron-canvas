@@ -191,6 +191,106 @@ ASYMMETRIC PATTERNS:
 
 ---
 
+## STEP 7: RESPONSIVE HARDENING (v4.2)
+
+> These rules are non-negotiable. Failing any of them = critical layout failure on mobile.
+
+### Mobile Collapse Rules (< 768px)
+
+```
+MANDATORY:
+  → ALL multi-column layouts collapse to single column. No exceptions.
+  → Horizontal scroll on mobile is a CRITICAL failure — test for it.
+  → All col-span overrides reset to col-span-1 on mobile.
+  → Remove all rotations, negative-margin overlaps, and z-axis transforms below 768px.
+  → Overlapping elements cause touch-target conflicts — stack vertically.
+  → Section padding reduces proportionally: clamp(3rem, 8vw, 6rem)
+
+NEVER:
+  → h-screen for full-height sections → ALWAYS min-h-[100dvh]
+  → Complex flexbox percentage math → ALWAYS CSS Grid
+  → Asymmetric layouts that DON'T collapse to single column on mobile
+  → Fixed-position elements that cover > 20% of mobile viewport height
+```
+
+### Touch Targets
+
+```
+MINIMUM: 44px × 44px on ALL interactive elements
+  → Buttons, links, form inputs, toggles, checkboxes, select dropdowns
+  → If the visual element is smaller, expand the hit area with padding
+  → Especially critical: nav links, close buttons, icon-only actions
+  → Test: can you reliably tap it with a thumb?
+```
+
+### Typography Scaling
+
+```
+REQUIRED:
+  → Display/H1: clamp(2.5rem, 7vw, 5rem) — scales smoothly, never overflows
+  → H2: clamp(1.75rem, 4vw, 3rem)
+  → Body text: minimum 1rem (16px) — never go below on mobile
+  → Body max-width: 65ch — prevents uncomfortably wide lines on desktop
+  → Headings: text-wrap: balance (prevents orphan words)
+  → Small labels: minimum 12px — below this is unreadable on mobile
+```
+
+### Container Constraints
+
+```
+REQUIRED:
+  → Page content contained by max-w-[1400px] mx-auto
+  → OR max-w-7xl mx-auto (1280px)
+  → Horizontal padding: clamp(1rem, 4vw, 2rem) on mobile
+  → Content NEVER stretches edge-to-edge on wide screens
+  → Full-bleed sections: use 100vw with inner content constrained
+```
+
+### Image Behavior on Mobile
+
+```
+  → Images in asymmetric layouts stack below text on mobile
+  → Use aspect-ratio or explicit height to prevent layout shift
+  → Below-fold images: loading="lazy"
+  → Hero background images: object-fit: cover with object-position: center
+  → Inline typography images (photos between words): stack below headline on mobile
+```
+
+### Navigation Responsive Pattern
+
+```
+  → Desktop horizontal nav → mobile hamburger menu
+  → Hamburger must be visible and tappable (44px target)
+  → Mobile menu: full-screen overlay, not a tiny dropdown
+  → Current page indicator visible in both desktop and mobile nav
+  → Scroll behavior: smooth (scroll-behavior: smooth on html)
+```
+> ★v6 note: when Lenis drives the scroll, leave `scroll-behavior` at `auto` (the two fight), and
+> gate any native smooth scroll behind `@media (prefers-reduced-motion: no-preference)`.
+
+### Spacing Reduction on Mobile
+
+```css
+/* Responsive section spacing */
+.section {
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+/* Responsive gaps */
+.grid {
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+/* Responsive container padding */
+.container {
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  max-width: 1400px;
+  margin-inline: auto;
+}
+```
+
+---
+
 ## INTEGRATION POINT: feel-profile.json
 
 ```json
@@ -202,7 +302,10 @@ ASYMMETRIC PATTERNS:
     "section_rhythm": "standard | contrast-heavy | editorial",
     "grid_breaks": 1,
     "bento_sections": false,
-    "asymmetric_hero": false
+    "asymmetric_hero": false,
+    "responsive_collapse": "single-column",
+    "touch_target_min": "44px",
+    "typography_scaling": "clamp"
   }
 }
 ```

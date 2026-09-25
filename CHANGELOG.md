@@ -1,5 +1,179 @@
 # Changelog
 
+## v6.0 — THE LIVING CANVAS (the soul restored, made executable) — 2026-09-24
+
+**Theme:** The early Iron Canvas, for all its bugs, *felt* alive — *"Kinetic Energy — Everything
+feels alive, intentional, moving."* By v5.2 the method was precise and mechanical: the lines that
+carried the feeling lived in files SKILL.md never routed to, two archive overlays had silently
+erased the v4.2.0 motion arsenal, and the restraint defaults (SOLO caps, "drop a register",
+aliveness checks waived at R0) had quietly made stillness the safe answer. v6 restores the voice
+inline, makes it executable, and guards it so it cannot be chopped again. Source studies:
+a forensic soul-recovery report across every revision since `45dcc41`, a fusion study of the
+Adaptive Design Intelligence and Immersive Landing Forge skills, frontier research (Claude
+Design, Seedance 2.5, Blender, WebGPU, HyperFrames), and five frame-by-frame film breakdowns.
+
+### Added — the voice and the floor
+- **SKILL.md §0.1 THE VOICE** — the studio's own words, back on the main path: *"We don't
+  vibe-code. We engineer beauty."*, the master blacksmith's studio, the five emotions,
+  *"a feel brief is not a mood board — it's a lens"*, the stillness paragraph, *"whitespace is the
+  breath between notes"*, *"every pixel earns its place … 2am on a dim screen"*, the surgeon, the
+  detective, the three critics. Framed as the studio's voice, never a client's palette. CD3
+  becomes **§0.2, the conscience** (all "§0" references still resolve).
+- **The Living Rules** — (1) the **ALIVENESS FLOOR**: arrival · heartbeat · hand-feel · breath ·
+  composed still, at every register and surface; (2) **write the score**; (3) **adjectives direct,
+  evidence proves**; (4) one craft, every altitude.
+- **VERIFY Axis 7 — Aliveness**, 6/6, never waived; recordings as evidence (first 5 s, a
+  15-second slow scroll, reduced motion). The Final Sign-Off is now 7 axes.
+- **The Feel Brief** (Phase 2): `lens`, the 3-second/after timeline, reference vibes as places,
+  `sensory_keywords`, the **feel line** (3 adjectives · material · tempo), `subject_vocabulary`, a
+  required **`kinetic_signature`** and the `signature` (mechanism sentence). GATE 2 fails on an
+  empty kinetic signature. "Lifeless / mechanical" is the default anti-feeling of every project.
+- **Discovery Interview Q8 — the mechanism.**
+- **Anti-patterns #18 LIFELESS · #19 TWO CLOCKS · #20 FLAGGED BUT SHIPPED · #21 DEFAULTS AS
+  DECISIONS · #22 UNREVIEWED INTERPOLATION** (registry 17 → 22).
+- **Taste Doctrine #9 Nothing ships lifeless · #10 One clock, one signature.**
+
+### Added — the executable parts
+- **`runtime/`** — the **Score Runtime** (`canvas-score.js`): acts → shots → 17 verbs × 7
+  personalities; full / reduced / static modes; kill switch; `window.__icScore`; `?score=debug`.
+  `score.schema.json` (+ the motion-contract fields `stage · job · role · emotion · reduced ·
+  fallback · signature`), `verbs.html` (the verb gallery), `camera-rail.js` (plays a
+  Blender-baked camera rail by the score's progress). SKILL.md **§23**.
+- **`engines/`** — the **Power Engines**: `detect.mjs`; Blender (`clay-camera` with a vertical-FOV
+  camera, roll, per-segment easing, seeded handheld, baked per-frame `ic-camera-rail/2` samples, the
+  move in words, a 21-still `sheet` gate and frame-count proof; `hero-object`; `turntable`;
+  `matcap`); Seedance 2.5 (fal queue or ingest, cost printed first, clips measured never inferred);
+  ElevenLabs audio; the **ledger** (select with a reason · re-hash verify · encode · promote with a
+  provenance sidecar). Register gates: *a toggle says available, the register says appropriate.*
+  The **twin camera**: Blender clay rail → Seedance `@Video1` → the same rail in WebGL. SKILL.md **§24**.
+- **`studio/`** — **Iron Canvas Studio**: idea in → treatment, score, engine jobs, config and a
+  paste-ready mission out; shows the aliveness floor per register. SKILL.md **§25**.
+- **`scripts/`** — `ic-preflight.mjs` (feel brief + score + engine config in one pass, every
+  violation with its JSON path); `ic-contract.mjs` (the build against its **design contract** —
+  colours, faces, curves, durations, radius, shadow, borders, hard fails); `lint-skill.mjs`
+  (paths · fences · voice anchors · version · the **loss guard**).
+- **`showcase/origin.html`** — the first Iron Canvas page (March 2026), restored with its bugs fixed
+  (reveal cascade, no-JS guard, visible dust, mobile keeps the orb, full reduced motion, seeded
+  randomness, AA contrast), public-safe, zero libraries — plus `origin.contract.json`, which it passes.
+- **`showcase/living-canvas/`** — the five-act WebGL scroll film; its score now lives in the page as
+  data (`<script type="application/json" data-ic-score>`) and passes preflight with zero warnings.
+- **`surfaces/film/PACK.md`** — Type **H** (experimental): launch films, motion graphics, promos,
+  cut-downs, OG video — one film score (context · segments · beats) → code (HyperFrames), video
+  (Seedance 2.5 / MiniMax via ingest) and Blender lanes; the camera vocabulary; measured presets;
+  timing and sound laws; render gates.
+- **References** — `motion-language.md` (the one motion vocabulary), `cinematic-score.md` (the
+  score as motion contract; one score → site · film · shot list), `power-engines.md`,
+  `direction-fusion.md` (Voice · World · Instrument; evidence classes).
+- **Templates** — `scroll-capture.spec.ts` (Axis 7 evidence), `design-contract.json`.
+- **PACKAGE 3.9b–d** — the Artifact Assessment Gate moves here from Phase 5 (engine jobs written
+  before FORGE; ASSET FORGE 5a runs in parallel); preflight must pass; the design contract.
+- **Phase 5 GENERATE** becomes the media tournament; **Phase 8** gains **PREMIERE** (the launch
+  film cut from the same score, HyperFrames determinism contract, film craft numbers).
+
+### Restored — the v4.2.0 material erased by the `0a06432` overlay (2026-06)
+- `references/interaction-library.md` — **High-End Component Patterns** (Double-Bezel, Button-in-
+  Button, Liquid Glass, Fluid Island nav, Eyebrow) and the **Creative Arsenal** (44 named patterns),
+  now with a *min register* column.
+- `references/motion-budget.md` — **React / Next.js Motion Rules**.
+- `references/anti-patterns.md` — **Section II, design-level AI tells** (34 items restored in full,
+  19 cross-referenced to CD3 / the Phase 7 gate; taste bans re-conditioned on the BPM as the source
+  analysis intended).
+- `references/grid-rhythm.md` — **Step 7 responsive hardening** (byte-identical to `d58bbd1`).
+- `agent-prompts/agent-c-ui.md` — the v4.2.0 prompt (5-state mandate, high-end patterns) + a
+  **Hand-feel** block from the original page; `agent-e-qa.md` — the adversarial stance (*"Finds what
+  everyone else missed"*) and the Design Quality Gate; `orchestrator.md` — *"Your taste doctrine:
+  Amplify what's already good. Never replace. Never impose."* + *"You are the keeper of the feel brief."*
+- `surfaces/app-dashboard/PACK.md` — the **five Bento motion archetypes** (*"a 'perpetual state'
+  that loops infinitely to keep the dashboard feeling alive"*), each with its reduced-motion state.
+- `references/expertise-injection.md` — the lost best practices (*"Verify at Higher Abstraction"*,
+  *"Don't Use Ralph Wiggum for Taste"*); SKILL.md — the full Golden Rule (*"Extract. Understand. Then
+  enhance."*), the lineage line, the filled load choreography, the transition-as-feeling table, the
+  per-section Emotion map (§7b), *"Generate for the context, not for the prompt"*, timing by
+  emotional weight, *"a site with no images … is a FAILED run"*.
+- Every restored block is recorded with its source revision and line range in the v6 pull request.
+
+### Changed
+- **Curve roles fixed** — the original page's calm expo-out (`0.16, 1, 0.3, 1`) is every arrival
+  (`--ease-arrive`); the overshoot (`0.34, 1.56, 0.64, 1`) is only for micro-moves ≤ 0.25 s
+  (`--ease-tick`). The inverted `--spring` / `--spring-slow` names are retired. One personality
+  system (silk · tide · gravity · spark · snap · bloom · drift) binds the doctrine to the runtime.
+- **CD3 Law 1** — *"When unsure, drop a register — never below the aliveness floor. Restraint is not
+  stillness."* Law 3 gains the design plan before code; Law 4 a registry of named model defaults
+  that grows every run; Law 5 *"no evidence without intent"*.
+- **§22** — *"Evidence beats adjectives"* becomes **"Adjectives direct. Evidence proves."** — right
+  about completion claims, wrong as a writing style.
+- **DIS §17** — the floor is reserved before any cap (calc step 0); SOLO caps systems, never the
+  floor; every dial gets its felt description back; a sound doctrine inside System 8.
+- **Agent prompts** — Agent-B gains an intent block, performs the score, and decides reduced motion
+  *before* Lenis is constructed (the `lenis` package); Agent-C takes the cursor tier from the DIS
+  dial on fine pointers only; Agent-D generates for the context and runs ASSET FORGE; Agent-E
+  collects the aliveness evidence.
+- **North Star examples** span three different worlds instead of all hard-coding the studio's
+  obsidian + gold + Outfit; `color-system.md`'s indigo-first examples are replaced by three
+  contrasting derived palettes.
+- **§13** — "DARK IS DEFAULT" becomes the *studio* default; client dashboards derive from DNA.
+- `references/typography-system.md` — Step 0 rights gate + Step 2b specimen tournament; Inter /
+  Space Grotesk only with a stated reason.
+- `sub-skills/` — marked archival, superseded by SKILL.md §7b.
+
+### Fixed
+- Merge splices: the Phase 2 FEEL-profile JSON and the BPM map (buried inside a Phase 3 code block),
+  the engine registry and keyframe method (inside the "AI engine selection" fence), Agent-B's tier
+  block (inside Agent-C's CSS), Agent-C's two-sweep block (inside Agent-D's prompt), Agent-D's asset
+  classification (under Agent-E's header), the conversion questions (inside the DNA JSON), the HDR
+  note and the §18/§19 notes (between a rule and its title).
+- The Taste Test T1–T7 fences, whose info strings swallowed Axes 4–5 into a code block.
+- The undefined `BRAND_BOLD_SCORE` global; the `@keyframes data-pulse` CSS inside a `javascript`
+  fence; GSAP ease names inside CSS transitions (invalid — the browser drops the declaration);
+  `rgba(var(--accent-rgb), …)` vs space-separated mirrors (one convention: `rgb(var(--x-rgb) / α)`).
+- Motion-budget GATE 3's contradiction with Anti-Pattern #7 (looping MP4 fine; scroll-tied never video).
+- The Blender clay camera treated `fov` as horizontal while three.js reads vertical — the clay film
+  would have been 1.78× tighter than the site; now vertical, baked per frame, and unit-tested.
+- The Studio's R1 depth cap (0.35) now matches SKILL.md §17 (0.5).
+
+### Removed / Relocated (the loss ledger — `scripts/lint-skill.mjs --against 49614ba` names every file below)
+- **SKILL.md** — rewritten, not lost: the v4 invocation block (replaced by v6 invocations); the
+  three North Star example prompts that hard-coded `#0a0e14` / `#c9a84c` / Outfit (replaced by three
+  contrasting worlds); the PRD's `heroIn/textIn/spring/brand` easing placeholder (replaced by the
+  personality system and the score); Agent-B's empty `runLoadSequence` stub and unconditional Lenis
+  start (replaced by the filled choreography and a reduced-motion early return); the r128 Three.js
+  injection lines about OrbitControls and CDN bundles (stale); `--spring` / `--spring-slow` /
+  `--smooth` tokens (retired roles); "DARK IS DEFAULT … = Iron Canvas signature" (now the studio
+  default); version strings v5.2 → v6.0. Every other flagged line is a reworded or re-fenced
+  original whose content survives.
+- **references/color-system.md** — the indigo (hue 260) worked examples in Steps 2–5 and the JSON
+  sample: replaced by three derived palettes so no single example reads as the default.
+- **phases/03-scout.md** — the free-form "reference collection" step: replaced by Direction Fusion
+  (the "specific elements that feel premium" framing is kept); the Type A / C / D North Star
+  templates that hard-coded the studio's OLED black, gold and Outfit (replaced by three contrasting
+  worlds — Anti-Pattern #3).
+- **phases/03.9-package.md** and **templates/design-prd.md** — the PRD template re-cut to SKILL.md
+  §2 / §4 / §9–§11: the retired `--spring` / `--spring-slow` / `--smooth` tokens and v5 durations,
+  the `heroIn … brand` easing object, the Locomotive / ScrollSmoother option, the flattened
+  transition list and the "animations disabled" reduced-motion line removed; the Artifact Assessment
+  Gate moved in from Phase 5.
+- **phases/05-generate.md** — the Assessment Gate relocated to 3.9b (moved, not lost); a scrim
+  hard-coded to the studio's `#0a0e14` replaced by a token.
+- **references/design-intensity-scale.md** — the stale 8/8 · 6/8 · 3/8 mode table replaced by SKILL.md
+  §17's 9/9 · 7/9 · 4/9; cursor tiers and drivers reconciled to the DIS dial; the JSON example,
+  calculation steps and resolution order renumbered to match SKILL.md.
+- **templates/invocation-templates.md** — v5.2 version strings and 6-axis wording; a dashboard North
+  Star that imposed the studio palette on client work; `var(--spring)` in the quick-enhancement template.
+- **phases/06-compose.md** — reworded, not lost: the Assessment Gate check (moved to 3.9b); the frame
+  loader and text scrim hard-coded to the studio's `#0a0e14` / `#c9a84c` (now tokens); the commented
+  `MOBILE_STEP` stub (replaced by the restored `FRAME_STEP` recipe); `ctx.scale(dpr, dpr)` (a HiDPI
+  double-scale bug); the transition steps now carry ★v6 annotations (runtime equivalents, cleanup craft kept).
+- **README.md** — condensed: the v5.2 / v4.3 / v4.2 banners folded into "Earlier releases" (their
+  highlights kept verbatim), the per-file tree shortened to folders (the full annotated map lives in
+  REPO_MAP.md), the v5.2 invocations replaced by v6 ones.
+- **phases/03.5-validate.md**, **templates/technical-validation-report.md** — GSAP licence gates
+  (SplitText, MorphSVG, DrawSVG): the whole toolset has been free since GSAP 3.13; replaced by font,
+  media and paid-engine licensing checks.
+- Not moved into this public repository on purpose: the unredacted original site, the Strategic
+  Synthesis, and the first methodology (public-safe policy, v5.2). They remain in the private history.
+
+---
+
 ## v5.2 — GAUNTLET-FORGED PREMIUM (the build method for R2–R4) — 2026-08-12
 
 **Theme:** The premium tier stops one-shotting its most immersive work. At registers R2–R4,

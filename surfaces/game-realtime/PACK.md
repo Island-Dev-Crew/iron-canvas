@@ -27,7 +27,7 @@ version: 5.0
 | 2 FEEL | BPM as standard + the **diegetic decision** (below) + photosensitivity envelope (flash/strobe limits set here, enforced at Verify). |
 | 3 SCOUT | Game-UI North Star sets (§6). Reference universe is shipped games + game-UI archives, not websites. |
 | 4 FORGE | Agent-C builds the **HUD grammar** + menu system before any styling. Agent-B's motion work becomes **game-feel timing** (juice curves, response envelopes). Input-agnostic from the first wireframe: gamepad, KB/M, touch. **★v5.2 — run as a GAUNTLET LOOP** (pack override of the R2–R4 default: fires at **R3/R4 only** — a Type-G companion site at R2 builds its HUD once, well): fan out N HUD/game-feel candidates, a blind critic scores each against the game-feel bar (juice envelopes, ≤ 8ms HUD latency, colorblind + photosensitivity gates, North Star diff), loop until one clears (references/gauntlet-loop.md). |
-| 4.5 IMMERSE | Title screen IS the sanctioned immersive moment (Agent F, §22 gate applies) — **gauntlet-forged ★v5.2 at R3/R4** (`references/gauntlet-loop.md`): fan out N title-screen candidates, blind-critic against scorecard ≥ 4.0 + North Star, ship the winner. In-HUD 3D elements (radar, holo-maps) count as staged scenes — one max. |
+| 4.5 IMMERSE | Title screen IS the sanctioned immersive moment (Agent F, §22 gate applies) — **gauntlet-forged ★v5.2 at R3/R4** (`references/gauntlet-loop.md`): fan out N title-screen candidates, blind-critic against scorecard ≥ 4.0 + North Star, ship the winner. In-HUD 3D elements (radar, holo-maps) count as staged scenes — one max. ★v6 The title world subscribes to one clock (the menu/state timeline, or the score's progress on a web frontend) — never a second driver. |
 | 5 GENERATE | Assets: iconography systems (SVG, states × rarities), frame/border nine-slices, §19 generative backgrounds for menus (seeded — menus must be reproducible in bug reports). |
 | 6 COMPOSE | Composition = layering contract with the game frame (below), state machine wiring (title → menu → loadout → in-game → pause), settings persistence. |
 | 7 VERIFY | This pack's verify profile (§5) — includes photosensitivity and colorblind gates web packs don't carry. |
@@ -117,11 +117,26 @@ ACCESSIBILITY (game-grade, mandatory):
               UI scale option 80–130% without layout breakage
 EVIDENCE:     §22 harness adapted — screenshots per game state (title/menu/HUD idle/HUD
               combat/pause), per aspect ratio, plus colorblind sim captures
-6-AXIS AUDIT: craft → frame discipline · identity → game-world citizenship · motion →
+              ★v6 + a recording of the title screen's first 5 seconds and of each menu at rest
+★v6 ALIVENESS FLOOR (Axis 7, need 6/6 — never waived, in menus and frontends as on the web):
+              ARRIVAL     the title screen's one designed first moment (≤ 1.5 s to legible)
+              HEARTBEAT   menus breathe at rest — a seeded §19 background, an idle drift — within the
+                          photosensitivity envelope; the HUD's heartbeat is state (a live tick), never flashing
+              HAND-FEEL   the juice envelopes on every control — pointer, touch AND gamepad focus
+              BREATH      the safe-area air + one ambient layer behind menus
+              COMPOSED STILL reduced motion / the photosensitivity-safe mode rests on designed frames
+              The HUD's calm is its register, not the absence of life: calm is not dead.
+7-AXIS AUDIT: craft → frame discipline · identity → game-world citizenship · motion →
               juice envelopes · depth → band contract with gameplay viewport · states →
               full state machine choreographed · treatment&soul (Axis 6, CD3) →
-              register match to the game's world; HUD legibility + diegetic coherence as soul; no decoration slop
+              register match to the game's world; HUD legibility + diegetic coherence as soul; no decoration slop ·
+              ★v6 aliveness (Axis 7) → alive at rest in every state, one clock for any scrolling frontend
 ```
+
+**Power engines (★v6)** — gated by register as everywhere (`references/power-engines.md`): R0/R1
+off · R2 the title screen's signature only · R3/R4 on (a Blender title-world piece within the HUD's
+budgets; a Seedance trailer shot). Engine output goes through the ledger with provenance; a missing
+engine takes its fallback and never blocks the frontend.
 
 ---
 

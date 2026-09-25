@@ -15,6 +15,9 @@ protocol: 4 of 4
 requires: design_brief.json, motion_blueprint.json, implementation (from Protocol 3)
 ---
 
+> **Archival — superseded.** Kept for history. The live doctrine is SKILL.md v6 (§7b Choreography)
+> and `references/motion-language.md`. Do not execute this file.
+
 # IRON CANVAS — PROTOCOL 4: VERIFICATION NEXUS
 ### *6-Axis Quality Audit & Final Sign-Off (Axis 6 = CD3 Treatment & Soul ★v5.1)*
 

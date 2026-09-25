@@ -18,7 +18,7 @@
 ## THE REGISTER GATE — when the gauntlet fires (and when it must not)
 
 The gauntlet loop is powerful and expensive. It fires **only where "loop until wowed" is the
-goal**, which the Treatment Register (CD3 §0) decides:
+goal**, which the Treatment Register (CD3 §0.2) decides:
 
 | Register | Gauntlet? | Why |
 |----------|-----------|-----|
@@ -47,16 +47,46 @@ ships each part, so the loop is a *wiring*, not new machinery:
    shadowed by a **blind critic** — a `cross-family-review` seat (independent model family,
    fresh clone) that scores the *artifact*, never the builder's self-report. Losers are killed;
    survivors reseed the next round.
+   **★v6 — the candidates are SCOUT's Direction Fusion variants.** At FORGE the N directions are
+   the 2–3 fusion variants recorded in `scout-report.json` — each rotates which source (Voice ·
+   World · Instrument) leads the hero, the instrument and the commit — never N random restyles
+   of one idea. At GENERATE the gauntlet is **the media tournament** (candidates by register
+   R2 2 · R3 3 · R4 4 → blind critic → `engines/ledger.mjs select` with a written reason →
+   verify → promote with provenance).
 3. **Bar to hit (falsifiable — this is the whole discipline)** — a candidate clears only on
    **captured evidence a critic could fail it on**, never vibes:
-   - the **immersion scorecard ≥ 4.0, zero auto-fails** (`templates/immersion-scorecard.md`);
+   - the **immersion scorecard ≥ 4.0, zero auto-fails** (`templates/immersion-scorecard.md` —
+     ★v6 six axes including Aliveness);
    - a **North Star reference-peg screenshot diff** (the loop shines because the critic is
      *visual* — screenshot the build, diff it against the North Star, fail until they converge);
-   - the pack's **§5 VERIFY profile** + the **6-axis audit read at the register** (Axis 6 = CD3);
-   - evidence captured by the **Playwright harness** (`templates/smoke.spec.ts`) — screenshots
-     at every camera station, console-clean, zero horizontal overflow, fallback-ladder proven.
+   - the pack's **§5 VERIFY profile** + the **7-axis audit read at the register** (Axis 6 = CD3;
+     ★v6 Axis 7 = Aliveness, scored from the recordings and never waived);
+   - evidence captured by the **Playwright harness** (`templates/smoke.spec.ts`; ★v6
+     `templates/scroll-capture.spec.ts` for station captures) — screenshots at every camera
+     station, console-clean, zero horizontal overflow, fallback-ladder proven — ★v6 plus the
+     aliveness recordings: a video of the first 5 seconds, a 15-second slow scroll, a
+     reduced-motion recording.
 
 > You can't wow your way past the bar — the critic must be able to fail you on captured evidence.
+
+---
+
+## THE CRITIC'S FOUR LENSES ★v6
+
+The blind critic reviews as three critics at once — an **Awwwards judge**, a **principal
+engineer**, an **accessibility auditor** (*"Be honest. Sycophancy here is expensive."*) — and a
+fourth: a **creative director**, who watches the recordings, reads the score's director's notes
+(`note` on each shot, `intent` and `emotion` on each act) and asks:
+
+- *"Does the motion serve the story, or is it noise?"*
+- *"What would make someone say 'show me that again'?"*
+- *"Which section feels leftover?"*
+
+The creative director scores **Axis 7 (Aliveness) from the recordings** — arrival (first 5 s),
+heartbeat and hand-feel (the slow scroll and the hover/focus sweep), breath, the composed still
+(the reduced-motion recording), and whether the score held (one signature, one clock, each act's
+emotion recognisable in its station screenshot). A candidate that is correct and dead fails
+(Anti-Pattern #18 LIFELESS) exactly as an over-produced one does (#17).
 
 ---
 
@@ -96,7 +126,7 @@ evidence if the round cap was hit. This is the premium tier's proof of forging �
 ## GRADUATION — gauntlet for wow, VERIFY for proof
 
 The gauntlet loop gets a **wow-grade candidate fast**; it is the lightweight cousin of a full
-governance gate. In Iron Canvas the **Phase 7 6-axis VERIFY + the §22 evidence gate** ARE that
+governance gate. In Iron Canvas the **Phase 7 7-axis VERIFY + the §22 evidence gate** ARE that
 gate — the real definition-of-done you would defend to a stranger. So: **gauntlet-forge the
 candidate in IMMERSE/GENERATE, then it must still pass VERIFY.** Say which you are running so no
 one mistakes a wowed candidate for a shipped, signed-off build. (Honest edge, per the island: a

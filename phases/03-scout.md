@@ -79,35 +79,100 @@ Start with competitor analysis, then route by industry vertical to A/B/C/D above
 
 ---
 
-## Step 2: Reference Collection Protocol
+## Step 2: Reference Collection → Direction Fusion ★v6
 
-Find **3-5 sites** that match the Feel Profile's primary and secondary emotions.
+> *"Iron Canvas is NOT a template. It's a methodology."* Work reads as unusually rich, deep and
+> specific when it comes from more than one lineage — and as a reskin when it comes from one.
+> **A named direction from the operator always overrides the fusion** (record it in
+> `scout-report.json → operator_direction` and skip to Step 3).
 
-Screenshot SPECIFIC ELEMENTS — not whole pages:
-- A hover state at the exact right intensity for your Brand Personality Matrix Bold score
-- A scroll animation at the correct drama level (check avant-garde score)
-- A typography treatment matching your DNA font personality
+### 2a. Collect elements that feel premium — never whole pages
+
+Find **3-5 candidate sites** that match the Feel Brief's lens, primary and secondary emotions.
+Screenshot SPECIFIC ELEMENTS that feel premium — not whole pages:
+- A hover state that feels premium — at the exact right intensity for your Brand Personality Matrix Bold score
+- A scroll animation that adds depth — at the correct drama level (check avant-garde score)
+- A loading sequence that feels polished
+- A typography treatment matching your DNA font personality, at the right weight
 - A section layout at the target density (airy/balanced/dense from spatial DNA)
 - A color relationship that matches your accent temperature (warm/cool/neutral)
 
-Document each:
+**Rule:** If a reference evokes ANY of the anti-feelings listed in the Feel Brief — discard it
+immediately, regardless of how technically impressive it is. (★v6: that includes "lifeless /
+mechanical" — a reference that is correct and dead is not a reference.)
+
+### 2b. Fuse — three sources, three different questions
+
+From the candidates, choose **three exact sources**, each answering a **different** question, so no
+single source can own the result:
+
+```
+VOICE       how the subject speaks   → lends type hierarchy, scale ratio, spacing rhythm
+WORLD       what it is made of        → lends material, surface, colour, imagery, depth rule
+INSTRUMENT  how its facts move        → lends temporal behaviour, component states, the proof device
+RULES  ≥ 3 of 5 global axes (grid · type · material · motion · tokens) stay project-owned
+       translate tokens by ROLE, never by value · mutate ≥ 3 axes against every source
+       2–3 fusion variants rotate which source leads hero / instrument / commit (= gauntlet candidates)
+       every claim about a reference is Observed / Derived / Unverified — record before you claim
+```
+
+- **The lanes are disjoint:** Voice → {typography, spatial} · World → {material, color, imagery} ·
+  Instrument → {temporal, components}. Voice never lends colour or imagery; World never lends
+  layout or type; Instrument never lends palette or type.
+- **Project-owned grammar.** At least 3 of the 5 global axes — grid, typography, material, motion,
+  tokens — belong to the project, never to a source. No source owns more than 2.
+- **Translate by role, never by value.** A source's "accent that marks the primary action" becomes
+  *our* accent in that role — never its hex code.
+- **Mutate at least three axes** against every source: spatial topology · typography and hierarchy
+  · material and rendering language · temporal cadence and interaction cause. Recolouring or
+  swapping assets inside a reference composition is imitation, not fusion.
+- **Two or three variants**, rotating which source leads the hero, the instrument and the commit
+  moment. At R2–R4 these variants **are** the gauntlet's candidates at FORGE — never N random
+  restyles.
+
+### 2c. Watch, don't guess — evidence classes
+
+References lie in stills. Every claim taken from a reference carries a class:
+
+| Class | Meaning | Example |
+|---|---|---|
+| **Observed** | seen directly in a recording, a live session or the source code | "the hero pins for about 2 viewports; recorded at 30 fps" |
+| **Derived** | inferred from observed frames | "trajectory: an arc; the easing looks like expo-out" |
+| **Unverified** | not seen — a guess, a gallery still, a claim in copy | "they use a custom shader" |
+
+A gallery preview never proves scroll, hover, responsive or implementation behaviour. Record the
+live site before claiming how it moves (rapid reels 4–8 fps · walkthroughs 1–2 fps; contact sheets
+carry frame and timestamp labels). Easing read from frames is **Derived** at best. References
+authorize study, not copying: recordings and preview clips stay in a gitignored evidence folder and
+are never redistributed.
+
+Document each source:
 ```json
 {
-  "reference_url": "https://...",
-  "what_to_take": "Specific element or technique",
-  "why_it_fits": "Maps to feel profile [emotion] + Brand Personality Matrix [score]",
+  "url": "https://...",
+  "role": "voice | world | instrument",
+  "what_to_take": "Specific element or technique that feels premium",
+  "lends": ["typography", "spatial"],
+  "evidence_class": "observed | derived | unverified",
+  "why_it_fits": "Maps to the Feel Brief [lens / emotion] + Brand Personality Matrix [score]",
+  "mutation": "the ≥ 3 axes we change so it becomes ours",
   "adaptation_needed": "Change [X] to match our [DNA hex / font / density]",
   "screenshot_file": "references/ref-[n]-[element].png"
 }
 ```
 
-**Rule:** If a reference evokes ANY of the anti-feelings listed in the Feel Profile — discard it immediately, regardless of how technically impressive it is.
+Full method: [references/direction-fusion.md](../references/direction-fusion.md).
 
 ---
 
 ## Step 3: North Star Image Generation
 
 The North Star Image synthesizes all scouted references into ONE image generated specifically for this project. It is the visual "what we are aiming for" — shown to the client, used by every Build Agent as a reference during execution.
+
+> ★v6 — one precision image: *the single visual that defines the product's soul.* Reference
+> extraction, not inspiration scrolling. Feed it **by roles**, never by pasting a source: *"World
+> lends: paper-over-black instrument blocks; Instrument lends: count-up rings that hold."* At R2–R4
+> each fusion variant (Step 2b) gets its own North Star candidate.
 
 ### AI Engine Selection
 
@@ -140,17 +205,23 @@ Leonardo.ai Kino XL:
 [Key visual elements] + [Layout approach] + [Negative constraints]
 ```
 
-### North Star Prompt Templates
+### North Star Prompt Templates ★v6
 
-**Type A — Animated website (dark luxury):**
+Every hex, face and material in a North Star prompt comes from *this* project's derived palette
+and DNA. The examples below deliberately span different worlds so no single example reads as the
+default — the v5 templates hard-coded the studio's own obsidian ground, forged gold and Outfit
+display face, and agents copied them into client work (Anti-Pattern #3 Template Imposition).
+Iron Canvas's own identity appears only in `FEEL.md` and the studio's showcases — it is the
+studio's feel brief, never a template.
+
+**Type A — Animated website** (example world: a coffee roaster — warm, dark, product-led):
 ```
-Award-winning creative studio website hero section, editorial asymmetric layout,
-massive display typography left-aligned (Outfit 900 or similar weight),
-orbital decorative animation element right panel, OLED black [#dominant hex],
-single warm [accent color] accent [#accent hex], film grain texture overlay,
-radial mesh gradient ambient glow behind, Awwwards Site of the Day quality,
-no stock photography, no centered hero layout, no three-column equal cards,
-photorealistic browser screenshot composition, 16:9 aspect ratio
+Award-winning coffee roaster website hero, editorial asymmetric layout, massive
+condensed display type left-aligned ([display face from FontRecord]), a single roasting
+drum rendered in warm studio light on the right, deep roast-brown ground ([ground]),
+one ember-orange accent ([accent]) used only on the primary action, film grain,
+heat-haze atmosphere, Awwwards SOTD quality, no stock photography, no centered layout,
+no three-column cards, photorealistic browser screenshot, 16:9
 ```
 
 **Type B — Marketing / SaaS:**
@@ -165,30 +236,30 @@ no purple gradients, no stock photography, no cookie-cutter layout,
 photorealistic browser screenshot, 16:9
 ```
 
-**Type C — Dashboard / Mission Control:**
+**Type C — Dashboard / Mission Control** (example world: a climate-data instrument — cool, light, precise):
 ```
-Premium dark analytics mission control interface, OLED black [#dominant hex],
-warm [accent color] data accent [#accent hex], glassmorphism cards with obsidian surfaces,
-radial mesh gradient ambient background glow, bento grid layout with 4-6 varying card sizes,
-3D chart visualization center panel, real-time data stream sidebar,
-subtle [accent color] border glow on cards, [display font] 700 typography,
-cinematic top-right rim lighting, no purple, no cold blue tones,
-photorealistic UI mockup screenshot, 16:9
+Premium analytics interface on a pale fog-grey ground ([ground]), deep slate text,
+one signal-orange accent ([accent]) reserved for the metric that needs action,
+bento grid 4–6 cards of varying size, one live chart as the centrepiece, quiet
+hairline borders, generous air, [text face] with tabular numerals, no glassmorphism
+unless the DNA asks for it, no purple, photorealistic UI mockup, 16:9
 ```
+A dashboard is dark, light or both by the brand's call (SKILL.md §13) — never by the studio's.
 
-**Type D — E-commerce / Product:**
+**Type D — E-commerce / Product** (example world: an heirloom kitchen knife — heritage, tactile):
 ```
-Premium luxury product scroll sequence hero section, [product description] centered
-on deep [dominant hex] background, warm studio lighting with [accent hex] rim highlights,
-floating [product element] particles in mid-reveal animation, minimal UI chrome,
-editorial large display typography product name, Apple.com-level polish and restraint,
-scroll progress indicator subtle at bottom, no clutter, no promotional banners,
-2K photorealistic product photography quality, 16:9
+Premium product scroll-sequence hero, [product] at a low three-quarter angle on
+oiled walnut ([material]), raking window light from the left, forged-steel detail
+in the blade, [ground] from the derived palette, editorial serif display
+([display face]) with one accent in the steel's own blue-grey, minimal UI chrome,
+scroll progress indicator, 2K photorealistic quality, no clutter, no banners
 ```
 
 ### Generate 4 Variants
 
 Generate 4 versions with the same base prompt, slightly varied descriptors. Select the best match. Do not proceed with a mediocre North Star — iterate the prompt until it's right.
+★v6: at R2–R4 generate the 4 variants per fusion variant, so the gauntlet's candidates each carry
+their own peg.
 
 ---
 
@@ -214,12 +285,13 @@ Before proceeding to Phase 3.5, validate:
 
 ```
 /north-star-reference.png    ← The North Star image
-/scout-report.json           ← References found + fit matrix
+/scout-report.json           ← Fusion record: Voice · World · Instrument + evidence classes ★v6
 ```
 
 ```json
 {
   "project": "",
+  "operator_direction": null,
   "north_star_image": "north-star-reference.png",
   "north_star_engine": "Nano Banana Pro / Grok / GPT Image / Leonardo",
   "north_star_validation": {
@@ -229,26 +301,41 @@ Before proceeding to Phase 3.5, validate:
     "density_match": true,
     "client_reaction": "YES THAT / close / needs iteration"
   },
+  "fusion": {
+    "project_owned_axes": ["grid", "tokens", "motion"],
+    "variants": [
+      { "id": "A", "hero_led_by": "world", "instrument_led_by": "instrument", "commit_led_by": "voice" }
+    ]
+  },
   "references": [
     {
-      "url": "", "what_to_take": "",
-      "why_it_fits": "", "adaptation_needed": ""
+      "url": "", "role": "voice | world | instrument",
+      "what_to_take": "", "lends": [],
+      "evidence_class": "observed | derived | unverified",
+      "why_it_fits": "", "mutation": "", "adaptation_needed": ""
     }
   ]
 }
 ```
 
+After the build, a short learning note — the sources, what transferred per section, measured
+results, lessons — goes into the run's evidence folder so the next fusion starts smarter.
+
 ---
 
 ## Phase 3 Completion Criteria
 
-- [ ] 3-5 references found matching the Feel Profile ✓/✗
+- [ ] 3-5 candidate references found matching the Feel Brief ✓/✗
+- [ ] ★v6 Three fusion sources chosen — Voice · World · Instrument, disjoint lanes (or the operator's named direction recorded) ✓/✗
+- [ ] ★v6 ≥ 3 of 5 axes project-owned; ≥ 3 axes mutated against every source; tokens translated by role ✓/✗
+- [ ] ★v6 Every claim about a reference carries an evidence class; motion claims are Observed from a recording ✓/✗
+- [ ] ★v6 At R2–R4: 2–3 fusion variants recorded (the gauntlet's candidates) ✓/✗
 - [ ] North Star image generated and validated (4/5 minimum) ✓/✗
 - [ ] No references evoke any anti-feelings ✓/✗
 - [ ] scout-report.json complete ✓/✗
 - [ ] north-star-reference.png saved ✓/✗
 
-**All 5 = PROCEED to Phase 3.5 Technical Validation**
+**All complete = PROCEED to Phase 3.5 Technical Validation**
 **Any missing = Continue research / regenerate North Star**
 
 ---

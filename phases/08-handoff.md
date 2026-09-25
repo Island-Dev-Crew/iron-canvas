@@ -1,5 +1,5 @@
-# Phase 8: HANDOFF
-## *Optional Phase — Triggered for Client Deliverables*
+# Phase 8: HANDOFF + ★v6 PREMIERE
+## *Optional Phase — Triggered for Client Deliverables (HANDOFF) · when the film engine is on (PREMIERE)*
 
 > **TRIGGER CONDITIONS:**
 > - Project type B, D, E, F (any client-facing site)
@@ -10,10 +10,19 @@
 > - Internal Iron Canvas Studio site
 > - Personal portfolio or test build
 > - Prototype that will not be maintained by a non-developer
+>
+> **★v6 PREMIERE (Step 5) has its own trigger:** `engines.film` is on (`power_engines.film:
+> enabled`) at R2+. It runs even when HANDOFF.md is skipped — the launch film is cut from the same
+> score the page performs.
 
 ---
 
 ## PURPOSE
+
+> **★v6 — no flag ships.** Before HANDOFF.md is written, every flag raised during the run — a risk
+> note, a red P0 test, a critic's blocking finding — is **resolved, or waived by the operator** in
+> writing. A flag treated as FYI, or "verified" narrated over a failing test, is Anti-Pattern #20
+> FLAGGED BUT SHIPPED. Waived flags are listed in the handoff's Notes, with who waived them.
 
 Phase 8 generates a HANDOFF.md in the project root.
 This document is written FOR the client — non-technical language.
@@ -71,11 +80,15 @@ These things can be updated by anyone without breaking the design:
 
 Do NOT change these without someone who knows CSS/JS:
 
-- Animations and transitions
+- Animations and transitions — the motion score (`score.json`) and its runtime (`canvas-score.js`)
 - Layout structure (section order, grid)
 - Font files or font stacks
 - The scroll sequence frames (if applicable)
+- Generated images and films — replace them only through the ledger, so each keeps its `.provenance.json`
 - Navigation structure
+
+If motion ever misbehaves, add `?motion=off` to the address: every section shows at its final
+state with no motion and the page stays fully readable (the motion runtime's static mode).
 
 ---
 
@@ -120,7 +133,7 @@ For urgent issues: [emergency contact]
 
 ---
 
-*Built with Iron Canvas v5.2 — Island Development Crew*
+*Built with Iron Canvas v6 — Island Development Crew*
 ```
 
 ---
@@ -186,10 +199,48 @@ In MISSION MODE with a visual QA agent:
 
 ---
 
+## STEP 5 ★v6: PREMIERE — the launch film, cut from the same score
+
+**Trigger:** `engines.film` on, R2+. The page already *is* a film — its score has acts, beats and a
+signature. PREMIERE renders it. Output: `iron_canvas_output/film/` (launch film + cut-downs).
+
+```
+DESIGNED FILM   HyperFrames renders the page's own timeline frame by frame — GSAP timelines are
+                paused and seeked, never played; no wall clock (Date.now, requestAnimationFrame,
+                timers); seeded randomness; every asset loaded before frame 0; fps and size locked.
+                One timeline → the launch film, social cut-downs, README loops, the OG video.
+PHOTOREAL FILM  Seedance 2.5 shots from the score's beats (the engine jobs of PACKAGE 3.9b) — with
+                the twin camera, the film follows the same rail as the site's WebGL camera, shot
+                for shot.
+FILM CRAFT      hold while text is readable (≥ 0.8 s), then push onto one element; words land
+                0.6–0.8 s, 0.08–0.14 s apart; transitions 0.4–0.6 s; camera moves 0.8–1.6 s;
+                count-ups 1.0–1.6 s; picture and sound on one clock — cues land on the beat
+                within a frame; sound only what causes it, one family of sounds, effects well
+                under the music; masters at −14 LUFS.
+CHECK-AND-FIX   before render: lint, then a 12-frame contact sheet critiqued "as a motion
+                designer" and fixed; after render: ffprobe (duration, fps, size, alpha), text
+                sharpness at delivery size, loudness. A film is measured, never described.
+```
+
+- **Timing by emotional weight** holds on film as on the page: the most seconds go where the drama
+  is — the signature — and the settle is long and quiet.
+- **Every rendered or generated film goes through the ledger** (`engines/ledger.mjs`): selected with
+  a written reason, verified, encoded (`brand-film` — 1080p + AAC; `poster` from 40 % in), promoted
+  with a provenance sidecar. A film never autoplays with sound.
+- **Fallback:** with no film engine, PREMIERE is skipped and recorded; the OG image (always made at
+  Phase 5) stands in.
+- Remotion remains an adapter for React-first teams (company licence above 3 employees).
+
+Doctrine: `references/cinematic-score.md` §7 · `references/code-driven-assets.md` (HyperFrames) ·
+`references/power-engines.md` (Seedance 2.5, the twin camera, the ledger).
+
+---
+
 ## OUTPUT CHECKLIST
 
 ```
 Phase 8 is complete when:
+□ ★v6 Every flag resolved or waived by the operator (Anti-Pattern #20) — waivers listed in Notes
 □ HANDOFF.md exists in project root
 □ Component map is accurate and complete
 □ Token reference table is populated
@@ -197,8 +248,10 @@ Phase 8 is complete when:
 □ Deployment instructions are correct and tested
 □ CHANGELOG.md updated
 □ Staging/main branch status confirmed (main = production ready)
+□ ★v6 PREMIERE (when film is on, R2+): contact sheet critiqued and fixed before render;
+  ffprobe + loudness report after; the film promoted through the ledger with provenance
 ```
 
 ---
 
-*Iron Canvas v5.2 — phases/08-handoff.md*
+*Iron Canvas v6 — phases/08-handoff.md*

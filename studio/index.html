@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Studio · Iron Canvas v6</title>
+<meta name="description" content="Iron Canvas Studio — describe an idea, choose the feeling, flip the power engines, and compile a production bible your agents can run.">
+<meta name="theme-color" content="#0b0907">
+<script>document.documentElement.classList.add('ic-js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Cormorant+Garamond:ital,wght@1,400;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0907; --ink-2:#13100c; --ink-3:#1a1510; --line:rgba(224,187,110,.14); --line-2:rgba(224,187,110,.3);
+    --gold:#e0bb6e; --ember:#ff8a3d; --cream:#f3e9d8; --ash:#9a8e7c; --ash-2:#6f6558;
+    --ok:#8fcf9a; --warn:#e7a64f;
+    --display:'Archivo',system-ui,sans-serif; --serif:'Cormorant Garamond',Georgia,serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+    --gutter:clamp(16px,3.4vw,40px); --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--display);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
+  ::selection{background:rgba(224,187,110,.3)}
+  .ic-js [data-ic]{opacity:0}
+  .ic-js:not(.ic-ready) [data-ic]{animation:ic-failsafe .5s 3s forwards}
+  @keyframes ic-failsafe{to{opacity:1}}
+  a{color:var(--gold);text-decoration:none}
+  button,input,textarea,select{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+  .bar{display:flex;align-items:center;gap:16px;padding:calc(14px + env(safe-area-inset-top,0px)) var(--gutter) 14px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash)}
+  .bar .mark{color:var(--cream);font-weight:600;display:flex;align-items:center;gap:10px}
+  .bar .mark i{width:10px;height:10px;border:1.5px solid var(--gold);transform:rotate(45deg);display:inline-block}
+  .bar nav{margin-left:auto;display:flex;gap:18px;flex-wrap:wrap}
+  .bar nav a{color:var(--ash)} .bar nav a:hover{color:var(--gold)}
+
+  header.hero{padding:clamp(34px,6vh,64px) var(--gutter) 26px;display:flex;flex-wrap:wrap;gap:12px 40px;align-items:end;justify-content:space-between}
+  h1{font-weight:880;font-stretch:125%;text-transform:uppercase;letter-spacing:-.015em;font-size:clamp(40px,6.4vw,84px);line-height:.92}
+  .hero p{font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.9vw,24px);color:var(--ash);max-width:38ch;line-height:1.3}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--gutter) 22px}
+  .presets span{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash-2);align-self:center;margin-right:4px}
+  .chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 13px;font-family:var(--mono);font-size:11.5px;cursor:pointer;transition:border-color .25s,color .25s}
+  .chip:hover{border-color:var(--gold);color:var(--gold)}
+
+  main{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:var(--gutter);padding:0 var(--gutter) 60px;align-items:start}
+  @media (max-width:980px){main{grid-template-columns:minmax(0,1fr)}}
+  .brief{display:grid;gap:14px}
+  @media (min-width:981px){.brief{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto;padding-right:6px;scrollbar-width:thin}}
+  fieldset{border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 18px;background:var(--ink-2);display:grid;gap:12px;min-width:0}
+  legend{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);padding:0 8px;margin-left:-8px}
+  label{display:grid;gap:6px;font-size:13px;color:var(--ash)}
+  label b{color:var(--cream);font-weight:600}
+  input[type=text],textarea{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--cream);transition:border-color .25s}
+  input[type=text]:focus,textarea:focus{border-color:var(--line-2);outline:none}
+  textarea{resize:vertical;min-height:72px;line-height:1.45}
+  .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .seg{display:grid;gap:6px}
+  .seg .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label.o{display:block;border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer;color:var(--cream);font-size:13px;transition:border-color .2s,background .2s}
+  .seg input:checked + label.o{border-color:var(--gold);background:rgba(224,187,110,.1);color:var(--gold)}
+  .seg input:focus-visible + label.o{outline:2px solid var(--gold);outline-offset:2px}
+  .regs label.o{flex:1 1 calc(50% - 6px);display:grid;gap:2px}
+  .regs label.o small{color:var(--ash);font-size:11.5px}
+  .regs input:checked + label.o small{color:var(--cream)}
+  .curve-preview{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .curve-preview svg{width:84px;height:52px;flex:none;overflow:visible}
+  .curve-preview svg path{fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round}
+  .curve-preview .track{position:relative;flex:1;height:2px;background:var(--line)}
+  .curve-preview .dot{position:absolute;top:-5px;left:0;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 16px rgba(224,187,110,.6);animation:ride 2.4s infinite}
+  @keyframes ride{0%,12%{left:0}62%,100%{left:calc(100% - 12px)}}
+  @media (prefers-reduced-motion:reduce){.curve-preview .dot{animation:none;left:calc(100% - 12px)}}
+  .curve-preview p{font-family:var(--mono);font-size:11px;color:var(--ash);margin-top:8px}
+  .depth-out{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ash)}
+  .depth-out b{color:var(--gold);font-weight:600}
+  input[type=range]{width:100%;accent-color:var(--gold)}
+
+  .engines{display:grid;gap:8px}
+  .engine{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px;transition:border-color .3s,background .3s}
+  .engine.on{border-color:var(--line-2);background:rgba(224,187,110,.05)}
+  .engine .name{font-weight:700;font-stretch:108%;font-size:14px}
+  .engine .what{font-size:12px;color:var(--ash)}
+  .engine .state{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ash);white-space:nowrap}
+  .engine.on .state{border-color:rgba(143,207,154,.45);color:var(--ok)}
+  .engine.gated .state{border-color:rgba(231,166,79,.5);color:var(--warn)}
+  .switch{position:relative;width:40px;height:22px;flex:none}
+  .switch input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+  .switch span{position:absolute;inset:0;border-radius:999px;background:var(--ink-3);border:1px solid var(--line-2);transition:background .25s}
+  .switch span::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--ash);transition:transform .3s cubic-bezier(.34,1.56,.64,1),background .25s}
+  .switch input:checked + span{background:rgba(224,187,110,.25)}
+  .switch input:checked + span::after{transform:translateX(18px);background:var(--gold)}
+  .switch input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
+  .twin{display:none;border:1px solid var(--gold);border-radius:12px;padding:12px 14px;background:linear-gradient(120deg,rgba(224,187,110,.14),rgba(255,138,61,.08))}
+  .twin.show{display:block}
+  .twin b{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px}
+  .twin p{font-size:13px;color:var(--cream)}
+
+  .bible{border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);min-width:0}
+  .tabs{display:flex;flex-wrap:wrap;gap:4px;padding:10px;border-bottom:1px solid var(--line)}
+  .tab{border:1px solid transparent;background:transparent;border-radius:9px;padding:8px 12px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;cursor:pointer;color:var(--ash)}
+  .tab[aria-selected="true"]{border-color:var(--line-2);color:var(--gold);background:rgba(224,187,110,.07)}
+  .tools{margin-left:auto;display:flex;gap:6px}
+  .tools button{border:1px solid var(--line);background:transparent;border-radius:9px;padding:8px 12px;font-family:var(--mono);font-size:11.5px;cursor:pointer}
+  .tools button:hover{border-color:var(--gold);color:var(--gold)}
+  .tools .primary{background:var(--gold);color:#1a130a;border-color:var(--gold);font-weight:600}
+  .tools .primary:hover{background:#ecc97f;color:#1a130a}
+  .panel{padding:20px;min-height:60vh}
+  .panel[hidden]{display:none}
+  pre{font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:var(--cream);background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:14px;max-height:72vh;overflow:auto}
+  .flash{animation:flash .9s ease-out}
+  @keyframes flash{0%{box-shadow:0 0 0 1px var(--gold)}100%{box-shadow:0 0 0 1px transparent}}
+  @media (prefers-reduced-motion:reduce){.flash{animation:none}}
+
+  .t-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px}
+  .t-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--ink)}
+  .t-card h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px}
+  .t-card p{font-size:14px}
+  .t-card .sub{font-size:12.5px;color:var(--ash);margin-top:6px}
+  .logline{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2vw,27px);line-height:1.3;margin-bottom:18px;max-width:52ch}
+  .arc{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 16px}
+  .arc span{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:6px 10px;border-radius:8px;border:1px solid var(--line);color:var(--ash)}
+  .arc span.sig{border-color:var(--gold);color:var(--gold);background:rgba(224,187,110,.08)}
+  .floor{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:4px 0 16px}
+  .floor div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.45;color:var(--cream)}
+  .floor b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+  .notes{display:grid;gap:6px;margin-top:10px}
+  .notes li{list-style:none;font-size:12.5px;color:var(--warn);padding-left:14px;position:relative}
+  .notes li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--warn)}
+  .job{margin-bottom:16px}
+  .job header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-family:var(--mono);font-size:12px;color:var(--gold)}
+  .job header button{border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 10px;font-family:var(--mono);font-size:11px;cursor:pointer;color:var(--ash)}
+  .empty{color:var(--ash);font-size:14px}
+  .empty code{font-family:var(--mono);color:var(--cream)}
+  .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--cream);color:#1a130a;font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:10px;transition:opacity .25s,transform .35s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:9}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  footer{border-top:1px solid var(--line);padding:26px var(--gutter) calc(34px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;color:var(--ash);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="mark"><i aria-hidden="true"></i>Iron Canvas <span style="color:var(--ash)">v6 · Studio</span></span>
+  <nav aria-label="Iron Canvas">
+    <a href="../showcase/living-canvas/">The Living Canvas</a>
+    <a href="../runtime/verbs.html">Verb Gallery</a>
+    <a href="https://github.com/Island-Dev-Crew/iron-canvas">GitHub</a>
+  </nav>
+</div>
+
+<header class="hero" id="intro">
+  <h1 data-ic>Studio</h1>
+  <p data-ic>Describe the idea. Choose the feeling. Flip the engines. Hand the bible to your agents.</p>
+</header>
+<div class="presets" aria-label="Examples">
+  <span>Try</span>
+  <button class="chip" type="button" data-preset="world">Coffee world · R4</button>
+  <button class="chip" type="button" data-preset="editorial">Fashion editorial · R2</button>
+  <button class="chip" type="button" data-preset="launch">SaaS launch · R1</button>
+  <button class="chip" type="button" data-preset="ops">Ops console · R0</button>
+  <button class="chip" type="button" data-preset="game">Game title screen · R3</button>
+</div>
+
+<main>
+  <form class="brief" id="brief" autocomplete="off" aria-label="Brief">
+    <fieldset>
+      <legend>01 · The idea</legend>
+      <label><b>What are we making?</b><textarea name="idea" rows="3" placeholder="A roastery site where you watch a bean become a cup."></textarea></label>
+      <label><b>Subject</b><input type="text" name="subject" placeholder="Tidewater Coffee"></label>
+      <label><b>The mechanism</b> In one sentence, what does it actually do? The signature moment will act this out.<input type="text" name="mechanism" placeholder="heat transforms a raw green seed into something aromatic and dark"></label>
+      <label><b>Audience</b><input type="text" name="audience" placeholder="people who care where their coffee comes from"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>02 · The feel</legend>
+      <label><b>Three words</b><span class="row3"><input type="text" name="adj0" placeholder="warm" aria-label="first word"><input type="text" name="adj1" placeholder="slow" aria-label="second word"><input type="text" name="adj2" placeholder="crafted" aria-label="third word"></span></label>
+      <label><b>One material</b><input type="text" name="material" list="materials" placeholder="roasted copper"></label>
+      <datalist id="materials"><option>molten gold</option><option>roasted copper</option><option>brushed steel</option><option>warm paper</option><option>ink on vellum</option><option>smoked glass</option><option>raw concrete</option><option>velvet</option><option>wet stone</option><option>signal light</option></datalist>
+      <div class="seg" role="radiogroup" aria-label="Tempo"><b style="font-size:13px">Tempo</b><div class="opts" id="tempo"></div></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>03 · The treatment</legend>
+      <div class="seg regs" role="radiogroup" aria-label="Treatment register"><div class="opts" id="register"></div></div>
+      <div class="seg" role="radiogroup" aria-label="Surface"><b style="font-size:13px">Surface</b><div class="opts" id="surface"></div></div>
+      <div class="seg" role="radiogroup" aria-label="Motion personality"><b style="font-size:13px">Motion personality</b><div class="opts" id="personality"></div></div>
+      <div class="curve-preview" aria-hidden="true">
+        <svg viewBox="0 0 100 60"><path id="curve" d=""/></svg>
+        <div style="flex:1"><div class="track"><span class="dot" id="dot"></span></div><p id="curve-label"></p></div>
+      </div>
+      <label><b>Depth</b> from composed CSS depth to an inhabited world
+        <input type="range" name="depth" min="0.1" max="1" step="0.01" value="0.5">
+      </label>
+      <div class="depth-out" id="depth-out"></div>
+      <div class="seg" role="radiogroup" aria-label="Performance tier"><b style="font-size:13px">Performance tier</b><div class="opts" id="perf"></div></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>04 · Power engines</legend>
+      <div class="engines" id="engines"></div>
+      <div class="twin" id="twin" role="status"><b>Twin camera unlocked</b><p>Blender renders a grey clay pass of the camera rail; Seedance 2.5 reads it as <code>@Video1</code>. The same rail drives the site's WebGL camera — film and site match shot for shot.</p></div>
+    </fieldset>
+  </form>
+
+  <section class="bible" aria-label="Production bible">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="p-treatment" id="t-treatment">Treatment</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="p-score" id="t-score">Score</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="p-jobs" id="t-jobs">Engine jobs</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="p-config" id="t-config">canvas.config.json</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="p-mission" id="t-mission">Mission</button>
+      <div class="tools">
+        <button type="button" id="download">Download bible</button>
+        <button type="button" class="primary" id="copy-mission">Copy mission</button>
+      </div>
+    </div>
+    <div class="panel" role="tabpanel" id="p-treatment" aria-labelledby="t-treatment"></div>
+    <div class="panel" role="tabpanel" id="p-score" aria-labelledby="t-score" hidden><pre id="score-out"></pre></div>
+    <div class="panel" role="tabpanel" id="p-jobs" aria-labelledby="t-jobs" hidden></div>
+    <div class="panel" role="tabpanel" id="p-config" aria-labelledby="t-config" hidden><pre id="config-out"></pre></div>
+    <div class="panel" role="tabpanel" id="p-mission" aria-labelledby="t-mission" hidden><pre id="mission-out"></pre></div>
+  </section>
+</main>
+
+<footer>
+  <span>Compiled locally in your browser — nothing leaves this page. The bible is a starting position; FEEL, SCOUT and the gauntlet still do the creative work.</span>
+  <span><a href="../engines/README.md">Power Engines</a> · <a href="../runtime/README.md">Score Runtime</a></span>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script type="module">
+  import { performScore } from '../runtime/canvas-score.js';
+  import { compileBible, REGISTERS, SURFACES, PERSONALITIES, resolveDepth } from './compile.mjs';
+
+  performScore({ personality: 'silk', smooth: false, acts: [{ id: 'intro', el: '#intro', trigger: 'load', shots: [
+    { at: 0.1, target: 'h1', verb: 'unveil', split: 'chars', stagger: 0.03 },
+    { at: 0.6, target: 'p', verb: 'focus' },
+  ] }] }, { Lenis: false });
+
+  const CURVES = { silk: 'M0 60 C 16 4, 40 0, 100 0', tide: 'M0 60 C 36 60, 64 0, 100 0', gravity: 'M0 60 C 8 10, 22 0, 100 0', spark: 'M0 60 C 24 -22, 46 -8, 100 0', snap: 'M0 60 C 65 60, 35 0, 100 0', bloom: 'M0 60 C 87 60, 13 0, 100 0' };
+  const BEZIER = { silk: '.16,1,.3,1', tide: '.37,0,.63,1', gravity: '.25,1,.5,1', spark: '.34,1.56,.64,1', snap: '.65,0,.35,1', bloom: '.87,0,.13,1' };
+  const ENGINES = [
+    ['blender', 'Blender', '3D the code can\'t make — clay camera passes, hero objects, turntables, matcaps', 'procedural three.js'],
+    ['video', 'Seedance 2.5', 'photoreal film, loops and transitions with sound — up to 30 s', 'HyperFrames / flow field'],
+    ['audio', 'Audio · ElevenLabs', 'an ambient bed and one cue for the signature moment', 'no audio UI'],
+    ['imagery', 'AI imagery', 'North Star frames, OG image, style references', 'code-driven art'],
+    ['film', 'HyperFrames', 'code-driven motion graphics and the OG video, rendered deterministically', 'OG still'],
+  ];
+  const PRESETS = {
+    world: { idea: 'A roastery site where you watch a single bean become a cup.', subject: 'Tidewater Coffee', mechanism: 'heat transforms a raw green seed into something aromatic and dark', audience: 'people who care where their coffee comes from', adj0: 'warm', adj1: 'slow', adj2: 'crafted', material: 'roasted copper', tempo: 'slow', register: 'R4', surface: 'immersive-3d', personality: 'tide', depth: 0.92, perf: '3', engines: { blender: true, video: true, audio: true, imagery: true, film: true } },
+    editorial: { idea: 'An autumn lookbook that reads like a magazine you can walk into.', subject: 'Maison Verre', mechanism: 'light moves across fabric and reveals its texture', audience: 'fashion buyers and editors', adj0: 'hushed', adj1: 'precise', adj2: 'sensual', material: 'smoked glass', tempo: 'measured', register: 'R2', surface: 'web', personality: 'silk', depth: 0.55, perf: '2', engines: { blender: false, video: true, audio: false, imagery: true, film: true } },
+    launch: { idea: 'A launch page for an invoicing tool that gets small businesses paid faster.', subject: 'Ledgerly', mechanism: 'an invoice goes out and money comes back, automatically', audience: 'small business owners', adj0: 'clear', adj1: 'confident', adj2: 'friendly', material: 'warm paper', tempo: 'brisk', register: 'R1', surface: 'web', personality: 'gravity', depth: 0.3, perf: '1', engines: { blender: false, video: false, audio: false, imagery: true, film: true } },
+    ops: { idea: 'An operations console for a fleet of delivery drones.', subject: 'Skyward Ops', mechanism: 'every drone reports its state; anomalies rise to the top', audience: 'dispatch operators on shift', adj0: 'calm', adj1: 'exact', adj2: 'alert', material: 'brushed steel', tempo: 'measured', register: 'R0', surface: 'app-dashboard', personality: 'snap', depth: 0.2, perf: '2', engines: { blender: true, video: true, audio: false, imagery: false, film: false } },
+    game: { idea: 'The title screen and menus for a mythic sailing game.', subject: 'Salt & Stars', mechanism: 'a ship sets out across a dark sea by starlight', audience: 'players on PC and console', adj0: 'mythic', adj1: 'vast', adj2: 'hopeful', material: 'wet stone', tempo: 'slow', register: 'R3', surface: 'game-realtime', personality: 'bloom', depth: 0.8, perf: '3', engines: { blender: true, video: true, audio: true, imagery: true, film: true } },
+  };
+
+  const form = document.getElementById('brief');
+  const $ = (id) => document.getElementById(id);
+  function radios(id, name, items, render) {
+    $(id).innerHTML = items.map(([value, html], i) => `<input type="radio" name="${name}" id="${name}-${value}" value="${value}"${i === 0 ? ' checked' : ''}><label class="o" for="${name}-${value}">${render ? render(value, html) : html}</label>`).join('');
+  }
+  radios('tempo', 'tempo', ['still', 'slow', 'measured', 'brisk', 'fast'].map((t) => [t, t]));
+  radios('register', 'register', Object.entries(REGISTERS).map(([k, v]) => [k, `${k} · ${v.name}<small>${v.job}</small>`]));
+  radios('surface', 'surface', Object.entries(SURFACES).map(([k, v]) => [k, v.name]));
+  radios('personality', 'personality', Object.keys(PERSONALITIES).map((k) => [k, k]));
+  radios('perf', 'perf', [['1', 'T1 · LCP < 2.5s'], ['2', 'T2 · animated'], ['3', 'T3 · immersive']]);
+  $('engines').innerHTML = ENGINES.map(([key, name, what, fallback]) => `
+    <div class="engine" data-engine="${key}">
+      <span class="switch"><input type="checkbox" name="engine-${key}" id="engine-${key}" aria-describedby="what-${key}"><span></span></span>
+      <label for="engine-${key}" style="display:block;cursor:pointer"><span class="name">${name}</span><br><span class="what" id="what-${key}">${what}</span></label>
+      <span class="state" data-fallback="${fallback}">off</span>
+    </div>`).join('');
+  form.querySelector('[name=tempo][value=measured]').checked = true;
+  form.querySelector('[name=register][value=R2]').checked = true;
+  form.querySelector('[name=perf][value="2"]').checked = true;
+  ['imagery', 'film'].forEach((k) => { $(`engine-${k}`).checked = true; });
+
+  function readBrief() {
+    const f = new FormData(form);
+    return {
+      idea: f.get('idea').trim(), subject: f.get('subject').trim() || 'Untitled', mechanism: f.get('mechanism').trim(), audience: f.get('audience').trim(),
+      feel: { adjectives: [f.get('adj0'), f.get('adj1'), f.get('adj2')].map((s) => s.trim()), material: f.get('material').trim(), tempo: f.get('tempo') },
+      register: f.get('register'), surface: f.get('surface'), personality: f.get('personality'), depth: Number(f.get('depth')), perfTier: Number(f.get('perf')),
+      engines: Object.fromEntries(ENGINES.map(([k]) => [k, $(`engine-${k}`).checked])),
+    };
+  }
+  function writeBrief(p) {
+    for (const k of ['idea', 'subject', 'mechanism', 'audience', 'adj0', 'adj1', 'adj2', 'material']) form.elements[k].value = p[k] || '';
+    for (const [k, v] of [['tempo', p.tempo], ['register', p.register], ['surface', p.surface], ['personality', p.personality], ['perf', p.perf]]) { const el = form.querySelector(`[name=${k}][value="${v}"]`); if (el) el.checked = true; }
+    form.elements.depth.value = p.depth;
+    for (const [k] of ENGINES) $(`engine-${k}`).checked = !!p.engines[k];
+  }
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  let bible;
+  function render(flash = true) {
+    const brief = readBrief();
+    bible = compileBible(brief);
+    const t = bible.treatment;
+    $('curve').setAttribute('d', CURVES[brief.personality]);
+    $('dot').style.animationTimingFunction = `cubic-bezier(${BEZIER[brief.personality]})`;
+    $('curve-label').textContent = PERSONALITIES[brief.personality];
+    const d = resolveDepth(brief);
+    $('depth-out').innerHTML = `<span>asked ${brief.depth.toFixed(2)} → <b>${d.value.toFixed(2)} · Tier ${d.tier} ${d.name}</b></span><span>${d.value >= 0.4 ? 'IMMERSIVE lane' : 'composed'}</span>`;
+    for (const [k] of ENGINES) {
+      const row = document.querySelector(`[data-engine=${k}]`);
+      const on = brief.engines[k];
+      const gated = on && t.engine_gates.some((g) => g.toLowerCase().includes({ blender: 'blender', video: 'seedance', audio: 'audio', imagery: '§', film: '§' }[k]));
+      row.classList.toggle('on', on && !gated);
+      row.classList.toggle('gated', gated);
+      const state = row.querySelector('.state');
+      state.textContent = gated ? 'gated' : on ? 'enabled' : `off → ${state.dataset.fallback}`;
+    }
+    $('twin').classList.toggle('show', bible.mission.includes('TWIN CAMERA'));
+    $('p-treatment').innerHTML = `
+      <p class="logline">${esc(t.logline)}</p>
+      <div class="t-grid">
+        <div class="t-card"><h3>Mechanism</h3><p>${esc(t.mechanism)}</p><p class="sub">${esc(t.signature)}</p></div>
+        <div class="t-card"><h3>Feel line</h3><p>${esc(t.feel_line)}</p></div>
+        <div class="t-card"><h3>Register · ${t.register.id}</h3><p>${esc(t.register.name)}</p><p class="sub">${esc(t.register.craft)}</p></div>
+        <div class="t-card"><h3>Depth</h3><p>${t.depth.value} · Tier ${t.depth.tier} ${t.depth.name}</p><p class="sub">${esc(t.depth.what)}</p></div>
+        <div class="t-card"><h3>Immersive lane</h3><p>${esc(t.immersive_lane)}</p></div>
+        <div class="t-card"><h3>Gauntlet</h3><p>${t.gauntlet.on ? `${t.gauntlet.width} candidates` : 'off'}</p><p class="sub">${esc(t.gauntlet.why)}</p></div>
+      </div>
+      <h3 style="font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">The arc</h3>
+      <div class="arc">${t.arc.map((s) => `<span class="${s.signature ? 'sig' : ''}" title="${esc(s.intent)}">${s.stage}${s.signature ? ' · signature' : ''}</span>`).join('')}</div>
+      <h3 style="font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px" title="Never waived — the register shapes how loud, never whether">The aliveness floor · ${t.register.id}</h3>
+      <div class="floor">${Object.entries(t.floor).map(([k, v]) => `<div><b>${k.replace('_', '-')}</b>${esc(v)}</div>`).join('')}</div>
+      ${[...t.depth.notes, ...t.engine_gates].length ? `<ul class="notes">${[...t.depth.notes, ...t.engine_gates].map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}`;
+    $('score-out').textContent = JSON.stringify(bible.score, null, 2);
+    $('config-out').textContent = JSON.stringify(bible.config, null, 2);
+    $('mission-out').textContent = bible.mission;
+    const jobs = Object.entries(bible.jobs);
+    $('p-jobs').innerHTML = jobs.length
+      ? jobs.map(([name, job]) => `<div class="job"><header><span>${esc(name)}</span><button type="button" data-copy="${esc(name)}">copy</button></header><pre>${esc(JSON.stringify(job, null, 2))}</pre></div>`).join('')
+        + `<p class="empty">Run them with <code>node engines/blender/blender.mjs run --job …</code>, <code>node engines/video/video.mjs run --job …</code>, <code>node engines/audio/audio.mjs run --job …</code>.</p>`
+      : '<p class="empty">No engine jobs for this brief — either no engines are on, or the register gates them off (see Treatment). The pipeline uses code-driven and static assets.</p>';
+    if (flash) { const open = document.querySelector('.panel:not([hidden])'); open.classList.remove('flash'); void open.offsetWidth; open.classList.add('flash'); }
+    try { localStorage.setItem('ic-studio-brief', JSON.stringify(brief)); } catch (e) { /* storage unavailable: the brief just won't persist */ }
+  }
+
+  let timer;
+  form.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(render, 140); });
+  form.addEventListener('change', () => render());
+  form.addEventListener('submit', (e) => e.preventDefault());
+  document.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('click', () => { writeBrief(PRESETS[b.dataset.preset]); render(); }));
+
+  const tabs = [...document.querySelectorAll('.tab')];
+  tabs.forEach((tab) => tab.addEventListener('click', () => {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    document.querySelectorAll('.panel').forEach((p) => { p.hidden = p.id !== tab.getAttribute('aria-controls'); });
+  }));
+
+  const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800); };
+  async function copy(text, what) {
+    try { await navigator.clipboard.writeText(text); toast(`${what} copied`); }
+    catch (e) { toast('Copy blocked here — select the text instead'); }
+  }
+  $('copy-mission').addEventListener('click', () => copy(bible.mission, 'Mission'));
+  $('p-jobs').addEventListener('click', (e) => { const name = e.target.dataset?.copy; if (name) copy(JSON.stringify(bible.jobs[name], null, 2), name); });
+  $('download').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ schema: 'ic-bible/1', compiled_at_utc: new Date().toISOString(), brief: readBrief(), ...bible }, null, 2)], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${bible.config.project}.bible.json` });
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    toast('Bible downloaded');
+  });
+
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem('ic-studio-brief') || 'null'); } catch (e) { saved = null; }
+  if (saved) writeBrief({ ...saved, ...saved.feel, adj0: saved.feel?.adjectives?.[0], adj1: saved.feel?.adjectives?.[1], adj2: saved.feel?.adjectives?.[2], perf: String(saved.perfTier) });
+  render(false);
+  window.__icStudio = { get bible() { return bible; }, readBrief, writeBrief, PRESETS, render };
+</script>
+</body>
+</html>

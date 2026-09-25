@@ -34,6 +34,7 @@ pack instead of SKILL.md.
 | `surfaces/app-dashboard/` | Dashboards, admin UIs, applications | C, C-app | **STABLE** ★v5.0 |
 | `surfaces/immersive-3d/` | Tier III worlds as the product | A-world | **STABLE** ★v5.0 (Agent F is the world agent; §22 gate mandatory) |
 | `surfaces/game-realtime/` | Game frontends, HUDs, menus + Unreal adapter | G | **EXPERIMENTAL** ★v5.0 (patterns stable; engine adapter is spec-stage — see `game-realtime/UNREAL-ADAPTER.md`) |
+| `surfaces/film/` | Launch films, motion graphics, promos, cut-downs, OG video, loops | H | **EXPERIMENTAL** ★v6 (one film score → code / video / Blender lanes; the contract is stable, no lane has rendered on the reference machine yet) |
 
 Unlisted = unrouted. Phase 0 dispatches only registry packs. EXPERIMENTAL packs run the
 full pipeline but flag their status in the orient decision and the handoff.
@@ -68,9 +69,10 @@ sanctioned on this surface. (See `references/depth-language.md`.)
 ### 5. VERIFY PROFILE
 Phase 7 checks for this surface. Web's Lighthouse/LCP battery does not transfer — an app
 measures INP and frame budget; a game measures frame time and input latency. Every profile
-must define: performance metrics + budgets, accessibility battery, and the 6-axis audit
-(Axis 6 — CD3 Treatment & Soul — is non-optional; every pack's VERIFY profile inherits it ★v5.1)
-adapted to the surface.
+must define: performance metrics + budgets, accessibility battery, and the 7-axis audit
+(Axis 6 — CD3 Treatment & Soul — is non-optional; every pack's VERIFY profile inherits it ★v5.1;
+Axis 7 — Aliveness — is non-optional and never waived ★v6: each pack says what arrival,
+heartbeat, hand-feel, breath and the composed still look like on its surface) adapted to the surface.
 
 ### 6. NORTH STAR SEARCH SETS
 Phase 3 SCOUT queries calibrated to the surface's reference universe.
@@ -87,7 +89,7 @@ The orient decision JSON gains two fields ★v5.0:
 
 ```json
 {
-  "surface_pack": "web | app-dashboard | immersive-3d | game-realtime",
+  "surface_pack": "web | app-dashboard | immersive-3d | game-realtime | film",
   "depth_intensity_hint": 0.0
 }
 ```
@@ -103,6 +105,8 @@ Phase 0 and never switched mid-run. If a project seems to need two packs (market
 - The Brand Personality Matrix and Palette Derivation Protocol (Phase 2 is universal)
 - The DIS calculation algorithm (packs adjust inputs via profile, never the algorithm)
 - The anti-pattern registry (packs may ADD emphases, never waive entries)
+- The aliveness floor ★v6 (packs translate it to their surface, never remove it)
+- The score contract ★v6 (packs may extend the score — the film pack adds lanes and beats — never fork its vocabulary)
 - The North Star discipline (every surface gets a Phase 3 reference image)
 - Staging-first production protocol
 - Agent autonomy tiers

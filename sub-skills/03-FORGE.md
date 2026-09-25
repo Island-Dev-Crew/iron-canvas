@@ -14,6 +14,9 @@ protocol: 3 of 4
 requires: design_brief.json, motion_blueprint.json
 ---
 
+> **Archival — superseded.** Kept for history. The live doctrine is SKILL.md v6 (§7b Choreography)
+> and `references/motion-language.md`. Do not execute this file.
+
 # IRON CANVAS — PROTOCOL 3: IRON CANVAS FORGE
 ### *Production Code Generation — 3-Phase Build*
 

@@ -1,0 +1,31 @@
+{
+  "$comment": "The design contract of showcase/origin.html — the first Iron Canvas page, restored. Check it with: node scripts/ic-contract.mjs --contract showcase/origin.contract.json showcase/origin.html",
+  "colors": {
+    "iron": { "hex": "#0a0e14", "role": "the ground — cool blue-black" },
+    "gold": { "hex": "#c9a84c", "role": "the one accent: light, hairlines, the primary action — used at many alphas as the light ladder" },
+    "bone": { "hex": "#f0ede8", "role": "text" },
+    "ash": { "hex": "#9a9490", "role": "secondary text" },
+    "dust": { "hex": "#807b76", "role": "dim labels — 4.6:1 on the ground" }
+  },
+  "allow_colors": [
+    "#1a1d24", "#2a2d35", "#131820", "#1d1d1a",
+    "#9d7e38", "#e2bf6a",
+    "#18192a", "#7b5ea7", "#5b8dee"
+  ],
+  "notes": {
+    "shades": "#1a1d24 anvil (lifted ground) · #2a2d35 slate (surface) · #131820 the orb's inner dark · #1d1d1a hover plates — all shades of the ground, not new colours",
+    "gold states": "#9d7e38 gold at rest · #e2bf6a gold on hover",
+    "enemy palette": "#18192a · #7b5ea7 · #5b8dee appear only inside the 'Every AI site looks identical' mock — the generic look, drawn so it can be named"
+  },
+  "fonts": {
+    "display": { "family": "Outfit", "fallback": "'Avenir Next', Avenir, 'Segoe UI', -apple-system, 'Helvetica Neue', Arial" },
+    "text": { "family": "DM Sans", "fallback": "'Segoe UI', -apple-system, Roboto, 'Helvetica Neue', Arial" }
+  },
+  "motion": {
+    "curves": ["cubic-bezier(0.16, 1, 0.3, 1)", "cubic-bezier(0.34, 1.56, 0.64, 1)"],
+    "durations_ms": [150, 200, 250, 300, 350, 400, 500, 800, 900],
+    "max_curves": 2
+  },
+  "shadow": { "policy": "soft", "max_blur_px": 64 },
+  "forbidden": ["/transition:\\s*all\\b/"]
+}

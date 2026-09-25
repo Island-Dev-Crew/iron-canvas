@@ -28,7 +28,7 @@ ___
 | Scroll engine (Canvas) | FEASIBLE / CONDITIONAL / BLOCKED | LOW / MED / HIGH | ___ |
 | GSAP + ScrollTrigger | FEASIBLE | LOW | ___ |
 | Lenis smooth scroll | FEASIBLE | LOW | ___ |
-| SplitText (GSAP) | FEASIBLE / CONDITIONAL | LOW | License check required |
+| SplitText (GSAP) | FEASIBLE | LOW | Free since GSAP 3.13 — use aria: 'auto' + autoSplit |
 | WebGL / Three.js | FEASIBLE / CONDITIONAL / BLOCKED | HIGH | Mobile fallback required |
 | Custom cursor | FEASIBLE | LOW | Touch detection required |
 | Page transitions (Barba) | FEASIBLE / CONDITIONAL / BLOCKED | LOW | Multi-page only |
@@ -100,13 +100,16 @@ Mobile fallback: ___
 
 ---
 
-## GSAP License Verification
+## Licensing Verification (★v6)
 
 ```
-Plugins planned: ScrollTrigger / SplitText / Flip / MorphSVG / DrawSVG
-License required: FREE tier / Club GSAP / Business
-SplitText: Club GSAP required — confirmed? YES / NO
-Alternative if no license: ___
+GSAP plugins planned: ScrollTrigger / SplitText / Flip / MorphSVG / DrawSVG
+  → the entire GSAP toolset is free, including commercial use, since 3.13 — no licence gate
+Fonts: every display + text face has a FontRecord with licence certainty 10/10? YES / NO
+  (references/typography-system.md Step 0 — trials are specimen-only)
+Media: every generated or sourced asset carries rights in its provenance sidecar? YES / NO
+Paid engines (Seedance / audio / imagery): budget.credit_cap_usd set in canvas.config.json? YES / NO
+Film renderer: HyperFrames (Apache-2.0) / Remotion (company licence above 3 employees) → ___
 ```
 
 ---

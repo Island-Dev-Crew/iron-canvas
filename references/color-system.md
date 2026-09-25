@@ -33,34 +33,79 @@ EXTRACT THESE VALUES:
 Modern color systems use oklch (perceptually uniform) not hex → hex guesswork.
 oklch(L C H) — Lightness 0-1, Chroma 0-0.4, Hue 0-360°
 
+> **Three worked examples, three different brands — none of them is a default.** Each starts from
+> a one-line DNA statement and runs the Palette Derivation Protocol (below). Copying one onto a brand
+> that did not earn it is Anti-Pattern #1 Cookie-Cutter / #3 Template Imposition.
+> Derive the full palette via chroma/lightness shifts, NOT hue rotation: every ramp step keeps the
+> anchor's hue; lightness steps from ~0.15 to ~0.97; chroma peaks near the anchor and tapers.
+
+**A · Warm espresso / gold — dark ground.** DNA: *"A small-batch coffee roaster — fire, brass and one lamp in a dark room."*
+`organic 8 · contemplative 7 · refined 7 · bold 6` → warm earth hue band · DARK base (contemplative ≥ 6) · low-chroma surfaces + ONE bright accent.
+
 ```css
-/* EXAMPLE: Brand primary = oklch(0.55 0.18 260) — a deep indigo */
-
-/* Derive full palette via chroma/lightness shifts, NOT hue rotation */
 :root {
-  /* Primary family */
-  --color-primary-950: oklch(0.15 0.18 260); /* darkest */
-  --color-primary-900: oklch(0.22 0.20 260);
-  --color-primary-800: oklch(0.30 0.22 260);
-  --color-primary-700: oklch(0.40 0.22 260);
-  --color-primary-600: oklch(0.50 0.20 260);
-  --color-primary-500: oklch(0.55 0.18 260); /* brand anchor */
-  --color-primary-400: oklch(0.65 0.16 260);
-  --color-primary-300: oklch(0.75 0.12 260);
-  --color-primary-200: oklch(0.85 0.08 260);
-  --color-primary-100: oklch(0.93 0.04 260);
-  --color-primary-50:  oklch(0.97 0.02 260);
-
-  /* Semantic tokens derived from primary */
+  --color-primary-900: oklch(0.26 0.05 80);
+  --color-primary-700: oklch(0.46 0.09 80);
+  --color-primary-500: oklch(0.79 0.125 80);        /* brand anchor — gold */
+  --color-primary-300: oklch(0.87 0.09 80);
+  --color-primary-100: oklch(0.95 0.03 80);
   --color-accent:      var(--color-primary-500);
-  --color-accent-glow: oklch(0.55 0.22 260 / 0.4); /* for glow effects */
-  --color-surface:     oklch(0.08 0.02 260);        /* dark bg */
-  --color-surface-alt: oklch(0.12 0.03 260);        /* card bg */
-  --color-text:        oklch(0.96 0.01 260);        /* near-white body */
-  --color-text-muted:  oklch(0.65 0.04 260);        /* secondary text */
-  --color-border:      oklch(0.22 0.05 260 / 0.6);  /* subtle borders */
+  --color-accent-glow: oklch(0.79 0.14 80 / 0.35);
+  --color-secondary:   oklch(0.66 0.13 52);          /* amber */
+  --color-surface:     oklch(0.17 0.018 52);         /* espresso ground */
+  --color-surface-alt: oklch(0.23 0.024 56);         /* cocoa card */
+  --color-text:        oklch(0.93 0.028 82);         /* cream — never pure white */
+  --color-text-muted:  oklch(0.72 0.03 72);
+  --color-border:      oklch(0.79 0.125 80 / 0.14);  /* gold hairline */
+  --shadow-tint:       oklch(0.10 0.03 50);          /* warm black */
 }
 ```
+
+**B · Cool technical — graphite ground.** DNA: *"An on-call monitoring console for infrastructure engineers — precise, fast, calm at 3 a.m."*
+`digital 9 (organic 1) · fast 8 · minimal 7 · refined 6 · bold 4` → cool/technical band, steel graphite (hue 235, not the old indigo) · DARK base (night use) · accent pulled analogous to signal cyan · 2–3 colors · good/warn/critical stay separate from the accent (CD3 LAW 3).
+
+```css
+:root {
+  --color-primary-900: oklch(0.28 0.05 205);
+  --color-primary-700: oklch(0.50 0.085 205);
+  --color-primary-500: oklch(0.80 0.12 205);         /* brand anchor — signal cyan */
+  --color-primary-300: oklch(0.88 0.08 205);
+  --color-primary-100: oklch(0.96 0.03 205);
+  --color-accent:      var(--color-primary-500);
+  --color-accent-glow: oklch(0.80 0.12 205 / 0.25);
+  --color-secondary:   oklch(0.62 0.06 240);         /* steel */
+  --color-surface:     oklch(0.21 0.012 235);        /* graphite ground */
+  --color-surface-alt: oklch(0.26 0.015 235);        /* panel */
+  --color-text:        oklch(0.94 0.008 235);
+  --color-text-muted:  oklch(0.70 0.02 235);
+  --color-border:      oklch(0.80 0.02 235 / 0.12);  /* cool hairline */
+  --shadow-tint:       oklch(0.08 0.02 235);         /* blue-black */
+}
+```
+
+**C · Light heritage — paper ground.** DNA: *"A fifth-generation bookbinder and stationer — linen paper, green cloth, an oxblood ribbon; nothing shouts."*
+`classic 8 · refined 7 · minimal 6 · bold 3` → HERITAGE branch: crisp near-neutral paper + deep cool jewel ink (emerald) + near-black text, high contrast · LIGHT base · never the warm-clay spa palette.
+
+```css
+:root {
+  --color-primary-900: oklch(0.24 0.05 160);
+  --color-primary-700: oklch(0.34 0.07 160);
+  --color-primary-500: oklch(0.42 0.09 160);         /* brand anchor — emerald ink */
+  --color-primary-300: oklch(0.72 0.08 160);
+  --color-primary-100: oklch(0.93 0.03 160);
+  --color-accent:      var(--color-primary-500);
+  --color-accent-glow: oklch(0.42 0.09 160 / 0.15);
+  --color-secondary:   oklch(0.40 0.11 25);          /* oxblood — small marks only */
+  --color-surface:     oklch(0.975 0.005 95);        /* paper — crisp, not cream */
+  --color-surface-alt: oklch(0.945 0.007 95);
+  --color-text:        oklch(0.22 0.012 160);        /* ink-black */
+  --color-text-muted:  oklch(0.48 0.015 160);
+  --color-border:      oklch(0.22 0.012 160 / 0.14); /* ink hairline */
+  --shadow-tint:       oklch(0.25 0.03 160);         /* ink green — ¼ alpha on paper (Step 4) */
+}
+```
+
+All three are in sRGB gamut. WCAG contrast, text on ground: A 15.6 · B 14.9 · C 16.1 : 1; accent on ground: 9.8 · 9.9 · 7.5 : 1.
 
 **Harmony options (choose one per project):**
 ```
@@ -87,16 +132,17 @@ Corporate/functional feel profile → subtle gradient, near-flat
 
 **Implementation:**
 ```css
-/* Conic gradient mesh (organic feel) */
+/* Radial-gradient mesh (organic feel) — every hue comes from the derived
+   Step 2 tokens, never typed in: swap the palette and the mesh follows */
 .mesh-bg {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%,
-      oklch(0.40 0.20 260 / 0.6) 0%, transparent 70%),
+      oklch(from var(--color-primary-700) l c h / 0.6) 0%, transparent 70%),
     radial-gradient(ellipse 60% 80% at 80% 70%,
-      oklch(0.35 0.18 200 / 0.5) 0%, transparent 70%),
+      oklch(from var(--color-secondary) l c h / 0.5) 0%, transparent 70%),
     radial-gradient(ellipse 100% 40% at 50% 0%,
-      oklch(0.55 0.22 290 / 0.3) 0%, transparent 60%),
-    oklch(0.08 0.02 260); /* base */
+      oklch(from var(--color-accent) l c h / 0.3) 0%, transparent 60%),
+    var(--color-surface); /* base */
 }
 
 /* Noise overlay (grain texture — premium feel) */
@@ -121,6 +167,16 @@ LIGHT/CLEAN:     1-2 gradients, pastel chroma, very low opacity (0.1-0.3)
 CORPORATE/FLAT:  No mesh. Maximum 1 subtle directional gradient.
 ```
 
+**The three Step 2 examples through this table:**
+```
+A · espresso / gold  → DEEP/LUXURY: 3 warm orbs (gold-brown, amber, a gold wash) over espresso;
+                       grain 0.04–0.06
+B · graphite / cyan  → CORPORATE/FLAT: no mesh — one directional graphite gradient
+                       (surface → surface-alt); the cyan stays a signal, never an atmosphere
+C · paper / emerald  → LIGHT/CLEAN: one pale emerald wash at ~0.1 over paper; grain 0.015–0.025;
+                       never dark orbs on paper
+```
+
 ---
 
 ## STEP 4: SHADOW PROTOCOL
@@ -129,27 +185,30 @@ Flat gray shadows are a dead giveaway of generic design.
 Branded shadows match the ambient light of the design's color palette.
 
 ```css
-/* RULE: Shadows should be tinted to the brand's primary hue */
+/* RULE: Shadows should be tinted to the brand's own palette — each Step 2
+   example defines --shadow-tint (A warm black · B blue-black · C ink green) */
 
 /* ❌ Generic: */
 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
 /* ✅ Branded: */
 box-shadow:
-  0 4px 20px oklch(0.10 0.15 260 / 0.4),  /* ambient — brand tinted */
-  0 1px 4px oklch(0.05 0.10 260 / 0.6);   /* sharp contact shadow */
+  0 4px 20px oklch(from var(--shadow-tint) l c h / 0.4),  /* ambient — brand tinted */
+  0 1px 4px oklch(from var(--shadow-tint) l c h / 0.6);   /* sharp contact shadow */
 
 /* ELEVATED (cards, modals) */
 box-shadow:
-  0 20px 60px oklch(0.08 0.18 260 / 0.5),
-  0 4px 16px oklch(0.08 0.15 260 / 0.3),
-  inset 0 1px 0 oklch(0.40 0.10 260 / 0.2); /* top edge highlight */
+  0 20px 60px oklch(from var(--shadow-tint) l c h / 0.5),
+  0 4px 16px oklch(from var(--shadow-tint) l c h / 0.3),
+  inset 0 1px 0 oklch(from var(--color-primary-300) l c h / 0.2); /* top edge highlight */
 
 /* GLOW (CTA buttons, active states, featured items) */
 box-shadow:
-  0 0 0 1px var(--color-accent / 0.3),
+  0 0 0 1px oklch(from var(--color-accent) l c h / 0.3),
   0 0 20px var(--color-accent-glow),
-  0 4px 12px oklch(0.08 0.18 260 / 0.4);
+  0 4px 12px oklch(from var(--shadow-tint) l c h / 0.4);
+
+/* LIGHT ground (example C): divide every shadow alpha by ~4 — ink on paper, not smoke */
 ```
 
 ---
@@ -164,11 +223,12 @@ When Brand Personality bold ≥ 6 OR feel includes dark/night/deep energy:
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-surface:     oklch(0.08 0.02 260);
-    --color-surface-alt: oklch(0.12 0.03 260);
-    --color-text:        oklch(0.96 0.01 260);
-    --color-text-muted:  oklch(0.65 0.04 260);
-    --color-border:      oklch(0.22 0.05 260 / 0.5);
+    /* hue comes from the derived anchor (h) — never a default hue */
+    --color-surface:     oklch(from var(--color-primary-500) 0.08 0.02 h);
+    --color-surface-alt: oklch(from var(--color-primary-500) 0.12 0.03 h);
+    --color-text:        oklch(from var(--color-primary-500) 0.96 0.01 h);
+    --color-text-muted:  oklch(from var(--color-primary-500) 0.65 0.04 h);
+    --color-border:      oklch(from var(--color-primary-500) 0.22 0.05 h / 0.5);
     /* Primary/accent stay the same — only surfaces and text flip */
   }
 }
@@ -195,8 +255,8 @@ Phase 2 output must include:
 ```json
 {
   "color": {
-    "primary_oklch": "oklch(0.55 0.18 260)",
-    "secondary_oklch": "oklch(0.50 0.20 200)",
+    "primary_oklch": "oklch(L C H) — the derived anchor (Step 2), never copied",
+    "secondary_oklch": "oklch(L C H) | null",
     "background_type": "near-black | off-white | pure-white | paper",
     "harmony": "analogous | complementary | monochromatic",
     "gradient_mesh": true,

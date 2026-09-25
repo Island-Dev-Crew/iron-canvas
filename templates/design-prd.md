@@ -1,19 +1,22 @@
 # Design PRD Template
-## Iron Canvas v5.2 — Phase 3.9 Output
+## Iron Canvas v6 — Phase 3.9 Output
 
 *Instructions: Orchestrator fills this completely before dispatching to Build Agents.*
 *Delete all instruction lines (in italics) before saving final PRD.*
 *Save as: design-prd.md in project root*
+*★v6: write the score (`score.json`) before Section 4 — Section 4 is the score, summarized. Run `node scripts/ic-preflight.mjs iron_canvas_output/` before dispatch; errors block it. Write `design-contract.json` (from `templates/design-contract.json`) from Section 1's design plan; `node scripts/ic-contract.mjs --contract design-contract.json <build>` checks every build.*
 
 ---
 
 # IRON CANVAS DESIGN PRD
 
 **Project:** ___
-**Type:** A / B / C / D / E / F
+**Type:** A / B / C / D / E / F / G
 **Mode:** SOLO / SWARM / MISSION
+**Register:** R0 / R1 / R2 / R3 / R4 ★v6 | **Surface:** web / app-dashboard / immersive-3d / game-realtime
 **Date:** YYYY-MM-DD
 **North Star:** `north-star-reference.png`
+**Score:** `iron_canvas_output/score.json` — preflight: PASS / [errors] ★v6
 **Validation Status:** All FEASIBLE / [n] CONDITIONAL — *see Section 8*
 
 ---
@@ -28,8 +31,10 @@ Text primary:   #______
 Text muted:     #______
 Accent:         #______
 Accent-2:       #______
-Border:         rgba(__, __, __, 0.12)
-Accent RGB:     __, __, __  ← for CSS calc in shadows
+Border:         rgb(var(--text-rgb) / 0.12)
+Accent RGB:     __ __ __  ← ★v6 space-separated triplet: rgb(var(--accent-rgb) / α) — three.js reads the same
+Text RGB:       __ __ __
+Ground RGB:     __ __ __  ← scrims, fog, the WebGL ground
 
 Display font:   _______, weights _____
 Body font:      _______, weights _____
@@ -44,24 +49,33 @@ Brand Personality Matrix (1-10):
   Serious   [__] ←——→ [__] Playful
   Classic   [__] ←——→ [__] Avant-garde
   Digital   [__] ←——→ [__] Organic
-  Quiet     [__] ←——→ [__] Bold      → Cursor: none / trailing / magnetic
+  Quiet     [__] ←——→ [__] Bold      → Cursor: native / trailing / magnetic (from the DIS dial)
   Fast      [__] ←——→ [__] Contemplative → Pacing: fast / medium / slow
+
+Design plan ★v6 (CD3 Law 3 — written before code, reviewed for genericness before the first component):
+  Colours (4–6, named, with roles): ___ · ___ · ___ · ___
+  Type families (1–2):              ___ / ___
+  Scale:                            ___
+  Machine-readable as:              design-contract.json (3.9d) — every slot a decision, never a pre-fill
 ```
 
 ---
 
-## SECTION 2: EMOTIONAL TARGET
+## 2. EMOTIONAL TARGET — THE FEEL BRIEF
 *Hard constraint — ALL agents honor this. Anti-feelings are vetoed at any decision point.*
 
-Primary emotion: ___
-Secondary emotions: ___, ___
+```
+Lens: [one sentence — how the audience should feel when they arrive]
+Primary (first 3 s): [emotion] | After: [the transformation]
+Anti-feelings: [list — HARD VETO; always includes "lifeless / mechanical"]
+Reference vibe: "[walking into ___ — light, temperature, tempo]" | Feel line: [3 adjectives · material · tempo]
+Mechanism: [one sentence] → Signature moment: [how the page acts it out]
+Kinetic signature: personality [silk/tide/gravity/spark/snap] · accent [bloom/none]
+  arrival [≤1.5 s, one sentence] · heartbeat [element, co-prime periods] · hand-feel [lift/press/lean]
+  breath [air + ambient layer] · still path [what reduced motion shows]
+```
 
-**ANTI-FEELINGS (HARD VETO — any design evoking these is rejected regardless of quality):**
-- ___
-- ___
-- ___
-
-Reference vibe: "Walking into ___"
+*Secondary emotions: ___, ___ (from feel-profile.json).*
 
 ---
 
@@ -77,8 +91,10 @@ Reference vibe: "Walking into ___"
   --color-text-muted:   #______;
   --color-accent:       #______;
   --color-accent-2:     #______;
-  --color-border:       rgba(__, __, __, 0.12);
-  --accent-rgb:         __, __, __;
+  --accent-rgb:         __ __ __;   /* ★v6 mirror of --color-accent: space-separated triplet */
+  --text-rgb:           __ __ __;   /* mirror of --color-text */
+  --bg-rgb:             __ __ __;   /* mirror of --color-bg */
+  --color-border:       rgb(var(--text-rgb) / 0.12);
 
   /* TYPOGRAPHY */
   --font-display: '___', serif;
@@ -99,18 +115,23 @@ Reference vibe: "Walking into ___"
   --space-8:  2rem; --space-4:  1rem;
   --space-2:  0.5rem;
 
-  /* MOTION */
-  --spring:       cubic-bezier(0.34, 1.56, 0.64, 1);
-  --spring-slow:  cubic-bezier(0.16, 1, 0.3, 1);
-  --smooth:       cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-fast:     150ms; --dur-normal: 300ms;
-  --dur-slow:     600ms; --dur-hero:   1000ms;
+  /* MOTION — by ROLE, never by value ★v6 (references/motion-language.md §3)
+     The v1–v5 names --spring / --spring-slow were inverted relative to the original page and are
+     retired: arrivals never overshoot; overshoot lives only in the tick. */
+  --ease-arrive:  cubic-bezier(0.16, 1, 0.3, 1);    /* every entrance + state change — the calm exhale */
+  --ease-tick:    cubic-bezier(0.34, 1.56, 0.64, 1); /* micro-moves ≤ 0.25 s only — "the Iron Spring" */
+  --ease-breathe: cubic-bezier(0.37, 0, 0.63, 1);   /* ambient loops */
+  --ease-depart:  cubic-bezier(0.55, 0, 1, 0.45);   /* exits — accelerate away */
+  --dur-hand:   180ms; --dur-state: 320ms;
+  --dur-arrive: 850ms; --dur-hero: 1400ms;
+  --stagger-arrive: 120ms;
+  --breath: 6s;        /* heartbeat base — co-prime partners 4s · 7s · 11s · 13s */
 
   /* DEPTH — tinted to accent color */
-  --shadow-sm: 0 2px 8px rgba(var(--accent-rgb), 0.08);
-  --shadow-md: 0 8px 32px rgba(var(--accent-rgb), 0.12);
-  --shadow-lg: 0 20px 60px rgba(var(--accent-rgb), 0.18);
-  --shadow-xl: 0 40px 100px rgba(var(--accent-rgb), 0.24);
+  --shadow-sm: 0 2px 8px rgb(var(--accent-rgb) / 0.08);
+  --shadow-md: 0 8px 32px rgb(var(--accent-rgb) / 0.12);
+  --shadow-lg: 0 20px 60px rgb(var(--accent-rgb) / 0.18);
+  --shadow-xl: 0 40px 100px rgb(var(--accent-rgb) / 0.24);
 
   /* RADIUS */
   --radius-sm: 4px; --radius-md: 8px;
@@ -124,44 +145,64 @@ Reference vibe: "Walking into ___"
 
 ---
 
-## SECTION 4: MOTION ARCHITECTURE
-*Agent-B executes.*
+## 4. MOTION ARCHITECTURE — THE SCORE (motion contract) ★v6
+*Agent-B performs.*
 
-**Easing vocabulary:**
-```javascript
-const EASE = {
-  heroIn:    'power4.out',
-  textIn:    'power3.out',
-  elementIn: 'power2.out',
-  spring:    'elastic.out(1, 0.3)',
-  brand:     'cubic-bezier(__, __, __, __)'
-};
 ```
-
-**Load sequence timing:**
-```
-Phase 0 (0-200ms):     ___
-Phase 1 (200-600ms):   ___
-Phase 2 (400-800ms):   ___
-Phase 3 (600-1000ms):  ___
-Phase 4 (800-1200ms):  ___
-Phase 5 (1000-1400ms): ___
+Motion sentence: [establish → … → resolve — the register's arc]
+Signature act: [id] | Clock owner: [the scrub acts; WebGL subscribes to progress]
+Act table (one row per section — the score.json acts):
+  | act | stage | job | role | emotion in → out | trigger | personality | reduced (settled meaning) |
+Load choreography: Phase 0→5 [ms values, ≤ 1500 total] — see references/motion-language.md §5
+Heartbeat: [element, periods, amplitude] | Breath: [air + ambient layer]
+Cursor: [native / trailing / magnetic / WebGL] from DIS magnetic_cursor [value]
+Page transitions: [fade-through-black = cinematic / curtain = theatrical / morph = seamless /
+                   colour flood = brand-forward / zoom = magazine] — [the feeling it serves]
+score.json path: [iron_canvas_output/score.json] — preflight: [PASS / errors]
+[AGENT-B performs this — via runtime/canvas-score.js or a faithful port]
 ```
 
-**Section choreography:**
+*Motion sentence by register: R0 establish → resolve · R1 establish → reveal → resolve · R2 establish → accelerate → pause → reveal → resolve · R3 establish → accelerate → pause → reveal → recover → climax → resolve · R4 the full sentence as a camera rail. Two loud beats never touch.*
+
+**Act table:**
+
+| act | stage | job | role | emotion in → out | trigger | personality | reduced (settled meaning) |
+|-----|-------|-----|------|------------------|---------|-------------|---------------------------|
+| ___ | establish | orient | support | ___ → ___ | load | ___ | ___ |
+| ___ | ___ | ___ | signature | ___ → ___ | scrub | bloom | ___ |
+| ___ | resolve | commit | support | ___ → ___ | enter | ___ | ___ |
+
+*Exactly one `signature`. Roles: signature · support · stillness. Verbs only from the seventeen (fade · rise · unveil · bloom · focus · tilt · wipe · iris · sink · lift · defocus · dolly · drift · draw · count · scramble · sweep); personalities only from the seven (silk · tide · gravity · spark · snap · bloom · drift).*
+
+**Load choreography (ms from page ready — ≤ 1500 total, steps 50–150 ms, never all at once):**
 ```
-[Section name]:
-  Entry:     ___
-  Scroll:    ___
-  Exit:      ___
-  Technique: pin+scrub / reveal / parallax / counter / horizontal
-  Emotion:   ___
+Phase 0 (0-200ms):     ___   (ground, atmosphere, canvas init — the heartbeat is already turning)
+Phase 1 (200-600ms):   ___   (primary visual / 3D element)
+Phase 2 (400-800ms):   ___   (headline — line, word or character)
+Phase 3 (600-1000ms):  ___   (supporting text)
+Phase 4 (800-1200ms):  ___   (CTA)
+Phase 5 (1000-1400ms): ___   (navigation + secondary UI)
 ```
 
-**Cursor:** none / trailing / magnetic
-**Page transitions:** none / iron-curtain / fade / shared-element | Framework: Barba.js / AnimatePresence
-**Scroll library:** Lenis / Locomotive / native
-**Scroll engine:** YES / NO
+**Scene map — one entry per section, no blanks:**
+```
+[SECTION / act id]  Stage: [motion-sentence beat]   Job: [orient / explain_system / … / commit]
+  Load: ___   Scroll: ___   Cursor: ___   Exit: ___   Duration: ___   Technique / verbs: ___
+  Emotion: [what the visitor should feel here — in → out]   Role: [signature / support / stillness]
+  Still: [what the settled frame means under reduced motion]
+```
+*Technique options: pin+scrub / reveal / parallax / counter / horizontal — written as the score's verbs (a pinned scrub act with `drift`, an `unveil`, a `count`, …).*
+*★v6 — **Emotion can never be blank.** Every section names what the visitor should feel, in words a person would use ("curious → drawn in"), never "TODO", "—" or "Static". A blank Emotion fails the PRD lint and `scripts/ic-preflight.mjs` (every act has a feeling), and VERIFY compares each section's station screenshot against it.*
+
+**Page transitions** (choose by the feeling it serves):
+```
+fade-through-black → Cinematic     curtain (Iron Curtain) → Theatrical     shared-element morph → Seamless
+colour flood → Brand-forward        WebGL distortion → Psychedelic (R3+)    zoom in/out → Magazine
+```
+Framework: Barba.js / AnimatePresence / same-document View Transitions | Chosen: ___ — because it feels ___
+
+**Smooth scroll:** Lenis (the `lenis` package) smoothing native scroll / native — one clock; no second scroll owner
+**Scroll engine:** YES / NO — a frame sequence is the scrub act of its section
   If YES: Section: ___ | Height: ___vh | Frames: ___ | Path: /frames/
           Overlays: [___ at __% scroll] [___ at __% scroll]
 
@@ -176,6 +217,8 @@ Phase 5 (1000-1400ms): ___
 | Primary button | translateY(-2px) + shadow-md | scale(0.98) | accent outline |
 | ___ | ___ | ___ | ___ |
 
+*★v6 Hand-feel (the aliveness floor): every row answers hover AND focus; press is a physical push (scale 0.98 or 1 px down); micro-moves ride `var(--ease-tick)` ≤ 0.25 s, state changes `var(--ease-arrive)`.*
+
 **Navigation:**
 Type: fixed / sticky | Scroll trigger: at ___px → scrolled class
 Mobile: hamburger / overlay / drawer
@@ -183,20 +226,20 @@ Mobile: hamburger / overlay / drawer
 **Typography treatments:**
 | Element | Treatment |
 |---------|----------|
-| .hero__title | SplitText chars / straight reveal |
+| .hero__title | unveil lines / words / chars · straight reveal |
 | ___ | ___ |
 
-**Grain overlay:** YES (creative/luxury) / NO
+**Grain overlay:** YES (creative/luxury) / NO — *★v6 with NO grain, name the ambient layer that breathes instead: light ladder / breathing mesh*
 **Glassmorphism panels:** YES / NO
 
 ---
 
 ## SECTION 6: ARTIFACT REQUIREMENTS
-*Agent-D executes. Complete PRE-GENERATION CHECKLIST for each.*
+*Agent-D executes (Agent-F with Agent-D for meshes and the clay rail). Complete PRE-GENERATION CHECKLIST for each.*
 
 ---
 **Artifact: ___**
-Section: ___ | Position: ___
+Section: ___ | Position: ___ | Act: ___
 Container: ___×___ px | CSS: ___
 Overlay gradient: ___ | Blend mode: ___ | Opacity: ___
 Palette: [#___ hex name] [#___ hex name]
@@ -206,7 +249,9 @@ Lighting: ___
 Angle: ___
 Background: ___
 Negative: ___
-Engine: Nano Banana Pro / Leonardo / Grok / GPT Image
+Engine: code / Nano Banana Pro / Leonardo / Grok / GPT Image / Blender / Seedance 2.5 / audio
+Engine status: enabled / missing → fallback: ___  *(from power_engines)*
+Class: scroll-tied / looping / static / code-driven / mesh / film / cue
 ---
 
 **Scroll sequence:** YES / NO
@@ -215,7 +260,10 @@ Engine: Nano Banana Pro / Leonardo / Grok / GPT Image
   Total frames: ___
   Keyframes: [1: ___] [2: ___] [3: ___] [4: ___] [5: ___]
              [6: ___] [7: ___] [8: ___] [9: ___] [10: ___]
+  *(more keyframes at the critical moment, fewer in the settle)*
   Content overlays: [___ at __% progress] [___ at __% progress]
+
+**Engine jobs ★v6:** [clay rail · hero object · shot jobs · cues — written at 3.9b, run in ASSET FORGE 5a]
 
 ---
 
@@ -223,12 +271,13 @@ Engine: Nano Banana Pro / Leonardo / Grok / GPT Image
 *Agent-E audits against these targets.*
 
 LCP target:        < ___s
-JS bundle budget:  ___KB
+JS bundle budget:  ___KB   *(★v6 web pack R3/R4: first-load ≤ 180 kB gzipped, three.js lazy)*
 Frame total:       ___MB (must be ≤ 5MB)
 WCAG level:        AA / AAA
-Reduced-motion:    animations disabled / simplified fade only
-Mobile animations to preserve: [list minimum 1]
+Reduced-motion:    ★v6 the composed still — every entrance target at its final state; opacity-only reveals, no pins, no breath, native scroll; never blank
+Mobile animations to preserve: [list minimum 1 — one signature animation, never zero]
 Fonts to preload:  [list font filenames]
+Aliveness evidence (Axis 7): first-5-seconds video · 15-second slow scroll · reduced-motion recording
 
 ---
 
@@ -246,11 +295,12 @@ Fonts to preload:  [list font filenames]
 
 | Agent | Domain | Primary Outputs |
 |-------|--------|----------------|
-| Agent-A | Foundation | tokens.css, index.html, base.css |
-| Agent-B | Motion | load-sequence.js, scroll.js, [scroll-engine.js], [transitions.js] |
-| Agent-C | UI/UX | components.css, interactions.js, typography.js |
-| Agent-D | Artifacts | artifact-prompts.md, generated images, frames/ |
-| Agent-E | QA | accessibility-audit.md, performance-checklist.md, qa-fixes.md |
+| Agent-A | Foundation | tokens.css, index.html, base.css — ★v6 act ids, data-ic / data-breath hooks, ic-js failsafe |
+| Agent-B | Motion — performs the score | motion.js + canvas-score.js, heartbeat, [load-sequence.js], scroll.js, [scroll-engine.js], [transitions.js] |
+| Agent-C | UI/UX | components.css, interactions.js, typography.js — hand-feel on every control |
+| Agent-D | Artifacts | artifact-prompts.md, generated images, frames/ — ★v6 ASSET FORGE engines + ledger |
+| Agent-E | QA | accessibility-audit.md, performance-checklist.md, qa-fixes.md — ★v6 + the aliveness evidence |
+| Agent-F | Immersion (depth ≥ 0.4) | ★v6 the staged scene / world, subscribed to the score's clock |
 
 **Merge sequence:** A → B → C → D → E
 
@@ -260,8 +310,9 @@ Fonts to preload:  [list font filenames]
 
 File naming: camelCase / kebab-case / PascalCase
 CSS approach: global tokens + component scoped / CSS Modules / BEM
-Asset paths: /public/images/ or /assets/ or /
-Data attributes: `data-magnetic` on CTAs | `.reveal` on below-fold elements | `data-scroll-section` on sections
+Asset paths: /public/images/ or /assets/ or / — ★v6 promoted encodes only, each with a `.provenance.json`
+Data attributes: `data-magnetic` on CTAs | `.reveal` on below-fold elements (CSS-only Tier 1 path) | `data-scroll-section` on sections
+★v6: `id="act-<id>"` on every section (the score's act ids) | `data-ic` on every entrance target | `data-breath` on the heartbeat's WRAPPER (never an element a shot also transforms) | `ic-js` marked in `<head>` before first paint with the 3 s failsafe
 Component prefix: ___
 
 ---
@@ -277,6 +328,23 @@ Component prefix: ___
 6. Trinket Dropping: images without CSS integration
 7. Video-as-Animation: MP4 for scroll sequence
 8. Frame Inconsistency: different base prompts per frame
+9. One-Shot Prompting: no Discovery Interview, no PRD as source of truth
+10. Skipping Asset Pipeline: raw video handed to a scroll engine
+11. Context Drift: agents guessing stack, tokens and intent
+12. Intensity Mismatch: flash that ignores the DNA (or static where the DNA is bold)
+13. Code-vs-AI Misrouting: AI-generated logo/chart, or SVG faking photoreal
+14. Generative-for-its-own-sake: effects bolted on for flash
+15. Depth Theater: 3D bolted on — incl. a double atmosphere (aurora + iridescence + frosted glass)
+16. Slop Tells: the CD3 anti-slop canon + the growing registry of named model defaults
+17. Register Mismatch: wrong treatment for the task's ambition (over-produced)
+18. ★v6 LIFELESS: correct and dead — no arrival, heartbeat, hand-feel, breath or composed still
+19. ★v6 TWO CLOCKS: two scroll owners in one viewport
+20. ★v6 FLAGGED BUT SHIPPED: a risk note or a red P0 test treated as FYI — every flag resolved or waived by the operator before HANDOFF
+21. ★v6 DEFAULTS AS DECISIONS: template pre-fills shipped as if chosen — the design contract + scripts/ic-contract.mjs in CI
+22. ★v6 UNREVIEWED INTERPOLATION: generated in-betweens no keyframe contained, shipped unseen — sample, match to keyframes, approve or reject in the ledger
+
+**Named model defaults seen in the first render ★v6** (the growing registry — CD3 Law 4; each needs a reason from the DNA or it goes): *cream / off-white grounds · an italic accent word in every headline · "01 / 02 / 03" section labels · monospace eyebrows · pill buttons · "→" on every link · ___*
+- ___
 
 **Project-specific veto list:**
 - ___

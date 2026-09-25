@@ -1,0 +1,36 @@
+{
+  "$schema": "./canvas.config.schema.json",
+  "project": "my-project",
+  "engines": {
+    "blender": {
+      "enabled": true,
+      "binary": "",
+      "note": "Empty binary = auto-detect (BLENDER_PATH, PATH, C:/Program Files/Blender Foundation/*, Steam)."
+    },
+    "video": {
+      "enabled": true,
+      "provider": "fal",
+      "model": "bytedance/seedance-2.5",
+      "resolution": "720p",
+      "note": "Providers: fal (automated) · ingest (generate in Dreamina/Higgsfield/ModelArk UI, then ingest) · higgsfield-mcp (interactive Claude session)."
+    },
+    "audio": {
+      "enabled": false,
+      "provider": "elevenlabs"
+    },
+    "imagery": {
+      "enabled": true,
+      "provider": "nano-banana",
+      "note": "Still images route through references/model-selection.md; this toggle only gates the lane."
+    },
+    "film": {
+      "enabled": true,
+      "provider": "hyperframes",
+      "note": "Code-driven motion graphics / OG video. HyperFrames is Apache-2.0; Remotion needs a company license above 3 employees."
+    }
+  },
+  "budget": {
+    "credit_cap_usd": 25,
+    "max_candidates_per_job": 4
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$comment": "Iron Canvas v6 · the design contract — the design plan made machine-readable (SKILL.md §5 3.9d). Every slot is a DECISION taken at PACKAGE from the DNA, never a pre-filled default. Check a build with: node scripts/ic-contract.mjs --contract design-contract.json <build dir>",
+  "colors": {
+    "ground": { "hex": "#______", "role": "the ground — derived from DNA (Palette Derivation, SKILL.md §17)" },
+    "ink": { "hex": "#______", "role": "text" },
+    "muted": { "hex": "#______", "role": "secondary text — ≥ 4.5:1 on the ground" },
+    "accent": { "hex": "#______", "role": "the one accent — spend boldness in one place" },
+    "surface": { "hex": "#______", "role": "raised surfaces" }
+  },
+  "allow_colors": [],
+  "notes": {
+    "allow_colors": "shades of the named colours (hover, pressed, lifted grounds) and any deliberate depiction colours — each with a reason here"
+  },
+  "fonts": {
+    "display": { "family": "______", "fallback": "a named fallback floor — a face with similar metrics, then the generic" },
+    "text": { "family": "______", "fallback": "______" }
+  },
+  "fonts_generic_fallback_ok": true,
+  "motion": {
+    "curves": ["cubic-bezier(0.16, 1, 0.3, 1)", "cubic-bezier(0.34, 1.56, 0.64, 1)"],
+    "durations_ms": [180, 320, 850, 1400],
+    "tolerance_ms": 10,
+    "max_curves": 3
+  },
+  "radius": { "values": ["0"], "exceptions": [] },
+  "shadow": { "policy": "none | hard | soft", "max_blur_px": 0 },
+  "border": { "translucent": true },
+  "forbidden": ["/transition:\\s*all\\b/"]
+}

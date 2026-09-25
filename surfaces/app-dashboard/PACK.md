@@ -121,6 +121,66 @@ order FLIPs only on user sort. A live table that reflows itself is unusable.
 
 ---
 
+## THE 5 BENTO CARD ARCHETYPES — the perpetual state (v4.2.0 Motion Engine, restored ★v6)
+
+Every dashboard bento grid should draw from these archetypes for perpetual micro-motion.
+Spring physics (`stiffness: 100, damping: 20`) on all interactive elements — no linear easing.
+Each card contains a "perpetual state" that loops infinitely to keep the dashboard feeling alive.
+
+> **Scope (reconciles with the REAL-TIME RULE above):** perpetual states live in overview,
+> onboarding and showcase cards — the card *demonstrates* a living system. On a list or table the
+> user is operating, the REAL-TIME RULE wins: rows never reorder themselves under the user.
+
+```
+ARCHETYPE 1: THE INTELLIGENT LIST
+  → Vertical stack of items with infinite auto-sorting loop
+  → Items swap positions using layoutId (Framer) or GSAP Flip
+  → Simulates AI prioritizing tasks in real-time
+  → Sort animation: spring physics, 0.5s duration
+  → Sort interval: every 4-6 seconds
+  → Reduced motion: rests in one settled priority order — no swaps; the top item keeps a static marker
+
+ARCHETYPE 2: THE COMMAND INPUT
+  → Search/AI bar with multi-step Typewriter Effect
+  → Cycles through 3-5 complex prompts with blinking cursor
+  → Includes "processing" state: shimmering loading gradient
+  → Typewriter speed: 40ms/char, pause: 2s between prompts
+  → Uses GSAP or CSS animation — NEVER useState for typing state
+  → Reduced motion: one complete prompt, fully typed; steady cursor; the processing state is a still gradient
+
+ARCHETYPE 3: THE LIVE STATUS
+  → Scheduling interface with "breathing" status indicators
+  → Pop-up notification badge: overshoot spring effect
+  → Badge appears with back.out(2) ease, stays 3s, fades with power2.in
+  → Breathing dots: scale 1→1.15→1 infinite loop, 2s duration
+  → Status colors: oklch-based green/amber/red tokens
+  → Reduced motion: dots rest at scale 1 in their status color; the badge is simply present until read
+
+ARCHETYPE 4: THE WIDE DATA STREAM
+  → Horizontal infinite carousel of data cards or metrics
+  → Seamless loop: x: ["0%", "-100%"] with duplicated content
+  → Speed: 30s for full cycle (feels effortless, not frantic)
+  → Pause on hover. Resume on leave.
+  → Use will-change: transform and translateZ(0) for GPU
+  → Reduced motion: a static row of the first cards, scrollable by the user — nothing auto-advances
+
+ARCHETYPE 5: THE CONTEXTUAL UI (FOCUS MODE)
+  → Document view that animates staggered text highlight
+  → Followed by "float-in" of a floating action toolbar
+  → Toolbar contains micro-icons (edit, share, annotate)
+  → Highlight: background-color transition with 0.3s stagger
+  → Toolbar: y:10 opacity:0 → y:0 opacity:1, back.out(1.5) ease
+  → Reduced motion: the highlight and the toolbar are already in place — the final frame, no stagger, no float-in
+```
+
+**Bento archetype performance rules:**
+- Each perpetual animation lives in its own isolated component
+- React: wrapped in React.memo, uses useMotionValue (not useState)
+- Vanilla: wrapped in requestAnimationFrame, uses transform only
+- Test: dashboard must maintain 60fps with ALL archetypes running simultaneously
+
+---
+
 ## 3. DIS PROFILE (all 9 systems)
 
 ```

@@ -42,6 +42,23 @@ TIER 3 — IMMERSIVE / WEBGL (performance via progressive enhancement)
     → Skeleton loading screens for WebGL content
 ```
 
+### ★v6 — The score's budgets (web pack, R3/R4 defaults)
+
+The score written at PACKAGE (3.9) must fit these; where a tier above is looser, the tighter number
+wins:
+
+```
+FIRST-LOAD JS     ≤ 180 kB gzipped — three.js (and any WebGL scene) lazy-loaded in its own chunk
+ABOVE-THE-FOLD    media ≤ 6 MB (hero film / poster / first frames — everything before the first scroll)
+TYPE              one display face + one text face (families — every weight file still counts
+                  against the tier's font-request cap)
+DPR               1.5 desktop / 1 mobile by default (2 is the ceiling, never the default)
+PARTICLES         counts set by viewport, never one number for every screen
+```
+
+The aliveness floor costs almost nothing and is never cut for budget: a CSS heartbeat, a still
+grain film, hover/focus states and a composed reduced-motion path fit inside Tier 1.
+
 ---
 
 ## STEP 2: IMAGE FORMAT DECISION TREE
@@ -107,7 +124,8 @@ ALWAYS:
   → Three.js: dynamic import (code split)
     const { THREE } = await import('./three-scene.js');
 
-  → Lenis: import only after DOM ready (defer scroll smooth init)
+  → Lenis: import only after DOM ready (defer scroll smooth init) — ★v6 the `lenis` package;
+    decide reduced motion first and never construct it for reduced-motion visitors
 
   → Barba.js: load only on Tier 3-4 builds, dynamic import
 
@@ -173,10 +191,13 @@ LOADING STRATEGY:
   → Preload next: when user reaches frame N, preload N+8
   → Unload past: frames beyond N-10 removed from memory
 
-FALLBACK:
-  → Mobile: compressed WebM/MP4 video (single file, better performance)
-  → Autoplay muted, preload="metadata" only
-  → poster= attribute always set
+FALLBACK (★v6 — reconciled with Anti-Pattern #7 and SKILL.md §9):
+  → Mobile: fewer frames (frames-mobile/ at half resolution, every other frame — FRAME_STEP 2)
+    or a static poster. Scroll-tied motion is NEVER a <video>: video cannot scrub backwards,
+    cannot sync overlays per frame, and hits mobile autoplay limits.
+  → A LOOPING background (not scroll-tied) may be a muted video: autoplay + loop + muted +
+    playsinline, preload="metadata", poster= attribute always set
+  → Reduced motion: the section rests on its designed still — no pin, no scrub
 
 CANVAS vs. IMG SEQUENCE:
   → Canvas preferred: paint frames directly, no DOM thrashing

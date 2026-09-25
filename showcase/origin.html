@@ -1,0 +1,2561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a0e14">
+  <title>Origin · Iron Canvas — Raw Ideas. Refined Experiences.</title>
+  <meta name="description" content="Iron Canvas is an AI-powered design studio that transforms digital presence into premium-grade experiences. We don't vibe-code. We engineer beauty.">
+  <meta property="og:title" content="Iron Canvas — Raw Ideas. Refined Experiences.">
+  <meta property="og:description" content="Origin: the first Iron Canvas page (March 2026), restored for v6. A living CSS orb, one expo-out curve, zero libraries.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0e14'/%3E%3Cpath d='M8 24 L16 8 L24 24' stroke='%23c9a84c' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='11' y1='18' x2='21' y2='18' stroke='%23c9a84c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@600;700;800;900&display=swap">
+
+  <script>
+    /* Runs before first paint.
+       B4  — `js` on <html>: hidden-before-reveal styles apply only when this ran.
+       ?motion=off — a static page for reviewers (same rules as prefers-reduced-motion).
+       B17 — hold the hero intro until Outfit 900 is ready (max 700 ms), so the
+             headline never re-flows mid-rise. The orb does not wait: it is already turning. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      if (/(?:^|[?&])motion=off(?:&|$)/.test(location.search)) d.classList.add('motion-off');
+      if (document.fonts && document.fonts.load) {
+        d.classList.add('fonts-pending');
+        var done = function () { d.classList.remove('fonts-pending'); };
+        Promise.all([document.fonts.load('900 1em Outfit'), document.fonts.load('400 1em "DM Sans"')]).then(done, done);
+        setTimeout(done, 700);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ════════════════════════════════════════════════════════════════════
+       IRON CANVAS · ORIGIN
+       The first Iron Canvas page (commit 45dcc41, March 2026), restored for v6.
+       Same tokens, curves, tempos, section order and copy; every known bug
+       (B1–B22 in the soul-recovery report) fixed. Zero libraries.
+       Motion rule: only `transform` and `opacity` are ever animated.
+       ════════════════════════════════════════════════════════════════════ */
+
+    /* ─── Reset & tokens ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Colour — verbatim from the original */
+      --base: #0a0e14;
+      --surface: #2a2d35;
+      --surface-2: #1a1d24;
+      --gold: #c9a84c;
+      --gold-dim: #9d7e38;
+      --gold-bright: #e2bf6a;
+      --text-primary: #f0ede8;
+      --text-secondary: #9a9490;
+      --text-dim: #807b76;       /* 4.6:1 on the ground — AA for the small labels it carries */
+      --border: rgba(201, 168, 76, 0.12);
+      --border-hover: rgba(201, 168, 76, 0.45);
+
+      /* Motion — the same two curves, with their ROLES made explicit */
+      --ease-arrive: cubic-bezier(0.16, 1, 0.3, 1);    /* every entrance and state change: expo-out, no overshoot */
+      --ease-tick: cubic-bezier(0.34, 1.56, 0.64, 1);  /* micro-moves of 0.25 s or less only: ~10 % overshoot */
+      --ease-breathe: ease-in-out;                     /* ambient loops: float, shimmer, dust, bars */
+      /* Rotation and marquees are always `linear`. */
+
+      /* Type — every family carries a real fallback stack */
+      --font-display: 'Outfit', 'Avenir Next', 'Avenir', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      --font-text: 'DM Sans', 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+      --gutter: clamp(1.25rem, 4vw, 4rem);
+      color-scheme: dark;
+    }
+
+    /* ─── Base ─────────────────────────────────────────────────────── */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-text);
+      background: var(--base);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* The still grain film: 3.2 %, fixed, above everything (the nav included). Never animated. */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.032;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      text-wrap: balance;
+    }
+
+    p {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      text-wrap: pretty;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    ul, ol { list-style: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    em { font-style: normal; color: var(--gold); }
+
+    ::selection { background: rgba(201, 168, 76, 0.28); color: var(--text-primary); }
+
+    /* Focus: the gold hairline, offset into the dark air */
+    :focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
+    main:focus { outline: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ─── Layout ───────────────────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1320px;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .section {
+      position: relative;
+      padding: clamp(7rem, 12vw, 10rem) 0;   /* 10rem of dark air on desktop */
+    }
+
+    /* The section grammar: a centre-weighted 1px gradient hairline */
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      pointer-events: none;
+    }
+
+    .section--lift { background: var(--surface-2); }
+
+    /* ─── Skip link (B11) ──────────────────────────────────────────── */
+    .skip-link {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10000;
+      background: var(--gold);
+      color: var(--base);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      transform: translateY(calc(-100% - 1.5rem));
+      transition: transform 0.2s var(--ease-arrive);
+    }
+    .skip-link:focus { transform: none; }
+
+    /* ─── Navigation ───────────────────────────────────────────────── */
+    .site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 0;
+    }
+
+    /* The frost lives on its own layer so it can fade on opacity alone */
+    .site-nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 14, 20, 0.85);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .site-nav.scrolled::before,
+    .site-nav.menu-open::before { opacity: 1; }
+
+    .nav-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      border-radius: 6px;
+    }
+
+    .nav-logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-logo-mark svg { width: 16px; height: 16px; display: block; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .nav-links[hidden] { display: none; }
+
+    /* #9a9490 → #f0ede8, done as opacity: #f0ede8 at .62 on the iron ground reads as the original grey */
+    .nav-links a:not(.nav-cta) {
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--text-primary);
+      opacity: 0.62;
+      border-radius: 4px;
+      transition: opacity 0.2s var(--ease-arrive);
+    }
+    .nav-links a:not(.nav-cta):hover,
+    .nav-links a:not(.nav-cta):focus-visible { opacity: 1; }
+
+    /* Nav CTA: the <a> is the unmoving magnet wrapper, the body moves (B12) */
+    .nav-cta { display: inline-flex; border-radius: 6px; }
+
+    .nav-cta-body {
+      position: relative;
+      z-index: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gold);
+      color: var(--base);
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + var(--lift, 0px)), 0) scale(var(--press, 1));
+      transition: transform 0.15s var(--ease-arrive);
+    }
+    .nav-cta-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: var(--gold-bright);
+      opacity: 0;
+      transition: opacity 0.2s var(--ease-arrive);
+    }
+    .nav-cta:hover .nav-cta-body { --lift: -1px; }
+    .nav-cta:hover .nav-cta-body::before,
+    .nav-cta:focus-visible .nav-cta-body::before { opacity: 1; }
+    .nav-cta:active .nav-cta-body { --lift: 0px; --press: 0.98; }
+
+    /* Phones keep the navigation (B14): a real menu */
+    .nav-toggle {
+      display: none;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.25rem 0.5rem 0.75rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      border-radius: 6px;
+    }
+    .nav-toggle-icon { position: relative; width: 18px; height: 10px; }
+    .nav-toggle-icon i {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: var(--gold);
+      border-radius: 1px;
+      transition: transform 0.3s var(--ease-arrive);
+    }
+    .nav-toggle-icon i:first-child { top: 0; }
+    .nav-toggle-icon i:last-child { bottom: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-icon i:first-child { transform: translateY(4.25px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-icon i:last-child { transform: translateY(-4.25px) rotate(-45deg); }
+
+    @media (max-width: 767px) {
+      html.js .nav-toggle { display: inline-flex; }
+
+      html.js .nav-links {
+        position: absolute;
+        top: calc(100% + 0.75rem);
+        left: var(--gutter);
+        right: var(--gutter);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0.5rem 1.25rem 1.25rem;
+        background: rgba(10, 14, 20, 0.94);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.3s var(--ease-arrive), transform 0.3s var(--ease-arrive);
+      }
+      html.js .nav-links.is-open { opacity: 1; transform: none; }
+      html.js .nav-links li + li { border-top: 1px solid var(--border); }
+      html.js .nav-links li:last-child { border-top: 0; padding-top: 1rem; }
+      html.js .nav-links a:not(.nav-cta) { display: block; padding: 1rem 0; font-size: 1rem; }
+      html.js .nav-cta,
+      html.js .nav-cta-body { display: flex; }
+      html.js .nav-cta-body { flex: 1; padding: 0.875rem 1.25rem; font-size: 0.95rem; }
+
+      /* Without JS the links simply wrap under the logo */
+      html:not(.js) .nav-inner { flex-wrap: wrap; }
+      html:not(.js) .nav-links { flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+    }
+
+    /* ─── Scroll reveals (B1–B4) ───────────────────────────────────────
+       A .reveal element never carries a transition of its own besides this one:
+       hover choreography lives on children or pseudo-elements, so nothing can
+       override the entrance or reset its stagger. Hidden states exist only under
+       .js, and a CSS failsafe reveals everything at 3 s if the observer never ran. */
+    html.js .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s var(--ease-arrive), transform 0.8s var(--ease-arrive);
+      transition-delay: calc(var(--d, 0) * 100ms);
+    }
+    html.js .reveal.in-view { opacity: 1; transform: none; }
+
+    .d1 { --d: 1; }
+    .d2 { --d: 2; }
+    .d3 { --d: 3; }
+    .d4 { --d: 4; }
+    .d5 { --d: 5; }
+    .d6 { --d: 6; }
+
+    html.js:not(.io-ready) .reveal { animation: reveal-failsafe 0.8s var(--ease-arrive) 3s both; }
+
+    /* ─── Gold eyebrow label ───────────────────────────────────────── */
+    .label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ─── Buttons ──────────────────────────────────────────────────── */
+    /* Primary: the <a> is the unmoving magnet wrapper; .btn-body carries the
+       lift (overshoot tick, 0.15 s), the magnetic lean, the bright fill and the bloom. */
+    .btn-primary { display: inline-flex; border-radius: 8px; }
+
+    .btn-body {
+      position: relative;
+      z-index: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gold);
+      color: var(--base);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      padding: 0.875rem 2rem;
+      border-radius: 8px;
+      transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + var(--lift, 0px)), 0) scale(var(--press, 1));
+      transition: transform 0.15s var(--ease-tick);
+    }
+    .btn-body::before,
+    .btn-body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .btn-body::before {                       /* #c9a84c → #e2bf6a */
+      z-index: -1;
+      background: var(--gold-bright);
+      transition: opacity 0.2s var(--ease-arrive);
+    }
+    .btn-body::after {                        /* the gold bloom: shadow used as light */
+      z-index: -2;
+      box-shadow: 0 8px 32px rgba(201, 168, 76, 0.25);
+      transition: opacity 0.2s var(--ease-arrive);
+    }
+    .btn-body svg { display: block; flex-shrink: 0; }
+
+    .btn-primary:hover .btn-body { --lift: -2px; }
+    .btn-primary:hover .btn-body::before,
+    .btn-primary:hover .btn-body::after,
+    .btn-primary:focus-visible .btn-body::before { opacity: 1; }
+    .btn-primary:active .btn-body { --lift: 0px; --press: 0.98; }
+    .btn-primary:active .btn-body::after { opacity: 0; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+      opacity: 0.62;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.875rem 0;
+      border-radius: 8px;
+      transition: opacity 0.2s var(--ease-arrive);
+    }
+    .btn-ghost:hover,
+    .btn-ghost:focus-visible { opacity: 1; }
+    .btn-ghost svg { display: block; transition: transform 0.2s var(--ease-tick); }
+    .btn-ghost:hover svg { transform: translateX(4px); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HERO — aligned to the same 1320px container as every section (B9)
+       ═══════════════════════════════════════════════════════════════ */
+    #hero {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 100vh;                 /* B16: fallback first */
+      min-height: 100dvh;
+      padding: 7rem 0 5rem;
+      overflow: hidden;
+    }
+
+    /* ambient pool, bottom-left */
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 60%;
+      height: 80%;
+      background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      align-items: center;
+      column-gap: clamp(1.5rem, 3vw, 3rem);
+    }
+
+    .hero-left { position: relative; z-index: 2; min-width: 0; }
+
+    .hero-eyebrow { margin-bottom: 2rem; }
+
+    .hero-headline {
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      font-weight: 900;
+      line-height: 0.97;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-subline {
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      line-height: 1.65;
+      max-width: 52ch;
+      margin-bottom: 2.75rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin-top: 4rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .stat-num span { color: var(--gold); }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* The load sequence: 150 ms steps, 28 px of rise, expo-out, from 0.2 s */
+    html.js .hero-anim { animation: fade-up 0.9s var(--ease-arrive) both; }
+    html.js .hero-eyebrow { animation-duration: 0.8s; animation-delay: 0.2s; }
+    html.js .hero-headline { animation-delay: 0.35s; }
+    html.js .hero-subline { animation-delay: 0.5s; }
+    html.js .hero-actions { animation-delay: 0.65s; }
+    html.js .hero-stats { animation-delay: 0.8s; }
+    html.fonts-pending .hero-anim { animation-play-state: paused; }
+
+    /* ─── The iron orb ─────────────────────────────────────────────── */
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    /* the soft gold pool the orb floats in */
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 170%;
+      height: 170%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at 52% 45%, rgba(201, 168, 76, 0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Never hard-clipped (B8): the orb sits whole inside its column at every width */
+    .iron-orb {
+      position: relative;
+      flex-shrink: 0;
+      width: min(520px, 45vw, calc(100% + 2rem));
+      aspect-ratio: 1;
+      margin-left: -1rem;
+    }
+
+    /* Three hairline rings, 18 s CW / 28 s CCW / 12 s CW — LCM 252 s, never visibly repeating.
+       Negative delays start each ring mid-orbit; the static rotate() is that same
+       angle, so reduced motion rests on the frame the page opened with. */
+    .orb-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      transform: rotate(50deg);
+      animation: orb-spin 18s linear -2.5s infinite;
+      will-change: transform;
+    }
+
+    /* THE FOUR BEADS — kept on purpose (B7). Every ring carries a bright bead
+       through .orb-ring::before (three), and ring 2 adds a dim one through ::after. */
+    .orb-ring::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold), 0 0 24px rgba(201, 168, 76, 0.5);
+    }
+
+    .orb-ring-2 {
+      inset: 14%;
+      border-color: rgba(201, 168, 76, 0.08);
+      transform: rotate(-90deg);
+      animation: orb-spin 28s linear -7s infinite reverse;
+    }
+    .orb-ring-2::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 30%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      box-shadow: 0 0 8px var(--gold-dim);
+    }
+
+    .orb-ring-3 {
+      inset: 27%;
+      border: 1.5px solid rgba(201, 168, 76, 0.2);
+      transform: rotate(105deg);
+      animation: orb-spin 12s linear -3.5s infinite;
+    }
+
+    /* Dust (B6): 2–3 px motes with a soft gold glow that actually render.
+       Each drift is written as literal keyframes (B19: no var() inside @keyframes). */
+    .orb-particle {
+      position: absolute;
+      width: 2.5px;
+      height: 2.5px;
+      margin: -1.25px 0 0 -1.25px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 6px 1px rgba(201, 168, 76, 0.55), 0 0 14px 2px rgba(201, 168, 76, 0.18);
+      opacity: 0.5;                       /* the reduced-motion resting state */
+      transform: var(--rest, none);
+      animation: none var(--ease-breathe) infinite both;
+    }
+    .dust-1 { top: 30%; left: 60%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; --rest: translate(24px, -32px); animation-name: dust-1; animation-duration: 3.2s; animation-delay: 0s; }
+    .dust-2 { top: 60%; left: 30%; width: 2px; height: 2px; margin: -1px 0 0 -1px; --rest: translate(-28px, 20px); animation-name: dust-2; animation-duration: 4.1s; animation-delay: 0.8s; }
+    .dust-3 { top: 20%; left: 45%; --rest: translate(16px, 28px); animation-name: dust-3; animation-duration: 3.7s; animation-delay: 1.5s; }
+    .dust-4 { top: 70%; left: 55%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; --rest: translate(-20px, -24px); animation-name: dust-4; animation-duration: 4.5s; animation-delay: 2.2s; }
+    .dust-5 { top: 45%; left: 20%; width: 2px; height: 2px; margin: -1px 0 0 -1px; --rest: translate(32px, 12px); animation-name: dust-5; animation-duration: 3.9s; animation-delay: 0.4s; }
+    .dust-6 { top: 55%; left: 75%; --rest: translate(-14px, -34px); animation-name: dust-6; animation-duration: 4.3s; animation-delay: 1.1s; }
+
+    /* The core breathes 12 px every 6 s */
+    .orb-core {
+      position: absolute;
+      inset: 33%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: orb-float 6s var(--ease-breathe) infinite;
+    }
+
+    .orb-hex {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--surface-2) 0%, #131820 50%, var(--surface-2) 100%);
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    }
+
+    /* a soft gold wash slides across and back every 4 s */
+    .orb-hex::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(201, 168, 76, 0.12) 50%, transparent 70%);
+      opacity: 0.6;                       /* the reduced-motion resting sheen */
+      animation: hex-shimmer 4s var(--ease-breathe) infinite;
+    }
+
+    .orb-hex svg {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: clamp(24px, 20%, 36px);
+      height: auto;
+      aspect-ratio: 1;
+      opacity: 0.9;
+    }
+
+    /* The forge striation: 32 seeded hairlines at 6 %, at the hero's far edge */
+    .iron-bars {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      padding: 2rem 0;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+    .iron-bar { display: block; height: 1.5px; }
+    .iron-bar::before {
+      content: '';
+      display: block;
+      height: 100%;
+      background: var(--gold);
+      border-radius: 1px;
+      animation: bar-pulse-b var(--dur, 3s) var(--ease-breathe) var(--delay, 0s) infinite;
+    }
+    .iron-bar.pulse-a::before { animation-name: bar-pulse-a; }
+    .iron-bar.pulse-c::before { animation-name: bar-pulse-c; }
+
+    /* Phones keep the vision (B14): the orb scales and opens the hero */
+    @media (max-width: 767px) {
+      #hero { align-items: flex-start; padding: 5.25rem 0 4.5rem; }
+      .hero-grid { grid-template-columns: minmax(0, 1fr); }
+      .hero-right {
+        order: -1;
+        justify-content: flex-end;
+        margin: 0 -0.5rem 0.5rem 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .iron-orb { width: min(72vw, 320px); margin: 0; }
+      .hero-headline { font-size: clamp(3rem, 13vw, 4.5rem); }
+      .hero-stats { gap: 1.75rem 2.25rem; margin-top: 3rem; padding-top: 2rem; }
+      .iron-bars { width: 72px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THE PROBLEM
+       ═══════════════════════════════════════════════════════════════ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+      gap: clamp(4rem, 8vw, 10rem);
+      align-items: start;
+    }
+
+    .problem-headline {
+      font-size: clamp(2.4rem, 4.5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .problem-body {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 52ch;
+    }
+
+    .problem-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 1rem;
+    }
+
+    .compare-label {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .compare-label.bad { color: var(--text-dim); }
+    .compare-label.good { color: var(--gold); }
+
+    .compare-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      padding: 1.5rem;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* The enemy palette — used only to depict generic AI */
+    .compare-card.generic { background: #18192a; border: 1px solid rgba(120, 100, 200, 0.2); }
+    .generic-hero-bar { width: 60%; height: 14px; background: linear-gradient(90deg, #7b5ea7, #5b8dee); border-radius: 3px; opacity: 0.7; }
+    .generic-sub-bar { width: 80%; height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 2px; }
+    .generic-sub-bar-2 { width: 65%; height: 8px; background: rgba(255, 255, 255, 0.06); border-radius: 2px; }
+    .generic-btn { width: 100px; height: 30px; background: linear-gradient(90deg, #7b5ea7, #5b8dee); border-radius: 20px; margin-top: 0.25rem; }
+    .generic-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: auto; }
+    .generic-card { height: 42px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(120, 100, 200, 0.15); border-radius: 6px; }
+    .generic-overlay {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(120, 100, 200, 0.02) 2px, rgba(120, 100, 200, 0.02) 4px);
+      pointer-events: none;
+    }
+
+    .compare-card.premium { background: var(--base); border: 1px solid rgba(201, 168, 76, 0.2); }
+    .premium-label-bar { width: 80px; height: 5px; background: var(--gold); border-radius: 1px; opacity: 0.8; }
+    .premium-headline-bar { width: 75%; height: 20px; background: rgba(240, 237, 232, 0.12); border-radius: 3px; }
+    .premium-headline-bar-2 { width: 55%; height: 20px; background: rgba(240, 237, 232, 0.08); border-radius: 3px; }
+    .premium-sub { width: 85%; height: 6px; background: rgba(154, 148, 144, 0.2); border-radius: 2px; margin-top: 0.25rem; }
+    .premium-sub-2 { width: 70%; height: 6px; background: rgba(154, 148, 144, 0.15); border-radius: 2px; }
+    .premium-btn { width: 110px; height: 30px; background: var(--gold); border-radius: 6px; margin-top: auto; opacity: 0.9; }
+
+    .compare-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .compare-divider::before,
+    .compare-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    @media (max-width: 767px) {
+      .problem-grid { grid-template-columns: minmax(0, 1fr); gap: 4rem; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THE METHOD
+       ═══════════════════════════════════════════════════════════════ */
+    #method { overflow: hidden; }
+    #method > .container { position: relative; z-index: 1; }
+
+    /* the 25vw ghost monogram at 2 % gold */
+    .method-ghost {
+      position: absolute;
+      right: -2%;
+      top: 10%;
+      z-index: 0;
+      font-family: var(--font-display);
+      font-size: 25vw;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      color: rgba(201, 168, 76, 0.02);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .method-header { max-width: 600px; margin-bottom: 6rem; }
+
+    .method-headline {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin: 1.5rem 0;
+    }
+
+    .method-sub { font-size: 1.05rem; line-height: 1.7; max-width: 48ch; }
+
+    .phases-list { display: flex; flex-direction: column; }
+
+    /* The phase row. Its hover lives entirely on ::before, ::after and .phase-num,
+       so the row's own reveal transition is never overridden (B1). */
+    .phase {
+      position: relative;
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 3rem;
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--border);
+      cursor: default;
+    }
+    .phase:last-child { border-bottom: 1px solid var(--border); }
+
+    .phase::after {                          /* the top border warms to gold .3 */
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -1px;
+      height: 1px;
+      background: rgba(201, 168, 76, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .phase::before {                         /* a 1px gold line draws left to right */
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -1px;
+      z-index: 1;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.5s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .phase:hover::after { opacity: 1; }
+    .phase:hover::before { transform: scaleX(1); }
+
+    /* the numeral warms from 12 % to 28 % gold (.28 × .4286 = .12) */
+    .phase-num {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 7vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      color: rgba(201, 168, 76, 0.28);
+      opacity: 0.4286;
+      transition: opacity 0.3s var(--ease-arrive);
+      padding-top: 0.25rem;
+      user-select: none;
+    }
+    .phase:hover .phase-num { opacity: 1; }
+
+    .phase-code {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.625rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .phase-code::after {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.5;
+    }
+
+    .phase-title {
+      font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .phase-desc {
+      font-size: 0.975rem;
+      line-height: 1.75;
+      max-width: 55ch;
+    }
+
+    .phase-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.25rem 0.625rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 1.25rem;
+    }
+
+    @media (max-width: 767px) {
+      .method-header { margin-bottom: 4rem; }
+      .phase { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding: 2.5rem 0; }
+      .phase-num { font-size: 3.5rem; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SERVICES — the bento: 7/5, then 5/3/4 (never three equal cards, B22)
+       ═══════════════════════════════════════════════════════════════ */
+    .builds-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 5rem;
+    }
+
+    .builds-headline {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+      margin-top: 1.5rem;
+    }
+
+    .builds-sub { font-size: 1rem; line-height: 1.7; max-width: 42ch; }
+
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* .bento-cell carries the reveal; .bento-card carries the hover (B2) */
+    .bento-cell { display: flex; min-width: 0; }
+    .bento-a { grid-column: span 7; }
+    .bento-b { grid-column: span 5; }
+    .bento-c { grid-column: span 5; }
+    .bento-d { grid-column: span 3; }
+    .bento-e { grid-column: span 4; }
+
+    .bento-card {
+      position: relative;
+      z-index: 0;
+      flex: 1;
+      min-width: 0;
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: transform 0.35s var(--ease-arrive);
+      cursor: default;
+    }
+    .bento-card::before,
+    .bento-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 14px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .bento-card::before {                    /* the deep shadow and gold edge, as a layer */
+      z-index: -1;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 168, 76, 0.06);
+      transition: opacity 0.35s var(--ease-arrive);
+    }
+    .bento-card::after {                     /* border .12 → .45 */
+      border: 1px solid var(--border-hover);
+      transition: opacity 0.35s var(--ease-arrive);
+    }
+    .bento-card:hover { transform: translateY(-3px); }
+    .bento-card:hover::before,
+    .bento-card:hover::after { opacity: 1; }
+
+    .bento-body {
+      position: relative;
+      height: 100%;
+      padding: 2.25rem;
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .bento-body::before {                    /* the diagonal gold wash */
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.03) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .bento-body::after {                     /* inner glass border */
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      pointer-events: none;
+    }
+    .bento-card:hover .bento-body::before { opacity: 1; }
+
+    .bento-icon {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .bento-icon::before {                    /* gold .1 over iron = #1d1d1a, border gold .3 */
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 10px;
+      background: #1d1d1a;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-arrive);
+    }
+    .bento-card:hover .bento-icon::before { opacity: 1; }
+    .bento-icon svg {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .bento-title {
+      position: relative;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 0.625rem;
+    }
+
+    .bento-desc {
+      position: relative;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      max-width: 38ch;
+    }
+
+    /* The orb's echo inside the large card: 140 px, 40 %, faster (14/22/8 s) */
+    .bento-visual {
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 140px;
+      height: 140px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .bvr {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      animation: orb-spin 14s linear infinite;
+    }
+    .bvr-2 { inset: 15%; border-color: rgba(201, 168, 76, 0.2); animation: orb-spin 22s linear infinite reverse; }
+    .bvr-3 { inset: 30%; border-color: rgba(201, 168, 76, 0.4); animation: orb-spin 8s linear infinite; }
+    .bvr-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      margin: -4px 0 0 -4px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+    }
+
+    @media (min-width: 768px) {
+      .bento-a .bento-body { padding-right: calc(140px + 4rem); }
+    }
+
+    @media (max-width: 1023px) {
+      .bento-a { grid-column: span 12; }
+      .bento-b, .bento-c, .bento-d, .bento-e { grid-column: span 6; }
+    }
+
+    @media (max-width: 767px) {
+      .builds-header { grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-bottom: 3.5rem; }
+      .bento-a, .bento-b, .bento-c, .bento-d, .bento-e { grid-column: span 12; }
+      .bento-body { padding: 2rem 1.75rem; }
+      /* scaled, not removed (B14) */
+      .bento-visual { top: 1.5rem; right: 1.5rem; transform: none; width: 88px; height: 88px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THE WORK — Island Dev Crew's own pages, linked live
+       ═══════════════════════════════════════════════════════════════ */
+    .case-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(4rem, 8vw, 9rem);
+      align-items: center;
+    }
+
+    .case-label { margin-bottom: 2rem; }
+
+    .case-headline {
+      font-size: clamp(2.2rem, 4.5vw, 3.75rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+      margin-bottom: 1.5rem;
+    }
+
+    .case-desc {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 48ch;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Each row reveals on the <li>; its hover lives on the <a> inside (B3) */
+    .work-item { border-top: 1px solid var(--border); }
+    .work-item:last-child { border-bottom: 1px solid var(--border); }
+
+    .work-link {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      padding: 1.125rem 0;
+      border-radius: 2px;
+    }
+    .work-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -1px;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.5s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .work-link:hover::before,
+    .work-link:focus-visible::before { transform: scaleX(1); }
+
+    .work-title {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+    .work-desc {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .work-arrow {
+      display: block;
+      flex-shrink: 0;
+      color: var(--gold);
+      transition: transform 0.25s var(--ease-tick);
+    }
+    .work-link:hover .work-arrow,
+    .work-link:focus-visible .work-arrow { transform: translateX(0.375rem); }
+
+    /* The art: stacked browser mocks, generic AI behind, Iron Canvas in front.
+       Cards no longer clip, so neither badge is cut (B5). */
+    .case-visual { position: relative; min-width: 0; }
+
+    .case-card-wrap { position: relative; padding: 2.75rem 0 0 2.5rem; }
+
+    .case-card {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .case-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.25rem;
+      background: var(--base);
+      border-bottom: 1px solid var(--border);
+      border-radius: 15px 15px 0 0;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-r { background: rgba(255, 95, 86, 0.5); }
+    .dot-y { background: rgba(255, 189, 46, 0.5); }
+    .dot-g { background: rgba(39, 201, 63, 0.5); }
+
+    .case-bar { flex: 1; height: 8px; background: var(--surface); border-radius: 4px; margin-left: 0.5rem; }
+
+    .case-site-mock {
+      padding: 1.75rem;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .site-label-strip { display: flex; align-items: center; gap: 0.5rem; }
+    .site-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+    .site-label-text { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+    .site-headline-block { display: flex; flex-direction: column; gap: 0.5rem; }
+    .site-h { height: 18px; background: rgba(240, 237, 232, 0.12); border-radius: 3px; }
+    .site-h-2 { height: 18px; width: 75%; background: rgba(240, 237, 232, 0.08); border-radius: 3px; }
+    .site-sub-block { display: flex; flex-direction: column; gap: 0.375rem; }
+    .site-sub { height: 7px; background: rgba(154, 148, 144, 0.15); border-radius: 2px; }
+    .site-sub.w85 { width: 85%; }
+    .site-sub.w70 { width: 70%; }
+    .site-sub.w55 { width: 55%; }
+    .site-card-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.625rem; margin-top: auto; }
+    .site-mini-card { height: 48px; background: rgba(201, 168, 76, 0.06); border: 1px solid rgba(201, 168, 76, 0.12); border-radius: 6px; }
+
+    .generic-mock { min-height: 200px; }
+    .gm-bar { height: 10px; width: 55%; background: rgba(120, 100, 200, 0.3); border-radius: 2px; }
+    .gm-head { height: 16px; width: 70%; background: rgba(255, 255, 255, 0.08); border-radius: 3px; }
+    .gm-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: auto; }
+    .gm-cards i { display: block; height: 40px; background: rgba(120, 100, 200, 0.1); border: 1px solid rgba(120, 100, 200, 0.15); border-radius: 4px; }
+
+    .case-card.before-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 3.5rem;
+      z-index: 0;
+      opacity: 0.45;
+      transform: scale(0.96);
+      transform-origin: 0 0;
+    }
+    .case-card.after-card { z-index: 1; }
+
+    .case-badge {
+      position: absolute;
+      z-index: 2;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.625rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .before-badge {
+      top: -12px;
+      left: 1rem;
+      background: var(--surface);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+    .after-badge {
+      top: calc(2.75rem - 12px);
+      right: 1rem;
+      background: #1d1d1a;
+      color: var(--gold);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+    }
+
+    @media (max-width: 767px) {
+      .case-grid { grid-template-columns: minmax(0, 1fr); gap: 4rem; }
+      .case-card-wrap { padding: 2.5rem 0 0 1.25rem; }
+      .case-card.before-card { right: 2rem; }
+      .after-badge { top: calc(2.5rem - 12px); }
+      .case-site-mock { padding: 1.5rem; min-height: 230px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THE ARSENAL — opposing marquees, 30 s left / 36 s right
+       ═══════════════════════════════════════════════════════════════ */
+    #arsenal { overflow: hidden; }
+
+    .arsenal-header { max-width: 700px; margin-bottom: 5rem; }
+
+    .arsenal-headline {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+      margin: 1.5rem 0 1.25rem;
+    }
+
+    .arsenal-sub { font-size: 1.05rem; line-height: 1.7; max-width: 48ch; }
+
+    .marquee {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .marquee::before,
+    .marquee::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 2;
+      width: 120px;
+      pointer-events: none;
+    }
+    .marquee::before { left: 0; background: linear-gradient(to right, var(--surface-2), transparent); }
+    .marquee::after { right: 0; background: linear-gradient(to left, var(--surface-2), transparent); }
+
+    /* Seamless (B10): the track is two identical sets, and each set carries its own
+       trailing gap, so -50 % of the track is exactly one set: no seam, no hitch. */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee-left 30s linear infinite;
+      will-change: transform;
+    }
+    .marquee--reverse .marquee-track { animation-name: marquee-right; animation-duration: 36s; }
+
+    .marquee-set {
+      display: flex;
+      flex-shrink: 0;
+      gap: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .marquee-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      background: var(--base);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.875rem 1.5rem;
+      white-space: nowrap;
+      cursor: default;
+    }
+    .marquee-item::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 10px;
+      border: 1px solid var(--border-hover);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .marquee-item:hover::after { opacity: 1; }
+
+    .marquee-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+    }
+
+    .marquee-text {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--text-secondary);
+    }
+
+    .marquee-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 3px;
+      padding: 0.15rem 0.4rem;
+    }
+
+    @media (max-width: 767px) {
+      .arsenal-header { margin-bottom: 3.5rem; }
+      .marquee::before, .marquee::after { width: 48px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONTACT
+       ═══════════════════════════════════════════════════════════════ */
+    #contact {
+      padding: clamp(8rem, 14vw, 12rem) 0 clamp(6rem, 9vw, 8rem);
+      overflow: hidden;
+    }
+
+    .contact-glow {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .contact-inner { position: relative; z-index: 1; max-width: 780px; }
+
+    .contact-headline {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .contact-sub {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 52ch;
+      margin-bottom: 3rem;
+    }
+
+    .contact-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.875rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: transform 0.2s var(--ease-arrive);
+    }
+    .contact-link::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 8px;
+      border: 1px solid var(--border-hover);
+      opacity: 0;
+      transition: opacity 0.25s var(--ease-arrive);
+      pointer-events: none;
+    }
+    .contact-link-text {
+      color: var(--text-primary);
+      opacity: 0.62;
+      transition: opacity 0.25s var(--ease-arrive);
+    }
+    .contact-link svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+    .contact-link:hover { transform: translateY(-1px); }
+    .contact-link:hover::after,
+    .contact-link:focus-visible::after { opacity: 1; }
+    .contact-link:hover .contact-link-text,
+    .contact-link:focus-visible .contact-link-text { opacity: 1; }
+
+    /* ─── Footer ───────────────────────────────────────────────────── */
+    .site-footer {
+      padding: 3rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem 3rem;
+    }
+
+    .footer-left { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .footer-parent { font-size: 0.8rem; color: var(--text-dim); }
+
+    .footer-note {
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: var(--text-dim);
+      max-width: 60ch;
+    }
+
+    .footer-verse { max-width: 52ch; text-align: right; }
+    .footer-verse blockquote p {
+      font-size: 0.78rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .footer-verse figcaption {
+      margin-top: 0.25rem;
+      font-size: 0.78rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--text-dim);
+    }
+    .footer-verse cite {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 767px) {
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-verse { text-align: left; }
+    }
+
+    /* ─── Live layers pause when unseen ────────────────────────────────
+       The orb, bars, bento echo and marquees stop when the tab is hidden
+       (visibilitychange) or when they are off-screen (IntersectionObserver). */
+    html.tab-hidden [data-live],
+    html.tab-hidden [data-live] *,
+    html.tab-hidden [data-live] *::before,
+    html.tab-hidden [data-live] *::after,
+    [data-live].is-offscreen,
+    [data-live].is-offscreen *,
+    [data-live].is-offscreen *::before,
+    [data-live].is-offscreen *::after { animation-play-state: paused !important; }
+
+    /* ─── Keyframes (literal values only — B19) ───────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes reveal-failsafe {
+      from { opacity: 0; transform: translateY(32px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes orb-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orb-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes hex-shimmer {
+      0%, 100% { opacity: 0; transform: translateX(-100%) rotate(45deg); }
+      50% { opacity: 1; transform: translateX(100%) rotate(45deg); }
+    }
+
+    /* The dust: travel and fade on one breath; the mote is full size when it is brightest */
+    @keyframes dust-1 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(60px, -80px) scale(0.4); } }
+    @keyframes dust-2 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(-70px, 50px) scale(0.4); } }
+    @keyframes dust-3 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(40px, 70px) scale(0.4); } }
+    @keyframes dust-4 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(-50px, -60px) scale(0.4); } }
+    @keyframes dust-5 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(80px, 30px) scale(0.4); } }
+    @keyframes dust-6 { 0% { opacity: 0; transform: translate(0, 0) scale(1); } 20% { opacity: 0.85; } 80% { opacity: 0.4; } 100% { opacity: 0; transform: translate(-35px, -85px) scale(0.4); } }
+
+    /* Bars: three pulse depths replace the per-bar var(--scale) of the original */
+    @keyframes bar-pulse-a { 0%, 100% { opacity: 1; transform: scaleX(1); } 50% { opacity: 0.4; transform: scaleX(0.55); } }
+    @keyframes bar-pulse-b { 0%, 100% { opacity: 1; transform: scaleX(1); } 50% { opacity: 0.4; transform: scaleX(0.7); } }
+    @keyframes bar-pulse-c { 0%, 100% { opacity: 1; transform: scaleX(1); } 50% { opacity: 0.4; transform: scaleX(0.85); } }
+
+    @keyframes marquee-left {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes marquee-right {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+
+    /* ─── Complete reduced motion (B13) ──────────────────────────────────
+       Everything rests at its final visible state: rings, dust and marquees stop,
+       entrances are already in place, hover changes state without travelling.
+       The same rules answer ?motion=off (html.motion-off) for reviewers. */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html.js .reveal { opacity: 1 !important; transform: none !important; }
+      .btn-body, .nav-cta-body,
+      .bento-card:hover, .contact-link:hover,
+      .btn-ghost:hover svg, .work-link:hover .work-arrow,
+      .work-link:focus-visible .work-arrow { transform: none !important; }
+      .orb-ring, .marquee-track { will-change: auto; }
+    }
+
+    html.motion-off { scroll-behavior: auto; }
+    html.motion-off *, html.motion-off *::before, html.motion-off *::after { animation: none !important; transition: none !important; }
+    html.motion-off.js .reveal { opacity: 1 !important; transform: none !important; }
+    html.motion-off .btn-body, html.motion-off .nav-cta-body,
+    html.motion-off .bento-card:hover, html.motion-off .contact-link:hover,
+    html.motion-off .btn-ghost:hover svg, html.motion-off .work-link:hover .work-arrow,
+    html.motion-off .work-link:focus-visible .work-arrow { transform: none !important; }
+    html.motion-off .orb-ring, html.motion-off .marquee-track { will-change: auto; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ─── NAV ───────────────────────────────────────────────────── -->
+  <header class="site-nav" id="nav">
+    <nav class="container nav-inner" aria-label="Primary navigation">
+      <a href="#hero" class="nav-logo" aria-label="Iron Canvas home">
+        <span class="nav-logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" focusable="false">
+            <path d="M3 13L8 3L13 13" stroke="#0a0e14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="5" y1="9.5" x2="11" y2="9.5" stroke="#0a0e14" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        Iron Canvas
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+        <span class="nav-toggle-text">Menu</span>
+        <span class="nav-toggle-icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+
+      <ul class="nav-links" id="nav-menu" role="list">
+        <li><a href="#method">Method</a></li>
+        <li><a href="#builds">Services</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#arsenal">Tools</a></li>
+        <li><a href="#contact" class="nav-cta magnet"><span class="nav-cta-body">Start a Project</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ─── HERO ─────────────────────────────────────────────────── -->
+    <section id="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+
+        <div class="hero-left">
+          <div class="hero-eyebrow hero-anim">
+            <span class="label">AI Design Studio</span>
+          </div>
+
+          <h1 id="hero-title" class="hero-headline hero-anim">
+            Raw <em>Ideas.</em><br>
+            Refined<br>
+            Experiences.
+          </h1>
+
+          <p class="hero-subline hero-anim">
+            Iron Canvas is an AI-powered design studio that transforms digital presence into premium-grade experiences. We don't vibe-code. We engineer beauty.
+          </p>
+
+          <div class="hero-actions hero-anim">
+            <a href="#method" class="btn-primary magnet">
+              <span class="btn-body">
+                See Our Method
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </a>
+            <a href="#work" class="btn-ghost">
+              View Work
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+
+          <ul class="hero-stats hero-anim" role="list" aria-label="The studio at a glance">
+            <li class="stat-item">
+              <span class="stat-num">7<span>—</span></span>
+              <span class="stat-label">Phase Methodology</span>
+            </li>
+            <li class="stat-item">
+              <span class="stat-num">3<span>+</span></span>
+              <span class="stat-label">AI Engines</span>
+            </li>
+            <li class="stat-item">
+              <span class="stat-num">$<span>0</span></span>
+              <span class="stat-label">Generic Output</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- The iron orb: a mechanism that is already turning before any words appear -->
+        <div class="hero-right" aria-hidden="true" data-live>
+          <div class="iron-orb">
+            <div class="orb-ring orb-ring-1"></div>
+            <div class="orb-ring orb-ring-2"></div>
+            <div class="orb-ring orb-ring-3"></div>
+
+            <i class="orb-particle dust-1"></i>
+            <i class="orb-particle dust-2"></i>
+            <i class="orb-particle dust-3"></i>
+            <i class="orb-particle dust-4"></i>
+            <i class="orb-particle dust-5"></i>
+            <i class="orb-particle dust-6"></i>
+
+            <div class="orb-core">
+              <div class="orb-hex">
+                <svg viewBox="0 0 36 36" fill="none" focusable="false">
+                  <path d="M7 28L18 8L29 28" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="11" y1="21" x2="25" y2="21" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 32 seeded hairlines, generated below (mulberry32, seed 0x45dcc41) -->
+      <div class="iron-bars" aria-hidden="true" data-live></div>
+    </section>
+
+    <!-- ─── THE PROBLEM ─────────────────────────────────────────── -->
+    <section id="problem" class="section" aria-labelledby="problem-title">
+      <div class="container">
+        <div class="problem-grid">
+
+          <div class="problem-text">
+            <div class="label reveal">The Problem</div>
+            <h2 id="problem-title" class="problem-headline reveal d1">
+              Every <em>AI site</em><br>looks identical.
+            </h2>
+            <p class="problem-body reveal d2">
+              Generic gradients. Centered heroes. Three equal cards. Inter font. Purple glow. Your customers can tell — and they leave. The rise of AI-assisted design has created a paradox: more websites than ever before, fewer that actually stand out.
+            </p>
+          </div>
+
+          <div class="problem-visual reveal d2">
+            <div class="compare-label bad" aria-hidden="true">Generic AI Output</div>
+            <div class="compare-card generic" role="img" aria-label="Generic AI output: an example page with a purple gradient, a pill button and three equal cards">
+              <div class="generic-hero-bar"></div>
+              <div class="generic-sub-bar"></div>
+              <div class="generic-sub-bar-2"></div>
+              <div class="generic-btn"></div>
+              <div class="generic-cards">
+                <div class="generic-card"></div>
+                <div class="generic-card"></div>
+                <div class="generic-card"></div>
+              </div>
+              <div class="generic-overlay"></div>
+            </div>
+
+            <div class="compare-divider" aria-hidden="true">vs</div>
+
+            <div class="compare-label good" aria-hidden="true">Iron Canvas Output</div>
+            <div class="compare-card premium" role="img" aria-label="Iron Canvas output: an example page with gold accents and an editorial layout">
+              <div class="premium-label-bar"></div>
+              <div class="premium-headline-bar"></div>
+              <div class="premium-headline-bar-2"></div>
+              <div class="premium-sub"></div>
+              <div class="premium-sub-2"></div>
+              <div class="premium-btn"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── THE METHOD ──────────────────────────────────────────── -->
+    <section id="method" class="section" aria-labelledby="method-title">
+      <div class="method-ghost" aria-hidden="true">IC</div>
+      <div class="container">
+
+        <div class="method-header">
+          <div class="label reveal">The Iron Canvas Method</div>
+          <h2 id="method-title" class="method-headline reveal d1">Seven phases.<br>Zero shortcuts.</h2>
+          <p class="method-sub reveal d2">
+            A systematic, repeatable process for producing professional-grade digital experiences. Every phase exists for a reason. Every output is intentional.
+          </p>
+        </div>
+
+        <ol class="phases-list" aria-label="The 7 phases of the Iron Canvas method">
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">01</div>
+            <div class="phase-content">
+              <div class="phase-code">Feel</div>
+              <h3 class="phase-title">Define the Emotional Target</h3>
+              <p class="phase-desc">Before a single pixel exists, we answer one question: how should your audience feel when they arrive? This anchors every downstream decision — from color temperature to font weight to motion speed. A feel brief is not a mood board. It's a lens.</p>
+              <div class="phase-tag">Foundation Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">02</div>
+            <div class="phase-content">
+              <div class="phase-code">Collect</div>
+              <h3 class="phase-title">Mood Board + References</h3>
+              <p class="phase-desc">We draw from Cosmos, Godly, Awwwards, and Dribbble — not Pinterest boards. Ten to twenty curated references become two anchor images: the single visual that defines the product's soul. Reference extraction, not inspiration scrolling.</p>
+              <div class="phase-tag">Research Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">03</div>
+            <div class="phase-content">
+              <div class="phase-code">Forge</div>
+              <h3 class="phase-title">Structural Design</h3>
+              <p class="phase-desc">Layout, typography, motion, and interaction architecture come together here. We use asymmetric grids, spring physics, and IntersectionObserver scroll reveals. No centered heroes. No three equal cards. The skeleton must be interesting before the skin goes on.</p>
+              <div class="phase-tag">Design Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">04</div>
+            <div class="phase-content">
+              <div class="phase-code">Generate</div>
+              <h3 class="phase-title">AI Artifact Creation</h3>
+              <p class="phase-desc">We command Leonardo.ai (Kino XL, 3D Animation, Lucid Origin), OpenAI GPT Image 1.5, and Gemini 3 Pro (Nano Banana) to produce precision artifacts. Not stock photo replacements — purpose-built visuals generated at exact dimensions, with controlled lighting and palette consistency across the entire set.</p>
+              <div class="phase-tag">Generation Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">05</div>
+            <div class="phase-content">
+              <div class="phase-code">Compose</div>
+              <h3 class="phase-title">Integration + Optimization</h3>
+              <p class="phase-desc">Artifacts meet structure. Every image receives overlay gradients, blend modes, and living motion. Images are converted, compressed, and given absolute paths for clean production deployments.</p>
+              <div class="phase-tag">Integration Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">06</div>
+            <div class="phase-content">
+              <div class="phase-code">Refine</div>
+              <h3 class="phase-title">Iterative Polish Loop</h3>
+              <p class="phase-desc">Look. React. Describe. Fix. Look again. This loop runs until every pixel earns its place. We review on mobile and desktop. We check spacing at 2am on a dim screen. We apply the quality checklist — every interactive state, every shadow tint, every orphaned word.</p>
+              <div class="phase-tag">Polish Phase</div>
+            </div>
+          </li>
+
+          <li class="phase reveal" data-stagger>
+            <div class="phase-num" aria-hidden="true">07</div>
+            <div class="phase-content">
+              <div class="phase-code">Deploy</div>
+              <h3 class="phase-title">Staging to Production Pipeline</h3>
+              <p class="phase-desc">Staging preview first, always. After approval, production push. Vercel deployment with correct trailing-slash configuration, absolute image paths, and branching discipline. You get a live URL you're proud to share — not one you quietly hope nobody visits on mobile.</p>
+              <div class="phase-tag">Delivery Phase</div>
+            </div>
+          </li>
+
+        </ol>
+
+      </div>
+    </section>
+
+    <!-- ─── SERVICES ────────────────────────────────────────────── -->
+    <section id="builds" class="section section--lift" aria-labelledby="builds-title">
+      <div class="container">
+
+        <div class="builds-header">
+          <div>
+            <div class="label reveal">Services</div>
+            <h2 id="builds-title" class="builds-headline reveal d1">What we<br>build for you.</h2>
+          </div>
+          <p class="builds-sub reveal d2">
+            Every engagement applies the full Iron Canvas method. The deliverable format changes. The standard never does.
+          </p>
+        </div>
+
+        <ul class="bento" role="list">
+
+          <li class="bento-cell bento-a reveal" data-stagger>
+            <article class="bento-card">
+              <div class="bento-body">
+                <div class="bento-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                </div>
+                <h3 class="bento-title">Website Redesigns</h3>
+                <p class="bento-desc">Transform your existing web presence into something your competitors study. Full Iron Canvas treatment — feel, structure, artifacts, and polish.</p>
+                <div class="bento-visual" aria-hidden="true" data-live>
+                  <div class="bvr"></div>
+                  <div class="bvr bvr-2"></div>
+                  <div class="bvr bvr-3"></div>
+                  <div class="bvr-dot"></div>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="bento-cell bento-b reveal" data-stagger>
+            <article class="bento-card">
+              <div class="bento-body">
+                <div class="bento-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                    <path d="M2 17L12 22L22 17"/>
+                    <path d="M2 12L12 17L22 12"/>
+                  </svg>
+                </div>
+                <h3 class="bento-title">Landing Pages</h3>
+                <p class="bento-desc">Marketing pages and campaign destinations engineered for conversion and visual impact. Every scroll is intentional.</p>
+              </div>
+            </article>
+          </li>
+
+          <li class="bento-cell bento-c reveal" data-stagger>
+            <article class="bento-card">
+              <div class="bento-body">
+                <div class="bento-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                  </svg>
+                </div>
+                <h3 class="bento-title">Dashboards &amp; App UI</h3>
+                <p class="bento-desc">Data interfaces and application UIs that inform without overwhelming. Premium density done right.</p>
+              </div>
+            </article>
+          </li>
+
+          <li class="bento-cell bento-d reveal" data-stagger>
+            <article class="bento-card">
+              <div class="bento-body">
+                <div class="bento-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                  </svg>
+                </div>
+                <h3 class="bento-title">Brand Identity</h3>
+                <p class="bento-desc">Visual systems — typography, color, iconography, and motion language — that hold together across every surface.</p>
+              </div>
+            </article>
+          </li>
+
+          <li class="bento-cell bento-e reveal" data-stagger>
+            <article class="bento-card">
+              <div class="bento-body">
+                <div class="bento-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </div>
+                <h3 class="bento-title">AI Artifact Pipelines</h3>
+                <p class="bento-desc">Systematic visual generation using Leonardo, OpenAI, and Gemini. Consistent sets of artifacts — not one-off generations.</p>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+
+      </div>
+    </section>
+
+    <!-- ─── THE WORK ────────────────────────────────────────────── -->
+    <section id="work" class="section" aria-labelledby="work-title">
+      <div class="container">
+        <div class="case-grid">
+
+          <div class="case-text">
+            <div class="label case-label reveal">The Work</div>
+            <h2 id="work-title" class="case-headline reveal d1">
+              One method.<br>Four living pages.<br>Zero compromise.
+            </h2>
+            <p class="case-desc reveal d2">
+              Proof you can open. Every page below is Island Dev Crew's own Iron Canvas work, living in this repository — no client logos, no borrowed numbers.
+            </p>
+
+            <ul class="work-list" role="list">
+              <li class="work-item reveal" data-stagger>
+                <a class="work-link" href="living-canvas/">
+                  <span>
+                    <span class="work-title">The Living Canvas</span>
+                    <span class="work-desc">A five-act WebGL scroll film.</span>
+                  </span>
+                  <svg class="work-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </li>
+              <li class="work-item reveal" data-stagger>
+                <a class="work-link" href="depth.html">
+                  <span>
+                    <span class="work-title">Depth Language</span>
+                    <span class="work-desc">The depth demo: one z-axis grammar, dialed by scroll.</span>
+                  </span>
+                  <svg class="work-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </li>
+              <li class="work-item reveal" data-stagger>
+                <a class="work-link" href="../studio/">
+                  <span>
+                    <span class="work-title">Iron Canvas Studio</span>
+                    <span class="work-desc">Idea in, production bible out.</span>
+                  </span>
+                  <svg class="work-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </li>
+              <li class="work-item reveal" data-stagger>
+                <a class="work-link" href="../runtime/verbs.html">
+                  <span>
+                    <span class="work-title">Verb Gallery</span>
+                    <span class="work-desc">Every Score Runtime motion verb, performed live.</span>
+                  </span>
+                  <svg class="work-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="case-visual reveal d2" role="img" aria-label="Illustration: a generic AI page with a purple gradient and three equal cards recedes behind an Iron Canvas page with gold accents and an editorial layout.">
+            <div class="case-card-wrap">
+              <div class="case-card before-card">
+                <div class="case-card-header">
+                  <span class="dot dot-r"></span>
+                  <span class="dot dot-y"></span>
+                  <span class="dot dot-g"></span>
+                  <span class="case-bar"></span>
+                </div>
+                <div class="case-site-mock generic-mock">
+                  <div class="gm-bar"></div>
+                  <div class="gm-head"></div>
+                  <div class="gm-cards"><i></i><i></i><i></i></div>
+                </div>
+              </div>
+
+              <div class="case-card after-card">
+                <div class="case-card-header">
+                  <span class="dot dot-r"></span>
+                  <span class="dot dot-y"></span>
+                  <span class="dot dot-g"></span>
+                  <span class="case-bar"></span>
+                </div>
+                <div class="case-site-mock">
+                  <div class="site-label-strip">
+                    <span class="site-dot"></span>
+                    <span class="site-label-text">Iron Canvas</span>
+                  </div>
+                  <div class="site-headline-block">
+                    <div class="site-h"></div>
+                    <div class="site-h-2"></div>
+                  </div>
+                  <div class="site-sub-block">
+                    <div class="site-sub w85"></div>
+                    <div class="site-sub w70"></div>
+                    <div class="site-sub w55"></div>
+                  </div>
+                  <div class="site-card-row">
+                    <div class="site-mini-card"></div>
+                    <div class="site-mini-card"></div>
+                    <div class="site-mini-card"></div>
+                    <div class="site-mini-card"></div>
+                  </div>
+                </div>
+              </div>
+
+              <span class="case-badge before-badge">Generic AI output</span>
+              <span class="case-badge after-badge">Iron Canvas output</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── THE ARSENAL ─────────────────────────────────────────── -->
+    <section id="arsenal" class="section section--lift" aria-labelledby="arsenal-title">
+      <div class="container">
+        <div class="arsenal-header">
+          <div class="label reveal">The Arsenal</div>
+          <h2 id="arsenal-title" class="arsenal-headline reveal d1">
+            We command the most powerful generation engines on the planet.
+          </h2>
+          <p class="arsenal-sub reveal d2">
+            The Iron Canvas method is only as good as its tools. We run the top AI image engines plus a proprietary methodology layer that turns raw generation into refined artifact sets.
+          </p>
+          <ul class="sr-only">
+            <li>Claude Code, agents</li>
+            <li>Three.js, WebGL</li>
+            <li>WebGPU, TSL</li>
+            <li>GSAP, ScrollTrigger</li>
+            <li>Blender, clay camera passes</li>
+            <li>Seedance 2.5, film</li>
+            <li>HyperFrames, motion graphics</li>
+            <li>ElevenLabs, audio</li>
+            <li>Playwright, evidence</li>
+            <li>ffmpeg, encoding</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Row 1 drifts left over 30 s -->
+      <div class="marquee" aria-hidden="true" data-live data-dur="30">
+        <div class="marquee-track">
+          <ul class="marquee-set">
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Claude Code</span><span class="marquee-badge">Agents</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Three.js</span><span class="marquee-badge">WebGL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">WebGPU</span><span class="marquee-badge">TSL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">GSAP</span><span class="marquee-badge">ScrollTrigger</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Blender</span><span class="marquee-badge">Clay Pass</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Claude Code</span><span class="marquee-badge">Agents</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Three.js</span><span class="marquee-badge">WebGL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">WebGPU</span><span class="marquee-badge">TSL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">GSAP</span><span class="marquee-badge">ScrollTrigger</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Blender</span><span class="marquee-badge">Clay Pass</span></li>
+          </ul>
+          <ul class="marquee-set">
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Claude Code</span><span class="marquee-badge">Agents</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Three.js</span><span class="marquee-badge">WebGL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">WebGPU</span><span class="marquee-badge">TSL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">GSAP</span><span class="marquee-badge">ScrollTrigger</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Blender</span><span class="marquee-badge">Clay Pass</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Claude Code</span><span class="marquee-badge">Agents</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Three.js</span><span class="marquee-badge">WebGL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">WebGPU</span><span class="marquee-badge">TSL</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">GSAP</span><span class="marquee-badge">ScrollTrigger</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Blender</span><span class="marquee-badge">Clay Pass</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Row 2 drifts right over 36 s -->
+      <div class="marquee marquee--reverse" aria-hidden="true" data-live data-dur="36">
+        <div class="marquee-track">
+          <ul class="marquee-set">
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Seedance 2.5</span><span class="marquee-badge">Film</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">HyperFrames</span><span class="marquee-badge">Motion</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ElevenLabs</span><span class="marquee-badge">Audio</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Playwright</span><span class="marquee-badge">Evidence</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ffmpeg</span><span class="marquee-badge">Encode</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Seedance 2.5</span><span class="marquee-badge">Film</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">HyperFrames</span><span class="marquee-badge">Motion</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ElevenLabs</span><span class="marquee-badge">Audio</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Playwright</span><span class="marquee-badge">Evidence</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ffmpeg</span><span class="marquee-badge">Encode</span></li>
+          </ul>
+          <ul class="marquee-set">
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Seedance 2.5</span><span class="marquee-badge">Film</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">HyperFrames</span><span class="marquee-badge">Motion</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ElevenLabs</span><span class="marquee-badge">Audio</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Playwright</span><span class="marquee-badge">Evidence</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ffmpeg</span><span class="marquee-badge">Encode</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Seedance 2.5</span><span class="marquee-badge">Film</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">HyperFrames</span><span class="marquee-badge">Motion</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ElevenLabs</span><span class="marquee-badge">Audio</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">Playwright</span><span class="marquee-badge">Evidence</span></li>
+            <li class="marquee-item"><span class="marquee-dot"></span><span class="marquee-text">ffmpeg</span><span class="marquee-badge">Encode</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── START A PROJECT ─────────────────────────────────────── -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="contact-glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="contact-inner">
+          <div class="label reveal">Start a Project</div>
+          <h2 id="contact-title" class="contact-headline reveal d1">
+            Ready to transform your<br><em>digital presence?</em>
+          </h2>
+          <p class="contact-sub reveal d2">
+            Tell us about your project. We apply the full Iron Canvas method — from feel brief to deployed production. No templates. No shortcuts. No AI slop.
+          </p>
+          <div class="contact-actions reveal d3">
+            <a href="https://islanddevcrew.com" class="btn-primary magnet">
+              <span class="btn-body">
+                Visit islanddevcrew.com
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </a>
+            <a href="#work" class="contact-link">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <rect x="2" y="3" width="12" height="10" rx="1.5"/>
+                <path d="M2 6H14"/>
+              </svg>
+              <span class="contact-link-text">See the work</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <div class="footer-brand">Iron Canvas</div>
+        <div class="footer-parent">An Island Development Crew studio &mdash; &copy; 2026</div>
+        <p class="footer-note">Origin — the first Iron Canvas page (March 2026), restored for v6. Zero libraries.</p>
+      </div>
+      <figure class="footer-verse">
+        <blockquote>
+          <p>&ldquo;Where there is no vision, the people perish.&rdquo;</p>
+        </blockquote>
+        <figcaption><cite>Proverbs 29:18</cite> &mdash; KJV</figcaption>
+      </figure>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const root = document.documentElement;
+      const $ = (sel, ctx = document) => ctx.querySelector(sel);
+      const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+      const watch = (mq, fn) => (mq.addEventListener ? mq.addEventListener('change', fn) : mq.addListener(fn));
+      const safely = (label, fn) => { try { fn(); } catch (err) { console.warn('[origin] ' + label + ' skipped', err); } };
+
+      /* ─── The motion gate (B13) ─────────────────────────────────────
+         OS reduced-motion (listened to live) or ?motion=off. CSS answers both
+         on its own; JS uses the gate for what CSS cannot see. */
+      const forcedOff = root.classList.contains('motion-off');
+      const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+      const finePointerMQ = matchMedia('(hover: hover) and (pointer: fine)');
+      const subscribers = [];
+      let motionOK = !forcedOff && !reduceMQ.matches;
+      const onMotionChange = (fn) => subscribers.push(fn);
+      root.dataset.motion = motionOK ? 'on' : 'off';
+      watch(reduceMQ, () => {
+        motionOK = !forcedOff && !reduceMQ.matches;
+        root.dataset.motion = motionOK ? 'on' : 'off';
+        subscribers.forEach((fn) => fn(motionOK));
+      });
+
+      /* Seeded randomness (B18) — the v5 rule: never raw Math.random() */
+      const mulberry32 = (seed) => () => {
+        seed |= 0;
+        seed = (seed + 0x6D2B79F5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+
+      /* ─── Nav frost after 40 px ─────────────────────────────────── */
+      safely('nav', () => {
+        const nav = $('#nav');
+        const update = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+        addEventListener('scroll', update, { passive: true });
+        update();
+      });
+
+      /* ─── Phone menu (B14) ─────────────────────────────────────── */
+      safely('menu', () => {
+        const nav = $('#nav');
+        const toggle = $('.nav-toggle');
+        const menu = $('#nav-menu');
+        const phoneMQ = matchMedia('(max-width: 767px)');
+        let open = false;
+        let timer = 0;
+
+        const setOpen = (next) => {
+          open = next;
+          clearTimeout(timer);
+          toggle.setAttribute('aria-expanded', String(next));
+          nav.classList.toggle('menu-open', next);
+          if (next) {
+            menu.hidden = false;
+            void menu.offsetWidth;               // commit the closed state so the open one transitions
+            menu.classList.add('is-open');
+          } else {
+            menu.classList.remove('is-open');
+            if (phoneMQ.matches) timer = setTimeout(() => { if (!open) menu.hidden = true; }, motionOK ? 320 : 0);
+          }
+        };
+
+        const sync = () => {
+          clearTimeout(timer);
+          open = false;
+          toggle.setAttribute('aria-expanded', 'false');
+          nav.classList.remove('menu-open');
+          menu.classList.remove('is-open');
+          menu.hidden = phoneMQ.matches;
+        };
+
+        toggle.addEventListener('click', () => setOpen(!open));
+        menu.addEventListener('click', (e) => { if (open && e.target.closest('a')) setOpen(false); });
+        document.addEventListener('keydown', (e) => {
+          if (open && e.key === 'Escape') { setOpen(false); toggle.focus(); }
+        });
+        document.addEventListener('click', (e) => { if (open && !nav.contains(e.target)) setOpen(false); });
+        watch(phoneMQ, sync);
+        sync();
+      });
+
+      /* ─── Scroll reveals (B1–B4) ──────────────────────────────────
+         One-shot IntersectionObserver (threshold .12, 40 px up from the bottom).
+         Siblings that enter together cascade in the original 100 ms steps. */
+      safely('reveal', () => {
+        const items = $$('.reveal');
+        const show = (el) => el.classList.add('in-view');
+        if (!motionOK || !('IntersectionObserver' in window)) {
+          items.forEach(show);
+          root.classList.add('io-ready');
+          return;
+        }
+        const byDocumentOrder = (a, b) => ((a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+        const io = new IntersectionObserver((entries) => {
+          const batch = entries.filter((e) => e.isIntersecting).map((e) => e.target).sort(byDocumentOrder);
+          let step = 0;
+          for (const el of batch) {
+            if (el.hasAttribute('data-stagger')) {
+              el.style.setProperty('--d', String(Math.min(step, 8)));
+              step += 1;
+            } else {
+              step = Math.max(step, (parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0) + 1);
+            }
+            show(el);
+            io.unobserve(el);
+          }
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach((el) => io.observe(el));
+        root.classList.add('io-ready');           // cancels the 3 s CSS failsafe
+        onMotionChange((ok) => { if (!ok) { io.disconnect(); items.forEach(show); } });
+      });
+
+      /* ─── The forge striation: 32 seeded iron bars ─────────────── */
+      safely('bars', () => {
+        const host = $('.iron-bars');
+        if (!host) return;
+        const rand = mulberry32(0x45dcc41);        // seeded with the origin commit
+        const depths = ['pulse-a', 'pulse-b', 'pulse-c'];
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 32; i++) {
+          const bar = document.createElement('i');
+          bar.className = 'iron-bar ' + depths[Math.floor(rand() * depths.length)];
+          bar.style.width = (40 + rand() * 60).toFixed(1) + '%';
+          bar.style.opacity = (0.3 + rand() * 0.7).toFixed(2);
+          bar.style.setProperty('--dur', (2 + rand() * 3).toFixed(2) + 's');
+          bar.style.setProperty('--delay', (rand() * 3).toFixed(2) + 's');
+          frag.appendChild(bar);
+        }
+        host.appendChild(frag);
+      });
+
+      /* ─── Magnetic pull (B12) ─────────────────────────────────────
+         Measures the unmoving <a>, moves only its inner body, and rides the CSS
+         transition (0.15 s tick), so every retarget leans with a little spring.
+         Only for a fine hovering pointer, and only while motion is allowed. */
+      safely('magnet', () => {
+        const STRENGTH = 0.22;
+        const magnets = $$('.magnet');
+        let enabled = false;
+        const rest = (body) => { body.style.removeProperty('--mx'); body.style.removeProperty('--my'); };
+        const update = () => {
+          enabled = motionOK && finePointerMQ.matches;
+          if (!enabled) magnets.forEach((m) => rest(m.firstElementChild));
+        };
+        magnets.forEach((m) => {
+          const body = m.firstElementChild;
+          let frame = 0;
+          let px = 0;
+          let py = 0;
+          m.addEventListener('pointermove', (e) => {
+            if (!enabled || e.pointerType === 'touch') return;
+            px = e.clientX;
+            py = e.clientY;
+            if (frame) return;
+            frame = requestAnimationFrame(() => {
+              frame = 0;
+              const r = m.getBoundingClientRect();
+              body.style.setProperty('--mx', ((px - (r.left + r.width / 2)) * STRENGTH).toFixed(2) + 'px');
+              body.style.setProperty('--my', ((py - (r.top + r.height / 2)) * STRENGTH).toFixed(2) + 'px');
+            });
+          });
+          m.addEventListener('pointerleave', () => {
+            if (frame) { cancelAnimationFrame(frame); frame = 0; }
+            rest(body);
+          });
+        });
+        watch(finePointerMQ, update);
+        onMotionChange(update);
+        update();
+      });
+
+      /* ─── Skip link (B11): reach #main and move focus there ─────── */
+      safely('skip', () => {
+        const skip = $('.skip-link');
+        const main = $('#main');
+        skip.addEventListener('click', () => main.focus({ preventScroll: true }));
+      });
+
+      /* ─── Pause the living layers when unseen ─────────────────── */
+      safely('live', () => {
+        const syncTab = () => root.classList.toggle('tab-hidden', document.hidden);
+        document.addEventListener('visibilitychange', syncTab);
+        syncTab();
+        if (!('IntersectionObserver' in window)) return;
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => e.target.classList.toggle('is-offscreen', !e.isIntersecting));
+        }, { rootMargin: '120px 0px' });
+        $$('[data-live]').forEach((el) => io.observe(el));
+      });
+
+      /* ─── Marquees on very wide screens ─────────────────────────────
+         Each set must be at least as wide as the row for the loop to stay full.
+         Beyond ~2300 px, append chips to both sets (they stay identical) and
+         stretch the duration so the drift keeps its original speed. */
+      safely('marquee', () => {
+        const rows = $$('.marquee').map((row) => {
+          const track = $('.marquee-track', row);
+          const sets = $$('.marquee-set', track);
+          return { row, track, sets, chips: sets[0].innerHTML, base: Number(row.dataset.dur) || 30, w0: 0 };
+        });
+        const fit = () => rows.forEach((r) => {
+          if (r.sets.length !== 2) return;
+          let w = r.sets[0].getBoundingClientRect().width;
+          if (!r.w0) r.w0 = w;
+          let added = 0;
+          while (w > 0 && w < r.row.clientWidth && added < 6) {
+            r.sets.forEach((set) => set.insertAdjacentHTML('beforeend', r.chips));
+            w = r.sets[0].getBoundingClientRect().width;
+            added += 1;
+          }
+          if (added) r.track.style.animationDuration = (r.base * w / r.w0).toFixed(2) + 's';
+        });
+        let t = 0;
+        addEventListener('resize', () => { clearTimeout(t); t = setTimeout(fit, 200); }, { passive: true });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+        fit();
+      });
+    })();
+  </script>
+
+</body>
+</html>

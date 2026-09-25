@@ -57,6 +57,12 @@ Easing reference:
 
 ## Three.js r128 + GSAP Integration (for Agent-B)
 
+> ★v6 note: the r128 pins below describe the old CDN bundle and are kept for projects already on
+> it. New work uses current three.js (r18x) through an import map pinned to one version —
+> WebGPURenderer with TSL materials where possible (WebGL2 is the automatic fallback), DPR
+> 1.5 desktop / 1 mobile by default, and the camera driven by the score's progress. The live
+> injection is in SKILL.md §12 ("Agent-B / Agent F (Three.js / WebGL / WebGPU)").
+
 ```markdown
 You are now an expert in Three.js r128 + GSAP ScrollTrigger integration.
 
@@ -148,34 +154,44 @@ Scroll sequence best practices:
 ```markdown
 You are now an expert in Lenis smooth scroll.
 
-Installation: npm install @studio-freight/lenis
+Installation: npm install lenis
 
-Initialization:
-  import Lenis from '@studio-freight/lenis';
-  const lenis = new Lenis({
-    duration: 1.4,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    direction: 'vertical',
-    smoothWheel: true,
-    touchMultiplier: 2
-  });
+Initialization (reduced motion is checked BEFORE Lenis is constructed; GSAP's ticker drives it):
+  import Lenis from 'lenis';
 
-GSAP sync (required):
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
+  function initSmoothScroll() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;   // native scroll, no Lenis
 
-ScrollTrigger sync (required):
-  lenis.on('scroll', ScrollTrigger.update);
+    const lenis = new Lenis({
+      duration: 1.4,                                              // optional, paired with easing:
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),   // exponential-out weight — omit both for Lenis's default lerp
+      orientation: 'vertical',
+      smoothWheel: true,
+      touchMultiplier: 2
+    });
+
+    // GSAP sync (required) — GSAP's ticker is the only loop driving Lenis (leave autoRaf off)
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // ScrollTrigger sync (required)
+    lenis.on('scroll', ScrollTrigger.update);
+
+    return lenis;
+  }
+
+  const lenis = initSmoothScroll();   // undefined under reduced motion — guard every call below
 
 Stopping Lenis (modals, overlays):
-  lenis.stop() // pause scroll
-  lenis.start() // resume scroll
+  lenis?.stop() // pause scroll
+  lenis?.start() // resume scroll
 
 Programmatic scroll:
-  lenis.scrollTo('#section', { offset: -80, duration: 1.2 })
+  lenis?.scrollTo('#section', { offset: -80, duration: 1.2 })
+  // reduced motion (no Lenis): document.querySelector('#section').scrollIntoView()
 
 Horizontal scroll:
-  direction: 'horizontal' + wrapper: document.querySelector('.horizontal-wrapper')
+  orientation: 'horizontal' + wrapper: document.querySelector('.horizontal-wrapper')
 ```
 
 ---
@@ -245,3 +261,21 @@ WebSocket pattern for scroll-triggered narration:
 ---
 
 *← [SKILL.md](../SKILL.md)*
+
+---
+
+## 52 Best Practices Applied to Iron Canvas
+
+From "52 Weeks of Claude Code Lessons in 45 Minutes":
+
+1. **Plan Mode First (#2):** Orchestrator runs Phase 0-3.9 in "plan mode" — pure reasoning, no code.
+2. **RPIT Loop (#26):** Every Build Agent follows Research → Plan → Implement → Test.
+3. **Spec-Driven Development (#28):** Design PRD = spec. Agents build from spec, not improvisation.
+4. **Screenshot Debugging (#10):** Every gate check includes visual verification.
+5. **Git Safety Net (#11):** Commit after each agent completes. Branch per agent.
+6. **Verify at Higher Abstraction (#31):** Don't review code line-by-line — check if the experience WORKS.
+7. **Give AI a Way to Verify (#32):** Agent-E IS the verification mechanism.
+8. **Auto-Document (#35):** Design PRD serves as living documentation of all decisions.
+9. **Multi-Clauding with Worktrees (#38):** SWARM mode = parallel agents in isolated workspaces.
+10. **Ralph Wiggum Loops (#42):** Agent-B scroll engine can iterate autonomously (build → test → fix → repeat). But NOT for taste decisions (#43).
+11. **Don't Use Ralph Wiggum for Taste (#43):** Phase 7 Taste Test requires human judgment. Always.

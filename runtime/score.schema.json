@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Island-Dev-Crew/iron-canvas/runtime/score.schema.json",
+  "title": "Iron Canvas Score",
+  "description": "A declarative motion score performed by runtime/canvas-score.js — and the motion contract every agent and the critic read (references/cinematic-score.md). Acts map to page sections; shots place verbs on each act's timeline. Contract fields (stage, job, role, emotion, reduced, fallback, signature) are ignored by the runtime and enforced by scripts/ic-preflight.mjs.",
+  "type": "object",
+  "required": ["acts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "title": { "type": "string" },
+    "logline": { "type": "string", "description": "One sentence: what the viewer should feel by the end." },
+    "register": { "enum": ["R0", "R1", "R2", "R3", "R4"], "description": "Contract: the Treatment Register this score was written for (sets the motion-sentence length and the quiet-between-loud rule)." },
+    "surface": { "enum": ["web", "app-dashboard", "immersive-3d", "game-realtime", "film"], "description": "Contract: the surface pack (mobile pin rules differ by pack)." },
+    "personality": { "$ref": "#/$defs/personality", "default": "silk" },
+    "tempo": { "type": "number", "minimum": 0.25, "maximum": 4, "default": 1, "description": "Multiplies durations of enter/load acts. contemplative > 1, fast < 1." },
+    "seed": { "type": "integer", "minimum": 0, "default": 7, "description": "Seeds breath phases so every run renders identically." },
+    "smooth": { "type": "boolean", "default": true, "description": "Lenis smooth scroll in full mode." },
+    "lerp": { "type": "number", "minimum": 0.02, "maximum": 1, "default": 0.085 },
+    "signature": { "type": "string", "description": "Contract: the id of the one act whose role is 'signature'." },
+    "breath": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "amplitude": { "type": "number", "minimum": 0, "maximum": 3, "default": 1 },
+        "selector": { "type": "string", "default": "[data-breath]" }
+      }
+    },
+    "acts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/act" } }
+  },
+  "$defs": {
+    "personality": { "enum": ["silk", "tide", "gravity", "spark", "snap", "bloom", "drift"] },
+    "verb": { "enum": ["fade", "rise", "unveil", "bloom", "focus", "tilt", "wipe", "iris", "sink", "lift", "defocus", "dolly", "drift", "draw", "count", "scramble", "sweep"] },
+    "stage": { "enum": ["establish", "accelerate", "pause", "reveal", "recover", "climax", "resolve"] },
+    "job": { "enum": ["orient", "establish_stakes", "explain_system", "compare", "trace_evidence", "show_progression", "explore_network", "inspect_detail", "commit", "handoff"] },
+    "act": {
+      "type": "object",
+      "required": ["id", "el"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "el": { "type": "string", "description": "CSS selector of the act's section." },
+        "stage": { "$ref": "#/$defs/stage", "description": "Contract: the act's beat in the motion sentence." },
+        "job": { "$ref": "#/$defs/job", "description": "Contract: what the section does for the visitor." },
+        "role": { "enum": ["signature", "support", "stillness"], "description": "Contract: exactly one act per score is the signature." },
+        "intent": { "type": "string", "description": "What this act makes the viewer feel. Documentation for humans and critics; not performed." },
+        "emotion": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Contract: the feeling on arrival and on leaving, in words a person would use.",
+          "properties": { "in": { "type": "string" }, "out": { "type": "string" } }
+        },
+        "reduced": { "type": "string", "description": "Contract: what the settled, still frame means under reduced motion." },
+        "fallback": { "type": "string", "description": "Contract: what shows without WebGL or on a slow network." },
+        "mobile": { "type": "string", "description": "Contract: the semantic mobile transformation when a pinned act cannot pin on phones." },
+        "trigger": { "enum": ["enter", "scrub", "load"], "default": "enter" },
+        "personality": { "$ref": "#/$defs/personality" },
+        "start": { "type": "string", "description": "ScrollTrigger start, e.g. 'top top' (scrub) or 'top 78%' (enter)." },
+        "end": { "type": "string" },
+        "length": { "type": "string", "description": "Scrub acts: scroll distance, e.g. '180%' (of viewport height)." },
+        "pin": { "type": "boolean", "default": false },
+        "scrub": { "oneOf": [{ "type": "boolean" }, { "type": "number", "minimum": 0 }] },
+        "hold": { "type": "number", "minimum": 0, "description": "Seconds of stillness appended so a pinned act rests on its final frame." },
+        "replay": { "type": "boolean", "default": false },
+        "shots": { "type": "array", "items": { "$ref": "#/$defs/shot" } }
+      }
+    },
+    "shot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "at": { "type": "number", "minimum": 0, "description": "Seconds on the act timeline (proportional in scrub acts)." },
+        "target": { "type": "string" },
+        "verb": { "$ref": "#/$defs/verb" },
+        "split": { "enum": ["chars", "words", "lines"] },
+        "personality": { "$ref": "#/$defs/personality" },
+        "duration": { "type": "number", "minimum": 0 },
+        "ease": { "type": "string" },
+        "stagger": { "type": "number", "minimum": 0 },
+        "from": { "type": "object" },
+        "to": { "type": "object" },
+        "glyphs": { "type": "string" },
+        "call": { "type": "string", "description": "Name of a hook passed in options.hooks — fired when the playhead reaches 'at'." },
+        "args": {},
+        "note": { "type": "string", "description": "Director's note — why this shot exists." }
+      },
+      "anyOf": [{ "required": ["target"] }, { "required": ["call"] }]
+    }
+  }
+}
