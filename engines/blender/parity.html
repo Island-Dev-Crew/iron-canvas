@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twin-camera parity · Iron Canvas</title>
+<!--
+  The twin-camera parity check: does the site's WebGL camera see exactly what Blender's clay film saw?
+  Serve the repo root (e.g. `npx http-server . -p 4174 -c-1`) and open
+    /engines/blender/parity.html?run=<run dir relative to the repo root>
+  where <run dir> is the folder `blender.mjs run` printed (it holds clay-frames/ and camera-rail.json),
+  or use `node engines/blender/handoff.mjs`, which prints the exact URL.
+  For the first, middle and last frame it rebuilds the clay blocking in three.js, applies the baked camera
+  sample, and scores silhouette overlap (IoU) against Blender's frame. Pass: every IoU >= 0.90.
+  Result: shown on the page and exposed as window.__parity for scripts.
+-->
+<style>
+  :root { color-scheme: dark; --ink: #0b0907; --line: rgba(224,187,110,.18); --gold: #e0bb6e; --cream: #f3e9d8; --ash: #a89c8a; --ok: #7fd18b; --bad: #ff7a6b; }
+  body { margin: 0; padding: 24px clamp(16px, 4vw, 48px); background: var(--ink); color: var(--cream); font: 14px/1.5 "Segoe UI", system-ui, sans-serif; }
+  h1 { font-size: 22px; margin: 0 0 4px; } .sub { color: var(--ash); margin: 0 0 18px; }
+  .verdict { font: 700 18px/1.2 system-ui; margin: 10px 0 18px; } .ok { color: var(--ok); } .bad { color: var(--bad); }
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+  figure { margin: 0; border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+  canvas, img { width: 100%; height: auto; display: block; border-radius: 6px; background: #000; }
+  figcaption { font: 12px ui-monospace, Consolas, monospace; color: var(--ash); margin-top: 6px; }
+  code { font: 12px ui-monospace, Consolas, monospace; }
+  @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js" } }</script>
+</head>
+<body>
+<h1>Twin-camera parity</h1>
+<p class="sub">Blender clay frame · three.js from the baked rail · overlap (gold = both, red = Blender only, blue = three.js only)</p>
+<div class="verdict" id="verdict">Loading…</div>
+<div id="rows"></div>
+<script type="module">
+import * as THREE from 'three';
+import { createRail } from '../../runtime/camera-rail.js';
+
+const W = 320, H = 180, PASS = 0.9;
+const q = new URLSearchParams(location.search);
+const run = (q.get('run') || '').replace(/\/+$/, '');
+const verdict = document.getElementById('verdict');
+const fail = (msg) => { verdict.innerHTML = `<span class="bad">${msg}</span>`; window.__parity = { pass: false, error: msg }; };
+
+async function findJobDir() {
+  // blender.mjs writes inputs/job.json at the run root and outputs under candidates/blender/<name>/
+  const rail = await fetch(`/${run}/camera-rail.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  if (rail) return { rail, out: `/${run}` };
+  const listing = await fetch(`/${run}/candidates/blender/`).then((r) => (r.ok ? r.text() : '')).catch(() => '');
+  const name = (listing.match(/href="[^"]*?candidates\/blender\/([^"/]+)\/"/) || listing.match(/href="([^"/?.][^"/?]*)\/"/) || [])[1];
+  if (!name) return null;
+  const out = `/${run}/candidates/blender/${decodeURIComponent(name)}`;
+  const r2 = await fetch(`${out}/camera-rail.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  return r2 ? { rail: r2, out } : null;
+}
+
+function buildBlocking(scene, job) {
+  const mat = new THREE.MeshBasicMaterial({ color: 0x9e9e9e, side: THREE.DoubleSide });
+  const blocks = [];
+  for (const b of job.blocking || []) {
+    const rep = b.repeat || { count: 1, step: [0, 0, 0] };
+    for (let n = 0; n < (rep.count || 1); n++) {
+      blocks.push({ ...b, position: [0, 1, 2].map((i) => (b.position || [0, 0, 0])[i] + (rep.step || [0, 0, 0])[i] * n) });
+    }
+  }
+  if (!blocks.length) blocks.push({ kind: 'plane', position: [0, -2.5, 0], size: [80, 1, 1] });
+  for (const b of blocks) {
+    const s = b.size || [1, 1, 1];
+    let geo;
+    if (b.kind === 'sphere') geo = new THREE.SphereGeometry(s[0] / 2, 48, 24);
+    else if (b.kind === 'cylinder') geo = new THREE.CylinderGeometry(s[0] / 2, s[0] / 2, s[1], 48);
+    else if (b.kind === 'plane') { geo = new THREE.PlaneGeometry(s[0], s[0]); geo.rotateX(-Math.PI / 2); }   // Blender planes are horizontal
+    else geo = new THREE.BoxGeometry(s[0], s[1], s[2]);
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(...b.position);
+    scene.add(m);
+  }
+}
+
+function mask(img) {
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data;
+  // background = the most common corner colour; geometry = anything clearly different from it
+  const bg = [0, 4 * (W - 1), 4 * W * (H - 1), 4 * (W * H - 1)].map((i) => [d[i], d[i + 1], d[i + 2]]).sort((a, b) => a[0] - b[0])[1];
+  const m = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) m[i] = Math.abs(d[4 * i] - bg[0]) + Math.abs(d[4 * i + 1] - bg[1]) + Math.abs(d[4 * i + 2] - bg[2]) > 24 ? 1 : 0;
+  return m;
+}
+
+function overlay(a, b) {
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d'); const im = x.createImageData(W, H);
+  let inter = 0, union = 0;
+  for (let i = 0; i < W * H; i++) {
+    const A = a[i], B = b[i];
+    if (A && B) inter++;
+    if (A || B) union++;
+    const col = A && B ? [224, 187, 110] : A ? [255, 90, 80] : B ? [90, 150, 255] : [12, 10, 8];
+    im.data.set([...col, 255], 4 * i);
+  }
+  x.putImageData(im, 0, 0);
+  return { canvas: c, iou: union ? inter / union : 1 };
+}
+
+const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error(`missing ${src}`)); i.src = src; });
+
+// ?selftest — proves the metric without Blender: stand-in "Blender" frames rendered from the example stations,
+// once with the correct vertical fov (must PASS) and once with the old bug, fov read as horizontal (must FAIL).
+async function selftest() {
+  const job = await fetch('../examples/living-canvas-rail.clay.json').then((r) => r.json());
+  const railPlayer = createRail({ stations: job.stations });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.setClearColor(0x2e2e2e);
+  const scene = new THREE.Scene(); buildBlocking(scene, job);
+  const cam = new THREE.PerspectiveCamera(50, W / H, 0.1, 1000);
+  const shot = async (p, fovFix) => {
+    const s = railPlayer.apply(cam, p);
+    if (fovFix) { cam.fov = fovFix(s.fov); cam.updateProjectionMatrix(); }
+    renderer.render(scene, cam);
+    return loadImg(renderer.domElement.toDataURL('image/png'));
+  };
+  const oldBug = (v) => (2 * Math.atan(Math.tan((v * Math.PI) / 360) / (W / H)) * 180) / Math.PI; // horizontal read as vertical
+  const cases = [];
+  for (const [label, fix] of [['correct vertical fov', null], ['old horizontal-fov bug', oldBug]]) {
+    const ious = [];
+    for (const p of [0, 0.5, 1]) {
+      const blender = await shot(p, fix);
+      const three = await shot(p, null);
+      ious.push(+overlay(mask(blender), mask(three)).iou.toFixed(4));
+    }
+    cases.push({ label, ious, pass: ious.every((v) => v >= PASS) });
+  }
+  const ok = cases[0].pass && !cases[1].pass;
+  window.__parity = { selftest: true, pass: ok, cases };
+  verdict.innerHTML = `<span class="${ok ? 'ok' : 'bad'}">SELFTEST ${ok ? 'PASS' : 'FAIL'}</span> — ${cases.map((c) => `${c.label}: ${c.ious.map((v) => v.toFixed(3)).join(' / ')} (${c.pass ? 'pass' : 'fail'})`).join(' · ')}`;
+}
+
+(async () => {
+  if (q.has('selftest')) return selftest();
+  if (!run) return fail('Add ?run=<run dir relative to the repo root> — node engines/blender/handoff.mjs prints it.');
+  const found = await findJobDir();
+  if (!found) return fail(`No camera-rail.json under /${run}`);
+  const { rail, out } = found;
+  if (!Array.isArray(rail.samples)) return fail('This rail has no baked samples (ic-camera-rail/2 needed) — re-run the clay-camera job.');
+  const runRoot = out.includes('/candidates/') ? out.slice(0, out.indexOf('/candidates/')) : out;
+  const job = await fetch(`${runRoot}/inputs/job.json`).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(W, H, false);
+  renderer.setClearColor(0x2e2e2e);
+  const scene = new THREE.Scene();
+  buildBlocking(scene, job);
+  const camera = new THREE.PerspectiveCamera(rail.samples[0][7], W / H, 0.1, 1000);
+  const railPlayer = createRail(rail);
+
+  const n = rail.samples.length;
+  const picks = [0, Math.floor((n - 1) / 2), n - 1];
+  const results = [];
+  const rows = document.getElementById('rows');
+  for (const k of picks) {
+    const frameNo = String(k + 1).padStart(4, '0');
+    let blenderImg;
+    try { blenderImg = await loadImg(`${out}/clay-frames/frame_${frameNo}.png`); }
+    catch (e) { return fail(`${e.message} — run the full job (not only the sheet) first.`); }
+    railPlayer.apply(camera, n > 1 ? k / (n - 1) : 0);
+    renderer.render(scene, camera);
+    const threeImg = await loadImg(renderer.domElement.toDataURL('image/png'));
+    const { canvas, iou } = overlay(mask(blenderImg), mask(threeImg));
+    results.push({ frame: k + 1, iou: +iou.toFixed(4), pass: iou >= PASS });
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<figure><img alt="Blender frame ${k + 1}" src="${blenderImg.src}"><figcaption>Blender · frame ${k + 1}</figcaption></figure>
+      <figure><img alt="three.js frame ${k + 1}" src="${threeImg.src}"><figcaption>three.js · baked sample ${k + 1}</figcaption></figure>
+      <figure></figure>`;
+    row.lastElementChild.append(canvas);
+    row.lastElementChild.insertAdjacentHTML('beforeend', `<figcaption class="${iou >= PASS ? 'ok' : 'bad'}">IoU ${iou.toFixed(3)} ${iou >= PASS ? '✓' : '✗ (need ≥ 0.90)'}</figcaption>`);
+    rows.append(row);
+  }
+  const pass = results.every((r) => r.pass);
+  window.__parity = { pass, threshold: PASS, run, rail: `${out}/camera-rail.json`, frames: n, fov: rail.fov, results };
+  verdict.innerHTML = `<span class="${pass ? 'ok' : 'bad'}">${pass ? 'PARITY PASS' : 'PARITY FAIL'}</span> — ${results.map((r) => `frame ${r.frame}: ${r.iou.toFixed(3)}`).join(' · ')}`;
+})().catch((e) => fail(e.message));
+</script>
+</body>
+</html>
